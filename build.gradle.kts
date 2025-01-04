@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
@@ -5,6 +7,7 @@ plugins {
 	id("org.springframework.boot") version "3.4.1"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("kapt") version "1.9.25"
 }
 
 group = "dev.joguenco"
@@ -33,7 +36,10 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	// SystemUtils
 	implementation("org.apache.commons:commons-lang3:3.13.0")
-}
+	// AutoMapper Entity to DTO
+	implementation("org.mapstruct:mapstruct:1.6.3")
+	kapt("org.mapstruct:mapstruct-processor:1.6.3")
+	}
 
 kotlin {
 	compilerOptions {
@@ -47,6 +53,22 @@ allOpen {
 	annotation("jakarta.persistence.Embeddable")
 }
 
+kapt {
+	arguments {
+		// Set Mapstruct Configuration options here
+		// https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
+		// https://mapstruct.org/documentation/stable/reference/html/#configuration-options
+		arg("mapstruct.defaultComponentModel", "spring")
+	}
+}
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs += "-Xjsr305=strict"
+		jvmTarget = "21"
+	}
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
-class Version {
+class VersionController {
 
     @Autowired
     lateinit var versionService: VersionService

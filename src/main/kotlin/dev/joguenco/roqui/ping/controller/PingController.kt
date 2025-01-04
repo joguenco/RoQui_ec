@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
-class Ping {
+class PingController {
 
     @GetMapping("/ping")
     fun ping() = Pong()
