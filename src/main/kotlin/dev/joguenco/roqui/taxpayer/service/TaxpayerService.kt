@@ -14,9 +14,8 @@ class TaxpayerService(private val taxPayerRepository: ITaxpayerRepository
     fun getTaxpayer(): TaxpayerDto {
         val taxpayer = taxPayerRepository.findById(1).get()
         // Mapper with implementation
-        val taxpayerMapper= TaxpayerMapperImpl()
+        //val taxpayerMapper= TaxpayerMapperImpl()
         // Mapper with interface, without implementation
-        //val taxpayerMapper= Mappers.getMapper(ITaxpayerMapper::class.java)
         return taxpayerMapper.toDto(taxpayer)
     }
 }

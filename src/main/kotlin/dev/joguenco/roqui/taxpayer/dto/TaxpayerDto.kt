@@ -1,11 +1,11 @@
 package dev.joguenco.roqui.taxpayer.dto
 
 data class TaxpayerDto(
-    val id: Int? = null,
-    val identification: String? = null,
-    val legalName: String? = null,
-    val forcedAccounting: String? = null,
-    val specialTaxpayer: String? = null,
-    val retentionAgent: String? = null,
-    val rimpe: String? = null
+    var id: Int? = null,
+    var identification: String? = null,
+    var legalName: String? = null,
+    var forcedAccounting: String? = null,
+    var specialTaxpayer: String? = null,
+    var retentionAgent: String? = null,
+    var rimpe: String? = null
 )
