@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Repository
-class EstablishmentsRepositoryImpl : IEstablishmentsRepository {
+class EstablishmentsRepository : CustomEstablishmentsRepository {
 
     @PersistenceContext
     lateinit var entityManager: EntityManager
