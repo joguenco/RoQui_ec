@@ -1,10 +1,10 @@
 package dev.joguenco.roqui.electronic.send
 
-import dev.mestizos.client.sri.Check
-import dev.mestizos.client.sri.Send
-import dev.mestizos.definition.AutorizacionEstado
-import dev.mestizos.roqui.util.DateUtil
-import dev.mestizos.roqui.util.FilesUtil
+import dev.joguenco.client.sri.Check
+import dev.joguenco.client.sri.Send
+import dev.joguenco.definition.AutorizacionEstado
+import dev.joguenco.roqui.util.DateUtil
+import dev.joguenco.roqui.util.FilesUtil
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.Mensaje
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud

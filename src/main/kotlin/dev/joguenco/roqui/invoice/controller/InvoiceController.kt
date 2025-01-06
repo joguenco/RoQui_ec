@@ -5,8 +5,8 @@ import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.invoice.service.InvoiceService
-import dev.mestizos.roqui.parameter.service.ParameterService
-import dev.joguenco.roqui.util.dto.DocumentDto
+import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.electronic.dto.DocumentDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

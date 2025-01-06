@@ -1,4 +1,4 @@
-package dev.joguenco.roqui.util.dto
+package dev.joguenco.roqui.electronic.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

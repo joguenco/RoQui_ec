@@ -1,13 +1,13 @@
 package dev.joguenco.roqui.invoice.service
 
 import dev.joguenco.roqui.invoice.dto.ReportInvoiceDto
-import dev.joguenco.roqui.invoice.repository.ReportInvoiceRepository
-import dev.mestizos.roqui.util.DateUtil
+import dev.joguenco.roqui.invoice.repository.CustomReportInvoiceRepository
+import dev.joguenco.roqui.util.DateUtil
 import org.springframework.stereotype.Service
 
 @Service
 class ReportInvoiceService(
-    private val reportInvoiceRepository: ReportInvoiceRepository
+    private val reportInvoiceRepository: CustomReportInvoiceRepository
 ) {
 
     fun getInvoiceByDatesAndStatus(startDate: String, endDate: String, status: String)

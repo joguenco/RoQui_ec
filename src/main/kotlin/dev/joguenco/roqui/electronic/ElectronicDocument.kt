@@ -1,6 +1,6 @@
 package dev.joguenco.roqui.electronic
 
-import dev.mestizos.definition.AutorizacionEstado
+import dev.joguenco.definition.AutorizacionEstado
 import dev.joguenco.roqui.electronic.model.Document
 import dev.joguenco.roqui.electronic.send.SendXML
 import dev.joguenco.roqui.electronic.send.WebService
@@ -8,9 +8,9 @@ import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.PdfInvoice
-import dev.mestizos.roqui.invoice.service.InvoiceService
-import dev.mestizos.roqui.parameter.service.ParameterService
-import dev.mestizos.roqui.util.DateUtil
+import dev.joguenco.roqui.invoice.service.InvoiceService
+import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.util.DateUtil
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 import java.time.LocalDateTime

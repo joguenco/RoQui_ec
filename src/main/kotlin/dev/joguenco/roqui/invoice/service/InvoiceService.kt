@@ -1,20 +1,23 @@
 package dev.joguenco.roqui.invoice.service
 
+import dev.joguenco.roqui.information.model.Information
 import dev.joguenco.roqui.information.repository.InformationRepository
 import dev.joguenco.roqui.invoice.dto.TaxTotal
 import dev.joguenco.roqui.invoice.dto.TributaryInformation
 import dev.joguenco.roqui.invoice.model.InvoiceDetail
 import dev.joguenco.roqui.invoice.model.Payment
 import dev.joguenco.roqui.invoice.model.TaxDetail
-import dev.joguenco.roqui.invoice.repository.InvoiceRepository
+import dev.joguenco.roqui.invoice.repository.CustomInvoiceRepository
 import dev.joguenco.roqui.parameter.repository.ParameterRepository
+import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
+import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
 import org.springframework.stereotype.Service
 
 @Service
 class InvoiceService(
-    private val invoiceRepository: InvoiceRepository,
+    private val invoiceRepository: CustomInvoiceRepository,
     private val taxPayerRepository: TaxpayerRepository,
-    private val establishmentRepository: EstablishmentsRepository,
+    private val establishmentRepository: EstablishmentRepository,
     private val parameterRepository: ParameterRepository,
     private val informationRepository: InformationRepository
 ) {

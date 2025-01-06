@@ -1,4 +1,4 @@
-package dev.mestizos.roqui.util
+package dev.joguenco.roqui.util
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat

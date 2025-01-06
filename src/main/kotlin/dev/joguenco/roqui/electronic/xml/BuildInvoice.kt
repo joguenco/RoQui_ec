@@ -1,7 +1,7 @@
 package dev.joguenco.roqui.electronic.xml
 
-import dev.mestizos.roqui.invoice.service.InvoiceService
-import dev.mestizos.roqui.util.FilesUtil
+import dev.joguenco.roqui.invoice.service.InvoiceService
+import dev.joguenco.roqui.util.FilesUtil
 import ec.gob.sri.invoice.v210.*
 import java.io.StringWriter
 import jakarta.xml.bind.JAXBContext
