@@ -14,7 +14,6 @@ import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
-import java.time.LocalDateTime
 import kotlin.NoSuchElementException
 
 class ElectronicDocument(
@@ -27,10 +26,14 @@ class ElectronicDocument(
 ) {
 
     private var accessKey: String = ""
+    private var baseDirectory = ""
+
+    init {
+        baseDirectory = parameterService.getBaseDirectory()
+    }
 
     fun process(type: TypeDocument): String {
-        val baseDirectory = parameterService.getBaseDirectory()
-        var statusResponse = ""
+        var statusResponse = "NO PROCESADO"
 
         if (type == TypeDocument.FACTURA) {
             val build = BuildInvoice(code, number, baseDirectory, invoiceService)
@@ -58,18 +61,17 @@ class ElectronicDocument(
                 statusResponse = saveResponse(it)
             }
 
-            return accessKey
+            return statusResponse
         }
 
         return statusResponse
     }
 
-    fun check() {
-        val baseDirectory = parameterService.getBaseDirectory()
+    fun check(): String {
         val xml = SendXML(accessKey, baseDirectory, webService)
         val response = xml.check()
 
-        saveResponse(response)
+        val status = saveResponse(response)
 
         if (Estado.AUTORIZADO.descripcion.equals(response.autorizacion.estado)) {
             val pathLogo = parameterService.getPathLogo()
@@ -78,20 +80,27 @@ class ElectronicDocument(
                 baseDirectory,
                 pathLogo,
                 response.autorizacion.numeroAutorizacion,
-                response.autorizacion.fechaAutorizacion.toString()
+                DateUtil.formatDate(DateUtil.extractDate(response.autorizacion.fechaAutorizacion))
             )
             printPdf.pdf()
         }
+
+        return status
     }
 
     private fun saveResponse(response: AutorizacionEstado): String {
-        var message = ""
+        val date = DateUtil.getDatetime()
+        var message = "$date |"
 
         if (response.autorizacion.mensajes != null) {
             for (i in response.autorizacion.mensajes.mensaje.indices) {
                 val messageResponse = response.autorizacion.mensajes.mensaje[i]
                 if (messageResponse.mensaje != null) {
-                    message = "$message ${messageResponse.mensaje} ${messageResponse.informacionAdicional}"
+                    message = message + " " +
+                            messageResponse.mensaje + " " +
+                            messageResponse.tipo + " " +
+                            messageResponse.identificador + " " +
+                            messageResponse.informacionAdicional
                 }
             }
         }
@@ -99,26 +108,26 @@ class ElectronicDocument(
         try {
             val document = documentService.getByCodeAndNumber(code, number)
 
-            if (document.observation!!.length > 2400){
+            if (document.observation!!.length > 2400) {
                 document.observation = ""
             }
 
             document.observation = "$message ${document.observation}"
 
             if (response.autorizacion.fechaAutorizacion != null) {
-               document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
-                       "${response.autorizacion.fechaAutorizacion} ${document.observation}"
+                document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
+                        "${response.autorizacion.fechaAutorizacion} ${document.observation}"
 
-               document.authorization = response.autorizacion.numeroAutorizacion
+                document.authorization = response.autorizacion.numeroAutorizacion
 
-               document.authorizationDate = DateUtil.extractDate(
-                   response.autorizacion.fechaAutorizacion
-               )
+                document.authorizationDate = DateUtil.extractDate(
+                    response.autorizacion.fechaAutorizacion
+                )
             }
             document.status = response.autorizacion.estado
 
             documentService.saveDocument(document)
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             val document = Document(code, number, message, response.autorizacion.estado)
 
             if (response.autorizacion.fechaAutorizacion != null) {
@@ -138,7 +147,7 @@ class ElectronicDocument(
 
     private fun saveResponse(response: RespuestaSolicitud): String {
         var receipt: Comprobante
-        val date = LocalDateTime.now()
+        val date = DateUtil.getDatetime()
         var message = "$date |"
 
         if (response.comprobantes == null) {
@@ -154,6 +163,8 @@ class ElectronicDocument(
                     if (messageReceipt.mensaje != null) {
                         message = message + " " +
                                 messageReceipt.mensaje + " " +
+                                messageReceipt.tipo + " " +
+                                messageReceipt.identificador + " " +
                                 messageReceipt.informacionAdicional
                     }
                 }
@@ -167,7 +178,7 @@ class ElectronicDocument(
             document.observation = message + " | " + document.observation
             document.status = response.estado
             documentService.saveDocument(document)
-        } catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
             val document = Document(code, number, message, response.estado)
             documentService.saveDocument(document)
         }

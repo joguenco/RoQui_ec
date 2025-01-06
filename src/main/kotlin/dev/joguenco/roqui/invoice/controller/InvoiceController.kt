@@ -7,6 +7,7 @@ import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.electronic.dto.DocumentDto
+import dev.joguenco.roqui.electronic.dto.StateDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,12 +48,12 @@ class InvoiceController {
             documentService
         )
 
-        buildInvoice.process(TypeDocument.FACTURA)
+        val state = StateDto(buildInvoice.process(TypeDocument.FACTURA))
 
         TimeUnit.SECONDS.sleep(3)
 
-        buildInvoice.check()
+        state.state = buildInvoice.check()
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(state)
     }
 }

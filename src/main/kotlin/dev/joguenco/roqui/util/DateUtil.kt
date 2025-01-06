@@ -2,6 +2,8 @@ package dev.joguenco.roqui.util
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.xml.datatype.XMLGregorianCalendar
 
@@ -30,6 +32,16 @@ class DateUtil {
 
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
             return simpleDateFormat.parse(dateString)
+        }
+
+        fun getDatetime(): String {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            return LocalDateTime.now().format(formatter)
+        }
+
+        fun formatDate(date: Date): String {
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            return formatter.format(date)
         }
     }
 }
