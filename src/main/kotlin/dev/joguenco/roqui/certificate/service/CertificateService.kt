@@ -8,11 +8,10 @@ import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.*
 
-
 @Service
-    class CertificateService(private val parameterService: ParameterService) {
+class CertificateService(private val parameterService: ParameterService) {
 
-    fun getCertificateInformation() : CertificateDto {
+    fun getCertificateInformation(): CertificateDto {
         val certificateFile = parameterService.getCertificatePath()
         val certificatePassword = parameterService.getCertificatePassword()
 

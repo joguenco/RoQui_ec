@@ -1,6 +1,7 @@
 package dev.joguenco.roqui.electronic
 
 import dev.joguenco.definition.AutorizacionEstado
+import dev.joguenco.definition.Estado
 import dev.joguenco.roqui.electronic.model.Document
 import dev.joguenco.roqui.electronic.send.SendXML
 import dev.joguenco.roqui.electronic.send.WebService
@@ -53,7 +54,6 @@ class ElectronicDocument(
             val xml = SendXML(accessKey, baseDirectory, webService)
             val response = xml.send()
 
-
             response?.let {
                 statusResponse = saveResponse(it)
             }
@@ -70,6 +70,18 @@ class ElectronicDocument(
         val response = xml.check()
 
         saveResponse(response)
+
+        if (Estado.AUTORIZADO.descripcion.equals(response.autorizacion.estado)) {
+            val pathLogo = parameterService.getPathLogo()
+            val printPdf = PdfInvoice(
+                accessKey,
+                baseDirectory,
+                pathLogo,
+                response.autorizacion.numeroAutorizacion,
+                response.autorizacion.fechaAutorizacion.toString()
+            )
+            printPdf.pdf()
+        }
     }
 
     private fun saveResponse(response: AutorizacionEstado): String {
