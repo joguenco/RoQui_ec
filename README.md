@@ -3,7 +3,7 @@ E-Invoicing for Ecuador
 
 ## Dependencies
 - Java 21
-- Gradle 8.11.1
+- Gradle 8.13
 - MariaDB 11.4
 
 ## Hot Reload
