@@ -24,10 +24,15 @@ class DateUtil {
         }
 
         fun extractDate(date: XMLGregorianCalendar): Date {
-            val dateString = date.year.toString() + "-" +
-                    date.month.toString() + "-" +
-                    date.day.toString() + " " +
-                    date.hour.toString() + ":" +
+            val dateString =
+                date.year.toString() +
+                    "-" +
+                    date.month.toString() +
+                    "-" +
+                    date.day.toString() +
+                    " " +
+                    date.hour.toString() +
+                    ":" +
                     date.minute.toString()
 
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")

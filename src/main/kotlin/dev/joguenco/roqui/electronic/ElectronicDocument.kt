@@ -12,9 +12,9 @@ import dev.joguenco.roqui.electronic.xml.PdfInvoice
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
+import kotlin.NoSuchElementException
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
-import kotlin.NoSuchElementException
 
 class ElectronicDocument(
     val code: String,
@@ -22,7 +22,7 @@ class ElectronicDocument(
     private val invoiceService: InvoiceService,
     private val webService: WebService,
     private val parameterService: ParameterService,
-    private val documentService: DocumentService
+    private val documentService: DocumentService,
 ) {
 
     private var accessKey: String = ""
@@ -57,9 +57,7 @@ class ElectronicDocument(
             val xml = SendXML(accessKey, baseDirectory, webService)
             val response = xml.send()
 
-            response?.let {
-                statusResponse = saveResponse(it)
-            }
+            response?.let { statusResponse = saveResponse(it) }
 
             return statusResponse
         }
@@ -75,13 +73,16 @@ class ElectronicDocument(
 
         if (Estado.AUTORIZADO.descripcion.equals(response.autorizacion.estado)) {
             val pathLogo = parameterService.getPathLogo()
-            val printPdf = PdfInvoice(
-                accessKey,
-                baseDirectory,
-                pathLogo,
-                response.autorizacion.numeroAutorizacion,
-                DateUtil.formatDate(DateUtil.extractDate(response.autorizacion.fechaAutorizacion))
-            )
+            val printPdf =
+                PdfInvoice(
+                    accessKey,
+                    baseDirectory,
+                    pathLogo,
+                    response.autorizacion.numeroAutorizacion,
+                    DateUtil.formatDate(
+                        DateUtil.extractDate(response.autorizacion.fechaAutorizacion)
+                    ),
+                )
             printPdf.pdf()
         }
 
@@ -96,10 +97,15 @@ class ElectronicDocument(
             for (i in response.autorizacion.mensajes.mensaje.indices) {
                 val messageResponse = response.autorizacion.mensajes.mensaje[i]
                 if (messageResponse.mensaje != null) {
-                    message = message + " " +
-                            messageResponse.mensaje + " " +
-                            messageResponse.tipo + " " +
-                            messageResponse.identificador + " " +
+                    message =
+                        message +
+                            " " +
+                            messageResponse.mensaje +
+                            " " +
+                            messageResponse.tipo +
+                            " " +
+                            messageResponse.identificador +
+                            " " +
                             messageResponse.informacionAdicional
                 }
             }
@@ -115,14 +121,14 @@ class ElectronicDocument(
             document.observation = "$message ${document.observation}"
 
             if (response.autorizacion.fechaAutorizacion != null) {
-                document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
+                document.observation =
+                    " | ${response.autorizacion.numeroAutorizacion} " +
                         "${response.autorizacion.fechaAutorizacion} ${document.observation}"
 
                 document.authorization = response.autorizacion.numeroAutorizacion
 
-                document.authorizationDate = DateUtil.extractDate(
-                    response.autorizacion.fechaAutorizacion
-                )
+                document.authorizationDate =
+                    DateUtil.extractDate(response.autorizacion.fechaAutorizacion)
             }
             document.status = response.autorizacion.estado
 
@@ -131,14 +137,14 @@ class ElectronicDocument(
             val document = Document(code, number, message, response.autorizacion.estado)
 
             if (response.autorizacion.fechaAutorizacion != null) {
-                document.observation = " | ${response.autorizacion.numeroAutorizacion} " +
+                document.observation =
+                    " | ${response.autorizacion.numeroAutorizacion} " +
                         "${response.autorizacion.fechaAutorizacion} ${document.observation}"
 
                 document.authorization = response.autorizacion.numeroAutorizacion
 
-                document.authorizationDate = DateUtil.extractDate(
-                    response.autorizacion.fechaAutorizacion
-                )
+                document.authorizationDate =
+                    DateUtil.extractDate(response.autorizacion.fechaAutorizacion)
             }
             documentService.saveDocument(document)
         }
@@ -161,10 +167,15 @@ class ElectronicDocument(
                 for (m in receipt.mensajes.mensaje.indices) {
                     val messageReceipt = receipt.mensajes.mensaje[m]
                     if (messageReceipt.mensaje != null) {
-                        message = message + " " +
-                                messageReceipt.mensaje + " " +
-                                messageReceipt.tipo + " " +
-                                messageReceipt.identificador + " " +
+                        message =
+                            message +
+                                " " +
+                                messageReceipt.mensaje +
+                                " " +
+                                messageReceipt.tipo +
+                                " " +
+                                messageReceipt.identificador +
+                                " " +
                                 messageReceipt.informacionAdicional
                     }
                 }

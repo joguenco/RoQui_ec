@@ -6,5 +6,5 @@ enum class TypeDocument {
     NOTA_CREDITO,
     NOTA_DEBITO,
     LIQUIDACION,
-    GUIA
+    GUIA,
 }

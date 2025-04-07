@@ -10,16 +10,14 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 class InformationRepository : CustomIInformationRepository {
 
-    @PersistenceContext
-    lateinit var entityManager: EntityManager
+    @PersistenceContext lateinit var entityManager: EntityManager
 
     override fun findInformationByIdentification(identification: String): MutableList<Information> {
-        val information = entityManager.createQuery(
-            "from Information " +
-                    "where identification = :identification"
-        )
-            .setParameter("identification", identification)
-            .resultList as MutableList<Information>
+        val information =
+            entityManager
+                .createQuery("from Information " + "where identification = :identification")
+                .setParameter("identification", identification)
+                .resultList as MutableList<Information>
 
         return information
     }

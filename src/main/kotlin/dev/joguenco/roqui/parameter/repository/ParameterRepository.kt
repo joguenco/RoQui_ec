@@ -9,16 +9,15 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 class ParameterRepository : CustomParameterRepository {
 
-    @PersistenceContext
-    lateinit var entityManager: EntityManager
+    @PersistenceContext lateinit var entityManager: EntityManager
 
     override fun findValueByName(name: String): String {
-        val value = entityManager.createQuery(
-            "select value from Parameter " +
-                    "where name = :name"
-        )
-            .setParameter("name", name)
-            .resultList[0] as String
+        val value =
+            entityManager
+                .createQuery("select value from Parameter " + "where name = :name")
+                .setParameter("name", name)
+                .resultList[0]
+                as String
 
         return value
     }

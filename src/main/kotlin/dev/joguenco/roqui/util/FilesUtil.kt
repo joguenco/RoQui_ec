@@ -12,8 +12,7 @@ class FilesUtil {
             val year = dateLocal.year
             val month = dateLocal.month.value
 
-            val directory = path + "${File.separatorChar}" + year +
-                    "${File.separatorChar}" + month
+            val directory = path + "${File.separatorChar}" + year + "${File.separatorChar}" + month
 
             val folder = File(directory)
 

@@ -5,15 +5,15 @@ import dev.joguenco.client.sri.Send
 import dev.joguenco.definition.AutorizacionEstado
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
+import java.io.File
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.Mensaje
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
-import java.io.File
 
 class SendXML(
     private val accessKey: String,
     private val baseDirectory: String,
-    private val webService: WebService
+    private val webService: WebService,
 ) {
     fun send(): RespuestaSolicitud {
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
@@ -25,15 +25,10 @@ class SendXML(
             return getErrorResponse(message)
         }
 
-        val pathSigned = FilesUtil
-            .directory(
-                baseDirectory + "${File.separatorChar}Signed",
-                dateAccessKey
-            )
+        val pathSigned =
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}Signed", dateAccessKey)
 
-        val statusSend = Send.execute(
-            "$pathSigned${File.separatorChar}$accessKey.xml"
-        )
+        val statusSend = Send.execute("$pathSigned${File.separatorChar}$accessKey.xml")
 
         return statusSend
     }

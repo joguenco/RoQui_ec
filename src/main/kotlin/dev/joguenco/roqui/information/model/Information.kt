@@ -11,15 +11,11 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_ele_information")
 class Information {
 
-    @Id
-    val id: Long? = null
+    @Id val id: Long? = null
 
-    @Column(name = "identification")
-    val identification: String? = null
+    @Column(name = "identification") val identification: String? = null
 
-    @Column(name = "name")
-    val name: String? = null
+    @Column(name = "name") val name: String? = null
 
-    @Column(name = "value")
-    val value: String? = null
+    @Column(name = "value") val value: String? = null
 }

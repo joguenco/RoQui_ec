@@ -12,5 +12,5 @@ data class ReportInvoiceDto(
     val identification: String? = null,
     val legalName: String? = null,
     val email: String? = null,
-    val status: String? = null
+    val status: String? = null,
 )

@@ -3,12 +3,12 @@ package dev.joguenco.roqui.electronic.xml
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.util.FilesUtil
 import ec.gob.sri.invoice.v210.*
-import java.io.StringWriter
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
+import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
 
@@ -16,7 +16,7 @@ class BuildInvoice(
     val code: String,
     val number: String,
     private val baseDirectory: String,
-    private val invoiceService: InvoiceService
+    private val invoiceService: InvoiceService,
 ) {
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
@@ -30,9 +30,8 @@ class BuildInvoice(
             factura.infoTributaria = buildInfoTributaria()
             factura.infoFactura = buildInfoFactura()
             factura.detalles = buildDetails()
-            factura.infoAdicional = buildAdditionalInformation(
-                tributaryInformation.invoice.identification!!
-            )
+            factura.infoAdicional =
+                buildAdditionalInformation(tributaryInformation.invoice.identification!!)
 
             val jaxbContext = JAXBContext.newInstance(Factura::class.java)
             val marshaller = jaxbContext.createMarshaller()
@@ -40,22 +39,22 @@ class BuildInvoice(
             marshaller.setProperty("jaxb.encoding", "UTF-8")
 
             val stringWriter = StringWriter()
-            stringWriter.use {
-                marshaller.marshal(factura, stringWriter)
-            }
+            stringWriter.use { marshaller.marshal(factura, stringWriter) }
 
-            val pathGenerated = FilesUtil
-                .directory(
+            val pathGenerated =
+                FilesUtil.directory(
                     baseDirectory + "${File.separatorChar}Generated",
-                    tributaryInformation.invoice.date!!
+                    tributaryInformation.invoice.date!!,
                 )
 
-            val out = OutputStreamWriter(
-                FileOutputStream(
-                    "$pathGenerated${File.separatorChar}" +
+            val out =
+                OutputStreamWriter(
+                    FileOutputStream(
+                        "$pathGenerated${File.separatorChar}" +
                             "${factura.infoTributaria.claveAcceso}.xml"
-                ), "UTF-8"
-            )
+                    ),
+                    "UTF-8",
+                )
 
             marshaller.marshal(factura, out)
             println(stringWriter)
@@ -109,7 +108,8 @@ class BuildInvoice(
     private fun buildInfoFactura(): Factura.InfoFactura {
         val infoFactura = Factura.InfoFactura()
 
-        infoFactura.fechaEmision = SimpleDateFormat("dd/MM/yyyy").format(tributaryInformation.invoice.date)
+        infoFactura.fechaEmision =
+            SimpleDateFormat("dd/MM/yyyy").format(tributaryInformation.invoice.date)
         infoFactura.dirEstablecimiento = tributaryInformation.establishmentAddress
         infoFactura.contribuyenteEspecial = tributaryInformation.taxpayer.specialTaxpayer
         if (tributaryInformation.taxpayer.forcedAccounting == "SI") {
@@ -124,7 +124,8 @@ class BuildInvoice(
         infoFactura.guiaRemision = tributaryInformation.invoice.deliveryNote
         infoFactura.totalSinImpuestos =
             tributaryInformation.invoice.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-        infoFactura.importeTotal = tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+        infoFactura.importeTotal =
+            tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.propina = BigDecimal(0).setScale(2)
         infoFactura.totalDescuento = BigDecimal(0).setScale(2)
         infoFactura.moneda = "DOLAR"
@@ -184,7 +185,8 @@ class BuildInvoice(
             facturaDetalle.cantidad = detail.quantity!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.precioUnitario = detail.unitPrice!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.descuento = BigDecimal(0).setScale(2)
-            facturaDetalle.precioTotalSinImpuesto = detail.totalPriceWithoutTax!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            facturaDetalle.precioTotalSinImpuesto =
+                detail.totalPriceWithoutTax!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.impuestos = buildDetailTax(detail.principalCode!!, detail.line!!)
 
             detalles.detalle.add(facturaDetalle)
@@ -193,7 +195,10 @@ class BuildInvoice(
         return detalles
     }
 
-    private fun buildDetailTax(principalCode: String, line: Long): Factura.Detalles.Detalle.Impuestos? {
+    private fun buildDetailTax(
+        principalCode: String,
+        line: Long,
+    ): Factura.Detalles.Detalle.Impuestos? {
         val impuestos = Factura.Detalles.Detalle.Impuestos()
         val taxDetail = invoiceService.getInvoiceDetailTax(code, number, principalCode, line)
 

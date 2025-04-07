@@ -7,5 +7,5 @@ data class TaxTotal(
     val percentageCode: String,
     val taxIva: BigDecimal,
     val taxBase: BigDecimal,
-    val value: BigDecimal
+    val value: BigDecimal,
 )

@@ -7,5 +7,5 @@ data class TaxpayerDto(
     var forcedAccounting: String? = null,
     var specialTaxpayer: String? = null,
     var retentionAgent: String? = null,
-    var rimpe: String? = null
+    var rimpe: String? = null,
 )

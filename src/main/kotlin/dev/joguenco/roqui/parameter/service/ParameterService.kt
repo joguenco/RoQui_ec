@@ -4,9 +4,7 @@ import dev.joguenco.roqui.parameter.repository.CustomParameterRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ParameterService(
-    private val parameterRepository: CustomParameterRepository
-) {
+class ParameterService(private val parameterRepository: CustomParameterRepository) {
 
     fun getBaseDirectory(): String {
         return parameterRepository.findValueByName("Base Directory")

@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/roqui/v1")
 class TaxpayerController {
 
-    @Autowired
-    lateinit var taxpayerService: TaxpayerService
+    @Autowired lateinit var taxpayerService: TaxpayerService
 
     @GetMapping("/taxpayer")
-    fun getTaxpayer() : ResponseEntity<Any> {
+    fun getTaxpayer(): ResponseEntity<Any> {
         val taxpayer = taxpayerService.getTaxpayer()
 
         if (taxpayer.id == null) {

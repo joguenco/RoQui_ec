@@ -19,7 +19,7 @@ class InvoiceService(
     private val taxPayerRepository: TaxpayerRepository,
     private val establishmentRepository: EstablishmentRepository,
     private val parameterRepository: ParameterRepository,
-    private val informationRepository: InformationRepository
+    private val informationRepository: InformationRepository,
 ) {
 
     fun count(code: String, number: String): Long {
@@ -32,13 +32,14 @@ class InvoiceService(
         val establishment = establishmentRepository.findByCode(invoice.establishment!!)
         val principalEstablishmentAddress = establishmentRepository.findPrincipal().address
 
-        val tributaryInformation = TributaryInformation(
-            invoice,
-            taxpayer,
-            establishment.address,
-            principalEstablishmentAddress,
-            establishment.businessName
-        )
+        val tributaryInformation =
+            TributaryInformation(
+                invoice,
+                taxpayer,
+                establishment.address,
+                principalEstablishmentAddress,
+                establishment.businessName,
+            )
 
         return tributaryInformation
     }
@@ -51,7 +52,7 @@ class InvoiceService(
         code: String,
         number: String,
         principalCode: String,
-        line: Long
+        line: Long,
     ): MutableList<TaxDetail> {
         return invoiceRepository.findDetailTax(code, number, principalCode, line)
     }

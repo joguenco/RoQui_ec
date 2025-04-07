@@ -8,5 +8,5 @@ data class CertificateDto(
     val dateExpiry: Date? = null,
     val dateIssued: Date? = null,
     val daysToExpiry: Int,
-    val serialNumber: String
+    val serialNumber: String,
 )

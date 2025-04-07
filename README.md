@@ -16,3 +16,7 @@ In second terminal run:
 gradle bootRun
 ```
 
+## Format source code
+```
+gradle ktfmtFormat
+```

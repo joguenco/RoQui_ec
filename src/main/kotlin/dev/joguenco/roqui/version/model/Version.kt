@@ -10,9 +10,7 @@ import org.hibernate.annotations.Immutable
 @Immutable
 @Table(name = "v_version")
 class Version {
-    @Id
-    val id: Int? = null
+    @Id val id: Int? = null
 
-    @Column(name = "version_database")
-    val versionDatabase: String? = null
+    @Column(name = "version_database") val versionDatabase: String? = null
 }

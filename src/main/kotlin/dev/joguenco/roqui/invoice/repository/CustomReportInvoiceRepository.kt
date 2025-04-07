@@ -5,6 +5,9 @@ import java.util.Date
 
 interface CustomReportInvoiceRepository {
 
-    fun findByDatesAndStatus(startDate: Date, endDate: Date, status: String)
-            : MutableList<ReportInvoice>
+    fun findByDatesAndStatus(
+        startDate: Date,
+        endDate: Date,
+        status: String,
+    ): MutableList<ReportInvoice>
 }

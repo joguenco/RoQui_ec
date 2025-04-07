@@ -10,20 +10,17 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 class DocumentRepository : CustomDocumentRepository {
 
-    @PersistenceContext
-    lateinit var entityManager: EntityManager
+    @PersistenceContext lateinit var entityManager: EntityManager
 
     override fun findByCodeAndNumber(code: String, number: String): Document {
-        val documentResult = entityManager.createQuery(
-            "from Document " +
-                    "where code = :code " +
-                    "and number = :number"
-        )
-            .setParameter("code", code)
-            .setParameter("number", number)
-            .resultList
+        val documentResult =
+            entityManager
+                .createQuery("from Document " + "where code = :code " + "and number = :number")
+                .setParameter("code", code)
+                .setParameter("number", number)
+                .resultList
 
-        if (documentResult.isEmpty()){
+        if (documentResult.isEmpty()) {
             throw NoSuchElementException("No document found with code=$code and number=$number")
         }
 

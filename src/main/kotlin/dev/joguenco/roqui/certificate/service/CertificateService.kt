@@ -2,11 +2,11 @@ package dev.joguenco.roqui.certificate.service
 
 import dev.joguenco.roqui.certificate.dto.CertificateDto
 import dev.joguenco.roqui.parameter.service.ParameterService
-import org.springframework.stereotype.Service
 import java.io.FileInputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.*
+import org.springframework.stereotype.Service
 
 @Service
 class CertificateService(private val parameterService: ParameterService) {
@@ -27,7 +27,8 @@ class CertificateService(private val parameterService: ParameterService) {
             val certificate = keyStore.getCertificate(alias) as X509Certificate
 
             val dateNow = Date()
-            val daysToExpiry = ((certificate.notAfter.time - dateNow.time) / (1000 * 60 * 60 * 24)).toInt()
+            val daysToExpiry =
+                ((certificate.notAfter.time - dateNow.time) / (1000 * 60 * 60 * 24)).toInt()
 
             return CertificateDto(
                 ownerCertificate = certificate.subjectDN.toString(),
@@ -35,7 +36,7 @@ class CertificateService(private val parameterService: ParameterService) {
                 dateExpiry = certificate.notAfter,
                 dateIssued = certificate.notBefore,
                 daysToExpiry = daysToExpiry,
-                serialNumber = certificate.serialNumber.toString()
+                serialNumber = certificate.serialNumber.toString(),
             )
         }
 
@@ -45,7 +46,7 @@ class CertificateService(private val parameterService: ParameterService) {
             dateExpiry = null,
             dateIssued = null,
             daysToExpiry = 0,
-            serialNumber = "Not found"
+            serialNumber = "Not found",
         )
     }
 }

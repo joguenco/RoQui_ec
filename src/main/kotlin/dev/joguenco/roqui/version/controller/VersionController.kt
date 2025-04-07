@@ -12,15 +12,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/roqui/v1")
 class VersionController {
 
-    @Autowired
-    lateinit var versionService: VersionService
+    @Autowired lateinit var versionService: VersionService
 
-    @Value("\${app.version}")
-    lateinit var appVersion : String
+    @Value("\${app.version}") lateinit var appVersion: String
 
-    @GetMapping("/version")
-    fun getVersion() = Application(versionService.getVersion(), appVersion)
-
+    @GetMapping("/version") fun getVersion() = Application(versionService.getVersion(), appVersion)
 
     class Application(versionDatabase: String, appVersion: String) {
         val application = Properties(versionDatabase, appVersion)
@@ -29,7 +25,8 @@ class VersionController {
     class Properties(val versionDatabase: String, appVersion: String) {
         val name = "RoQui E-Invoicing for Ecuador"
         val author = "Jorge Luis"
-        val versionOS: String = SystemUtils.OS_NAME + " " + SystemUtils.OS_VERSION + " " + SystemUtils.OS_ARCH
+        val versionOS: String =
+            SystemUtils.OS_NAME + " " + SystemUtils.OS_VERSION + " " + SystemUtils.OS_ARCH
         val versionJava: String = SystemUtils.JAVA_VERSION
         val version = appVersion
     }

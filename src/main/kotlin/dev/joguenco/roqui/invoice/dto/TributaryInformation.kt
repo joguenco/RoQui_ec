@@ -8,5 +8,5 @@ data class TributaryInformation(
     val taxpayer: Taxpayer,
     val establishmentAddress: String? = null,
     val principalEstablishmentAddress: String? = null,
-    val establishmentBusinessName: String? = null
+    val establishmentBusinessName: String? = null,
 )

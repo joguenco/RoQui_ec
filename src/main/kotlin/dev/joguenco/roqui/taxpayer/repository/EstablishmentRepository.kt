@@ -10,23 +10,20 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 class EstablishmentRepository : CustomEstablishmentRepository {
 
-    @PersistenceContext
-    lateinit var entityManager: EntityManager
+    @PersistenceContext lateinit var entityManager: EntityManager
 
     override fun findByCode(code: String): Establishment {
-        return entityManager.createQuery(
-            "from Establishment " +
-                    "where code = :code "
-        )
+        return entityManager
+            .createQuery("from Establishment " + "where code = :code ")
             .setParameter("code", code)
-            .resultList.get(0) as Establishment
+            .resultList
+            .get(0) as Establishment
     }
 
     override fun findPrincipal(): Establishment {
-        return entityManager.createQuery(
-            "from Establishment " +
-                    "where principal = 'Principal' "
-        )
-            .resultList.get(0) as Establishment
+        return entityManager
+            .createQuery("from Establishment " + "where principal = 'Principal' ")
+            .resultList
+            .get(0) as Establishment
     }
 }

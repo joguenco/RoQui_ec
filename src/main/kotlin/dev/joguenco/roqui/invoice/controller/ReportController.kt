@@ -14,18 +14,17 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/roqui/v1")
 class ReportController {
 
-    @Autowired
-    lateinit var reportInvoiceService: ReportInvoiceService
+    @Autowired lateinit var reportInvoiceService: ReportInvoiceService
 
     @GetMapping("/invoice/report/dates/{startDate}/{endDate}/status/{status}")
     fun getInvoiceByDatesAndStatus(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-        @PathVariable(value = "status") status: String
-    )
-            : ResponseEntity<MutableList<ReportInvoiceDto>> {
+        @PathVariable(value = "status") status: String,
+    ): ResponseEntity<MutableList<ReportInvoiceDto>> {
 
-        val reportInvoice = reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, status)
+        val reportInvoice =
+            reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, status)
 
         return ResponseEntity<MutableList<ReportInvoiceDto>>(reportInvoice, HttpStatus.OK)
     }

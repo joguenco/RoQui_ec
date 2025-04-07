@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/roqui/v1")
 class CertificateController {
 
-    @Autowired
-    lateinit var certificateService: CertificateService
+    @Autowired lateinit var certificateService: CertificateService
 
     @GetMapping("/certificate")
-    fun getCertificate() : ResponseEntity<Any> {
+    fun getCertificate(): ResponseEntity<Any> {
         val certificate = certificateService.getCertificateInformation()
 
         return ResponseEntity.ok(certificate)
