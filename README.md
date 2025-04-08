@@ -20,3 +20,18 @@ gradle bootRun
 ```
 gradle ktfmtFormat
 ```
+
+# RoQui Web Client
+## Dependencies
+- Node 22
+
+## Initialization
+```
+pnpm install
+```
+```
+pnpm format
+```
+```
+pnpm dev
+```
