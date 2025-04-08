@@ -2,7 +2,6 @@ package dev.joguenco.roqui.security.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -21,11 +20,9 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/roqui/v1/login", "api/auth/refresh", "/error")
+                it.requestMatchers("/roqui/v1/login", "api/auth/refresh", "/error", "/ping")
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/users")
-                    .permitAll()
-                    .requestMatchers("/api/users**")
+                    .requestMatchers("/roqui/v1**")
                     .hasRole("ADMIN")
                     .anyRequest()
                     .fullyAuthenticated()
