@@ -22,5 +22,19 @@ class FilesUtil {
 
             return directory
         }
+
+        fun isDirectoryExists(path: String): Boolean {
+            val file = File(path)
+            return file.exists() && file.isDirectory
+        }
+
+        fun createDirectory(path: String): Boolean {
+            val file = File(path)
+            return if (!file.exists()) {
+                file.mkdirs()
+            } else {
+                false
+            }
+        }
     }
 }

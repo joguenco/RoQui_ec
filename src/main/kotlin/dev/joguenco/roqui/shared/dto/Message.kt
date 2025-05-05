@@ -6,4 +6,10 @@ import jakarta.validation.constraints.NotEmpty
 @JsonInclude
 class Message {
     @NotEmpty var message = ""
+
+    constructor()
+
+    constructor(message: String) {
+        this.message = message
+    }
 }

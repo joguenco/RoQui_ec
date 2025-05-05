@@ -2,6 +2,8 @@ package dev.joguenco.roqui.certificate.service
 
 import dev.joguenco.roqui.certificate.dto.CertificateDto
 import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.util.FilesUtil.Companion.isDirectoryExists
+import java.io.File
 import java.io.FileInputStream
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -55,8 +57,12 @@ class CertificateService(
     }
 
     fun uploadFile(file: MultipartFile, password: String): Boolean {
-        certificateFileService.uploadFile(file, password)
+        val directory = parameterService.getBaseDirectory() + File.separatorChar + "certificate"
+        if (!isDirectoryExists(directory)) {
+            return false
+        }
 
+        certificateFileService.uploadFile(file, password)
         return true
     }
 }
