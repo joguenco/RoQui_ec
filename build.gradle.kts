@@ -62,6 +62,8 @@ dependencies {
     implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
     implementation("com.thoughtworks.xstream:xstream:1.4.20")
     implementation("commons-io:commons-io:2.12.0")
+    // Utils
+    implementation("joda-time:joda-time:2.14.0")
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }

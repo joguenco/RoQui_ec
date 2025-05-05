@@ -7,9 +7,13 @@ import java.security.KeyStore
 import java.security.cert.X509Certificate
 import java.util.*
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 @Service
-class CertificateService(private val parameterService: ParameterService) {
+class CertificateService(
+    private val parameterService: ParameterService,
+    private val certificateFileService: CertificateFileService,
+) {
 
     fun getCertificateInformation(): CertificateDto {
         val certificateFile = parameterService.getCertificatePath()
@@ -48,5 +52,11 @@ class CertificateService(private val parameterService: ParameterService) {
             daysToExpiry = 0,
             serialNumber = "Not found",
         )
+    }
+
+    fun uploadFile(file: MultipartFile, password: String): Boolean {
+        certificateFileService.uploadFile(file, password)
+
+        return true
     }
 }

@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.parameter.repository
 
+import dev.joguenco.roqui.parameter.model.Parameter
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -14,11 +15,26 @@ class ParameterRepository : CustomParameterRepository {
     override fun findValueByName(name: String): String {
         val value =
             entityManager
-                .createQuery("select value from Parameter " + "where name = :name")
+                .createQuery(
+                    "select value from Parameter " + "where name = :name " + "and status = true"
+                )
                 .setParameter("name", name)
                 .resultList[0]
                 as String
 
         return value
+    }
+
+    override fun findByName(name: String): Parameter {
+        return entityManager
+            .createQuery("from Parameter " + "where name = :name " + "and status = true")
+            .setParameter("name", name)
+            .singleResult as Parameter
+    }
+
+    override fun update(parameter: Parameter) {
+        val p = findByName(parameter.name!!)
+        p.value = parameter.value
+        entityManager.flush()
     }
 }
