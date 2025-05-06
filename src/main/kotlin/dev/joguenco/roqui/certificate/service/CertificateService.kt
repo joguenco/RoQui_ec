@@ -65,4 +65,13 @@ class CertificateService(
         certificateFileService.uploadFile(file, password)
         return true
     }
+
+    fun checkCertificateFile(): Boolean {
+        val file = parameterService.getCertificatePath()
+        if (!isDirectoryExists(file)) {
+            return false
+        }
+
+        return true
+    }
 }

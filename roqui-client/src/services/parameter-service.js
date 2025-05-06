@@ -10,4 +10,18 @@ parameterService.getBaseDirectory = async (token) => {
   })
 }
 
+parameterService.setBaseDirectory = async (token, baseDirectory) => {
+  return await client.post(
+    '/parameter/base/directory',
+    {
+      baseDirectory,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
+}
+
 export default parameterService

@@ -56,6 +56,6 @@ class ParameterController {
         createDirectory(baseDirectory + File.separatorChar + "certificate")
         createDirectory(baseDirectory + File.separatorChar + "image")
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity(Message("Successfully set base directory"), HttpStatus.OK)
     }
 }
