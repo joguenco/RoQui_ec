@@ -28,6 +28,11 @@ class FilesUtil {
             return file.exists() && file.isDirectory
         }
 
+        fun isFileExists(path: String): Boolean {
+            val file = File(path)
+            return file.exists()
+        }
+
         fun createDirectory(path: String): Boolean {
             val file = File(path)
             return if (!file.exists()) {

@@ -10,16 +10,36 @@
       <p>Certificado para firmar los comprobantes electrónicos</p>
     </div>
     <div class="message-body">
-      <p><strong>Entidad Dueña del Certificado: </strong></p>
-      <p><strong>Entidad Emisora: </strong></p>
-      <p><strong>Formato de Fechas: </strong></p>
-      <p><strong>Fecha de Caducidad: </strong></p>
-      <p><strong>El certificado caducará en: </strong></p>
+      <p><strong>Entidad Dueña del Certificado: </strong>{{ certificate.ownerCertificate }}</p>
+      <p><strong>Entidad Emisora: </strong>{{ certificate.issuerCertificate }}</p>
+      <p><strong>Fecha de Caducidad: </strong>{{ certificate.dateExpiry }}</p>
+      <p><strong>El certificado caducará en: </strong>{{ certificate.daysToExpiry }}</p>
       <div class="buttons mt-3">
-        <button class="button is-primary" @click="">Cargar</button>
+        <button class="button is-primary" @click="showModal">Cargar</button>
       </div>
     </div>
   </article>
+
+  <div class="modal" v-bind:class="{ 'is-active': isActive }">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p><strong>Cargar Certificado</strong></p>
+      </header>
+      <section class="modal-card-body">
+        <p><strong>Archivo P12: </strong></p>
+        <input type="file" accept=".p12" class="input" @change="onFileSelected" />
+        <p><strong>Contraseña: </strong></p>
+        <input class="input" type="password" v-model="passwordFile" />
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons">
+          <button class="button is-success" @click="uploadFile">Guardar</button>
+          <button class="button" @click="closeModal">Cancelar</button>
+        </div>
+      </footer>
+    </div>
+  </div>
 </template>
 <script>
 import certificateService from '@/services/certificate-service'
@@ -40,6 +60,9 @@ export default {
       type: 'is-link',
     },
     showNotification: false,
+    isActive: false,
+    selectedFile: null,
+    passwordFile: '',
   }),
 
   mounted() {
@@ -49,6 +72,12 @@ export default {
     } else {
       this.$router.push('/')
     }
+
+    document.addEventListener('keyup', this.handleEscapeKey)
+  },
+
+  beforeDestroy() {
+    document.removeEventListener('keyup', this.handleEscapeKey)
   },
 
   watch: {
@@ -67,13 +96,45 @@ export default {
         .getCertificate(token)
         .then((response) => {
           this.certificate = response.data
-          console.log(this.certificate)
         })
         .catch((error) => {
           this.notification.message = error.response.data.message
           this.notification.type = 'is-danger'
           this.showNotification = true
         })
+    },
+
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0]
+    },
+
+    uploadFile() {
+      if (this.selectedFile != null) {
+        const formData = new FormData()
+        formData.append('file', this.selectedFile, this.selectedFile.name)
+        formData.append('password', this.passwordFile)
+        certificateService.loadCertificate(formData, this.user.accessToken).then((res) => {
+          // console.log(res)
+          if (res.status === 200) {
+            this.getCertificate(this.user.accessToken)
+          }
+          this.isActive = false
+        })
+      }
+    },
+
+    showModal() {
+      this.isActive = true
+    },
+
+    closeModal() {
+      this.isActive = false
+    },
+
+    handleEscapeKey(event) {
+      if (event.key === 'Escape' && this.isActive) {
+        this.closeModal()
+      }
     },
   },
 }

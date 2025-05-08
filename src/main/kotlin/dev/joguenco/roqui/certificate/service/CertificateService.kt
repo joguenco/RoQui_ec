@@ -3,6 +3,7 @@ package dev.joguenco.roqui.certificate.service
 import dev.joguenco.roqui.certificate.dto.CertificateDto
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.FilesUtil.Companion.isDirectoryExists
+import dev.joguenco.roqui.util.FilesUtil.Companion.isFileExists
 import java.io.File
 import java.io.FileInputStream
 import java.security.KeyStore
@@ -68,10 +69,6 @@ class CertificateService(
 
     fun checkCertificateFile(): Boolean {
         val file = parameterService.getCertificatePath()
-        if (!isDirectoryExists(file)) {
-            return false
-        }
-
-        return true
+        return isFileExists(file)
     }
 }
