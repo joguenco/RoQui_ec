@@ -1,13 +1,10 @@
 import client from '@/services/client'
+import headerAuthorization from '@/services/header-authorization'
 
 const parameterService = {}
 
 parameterService.getBaseDirectory = async (token) => {
-  return await client.get('/parameter/base/directory', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  return await client.get('/parameter/base/directory', headerAuthorization(token))
 }
 
 parameterService.setBaseDirectory = async (token, baseDirectory) => {
@@ -16,11 +13,7 @@ parameterService.setBaseDirectory = async (token, baseDirectory) => {
     {
       baseDirectory,
     },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
+    headerAuthorization(token),
   )
 }
 

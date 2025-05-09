@@ -28,15 +28,19 @@ class CertificateService(
         }
 
         val aliases = keyStore.aliases()
+        var certificate: X509Certificate? = null
+        var daysToExpiry: Int = 0
 
         while (aliases.hasMoreElements()) {
             val alias = aliases.nextElement()
-            val certificate = keyStore.getCertificate(alias) as X509Certificate
+            certificate = keyStore.getCertificate(alias) as X509Certificate
 
             val dateNow = Date()
-            val daysToExpiry =
+            daysToExpiry =
                 ((certificate.notAfter.time - dateNow.time) / (1000 * 60 * 60 * 24)).toInt()
+        }
 
+        if (certificate != null) {
             return CertificateDto(
                 ownerCertificate = certificate.subjectDN.toString(),
                 issuerCertificate = certificate.issuerDN.toString(),
@@ -52,7 +56,7 @@ class CertificateService(
             issuerCertificate = "Not found",
             dateExpiry = null,
             dateIssued = null,
-            daysToExpiry = 0,
+            daysToExpiry,
             serialNumber = "Not found",
         )
     }
