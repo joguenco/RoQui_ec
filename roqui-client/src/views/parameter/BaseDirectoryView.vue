@@ -1,10 +1,10 @@
 <template>
+  <AppHeader />
   <AppNotification
     :type="notification.type"
     :message="notification.message"
     v-if="showNotification"
   />
-  <AppHeader />
   <article class="message is-info m-6">
     <div class="message-header">
       <p>Configuración de directorio base para los archivos de la aplicación</p>
