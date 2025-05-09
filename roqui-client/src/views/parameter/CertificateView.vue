@@ -12,6 +12,7 @@
     <div class="message-body">
       <p><strong>Entidad Dueña del Certificado: </strong>{{ certificate.ownerCertificate }}</p>
       <p><strong>Entidad Emisora: </strong>{{ certificate.issuerCertificate }}</p>
+      <p><strong>Fecha de Emisión: </strong>{{ certificate.dateIssued }}</p>
       <p><strong>Fecha de Caducidad: </strong>{{ certificate.dateExpiry }}</p>
       <p><strong>El certificado caducará en: </strong>{{ certificate.daysToExpiry }}</p>
       <div class="buttons mt-3">
@@ -45,6 +46,7 @@
 import certificateService from '@/services/certificate-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
+import { format } from '@formkit/tempo'
 
 export default {
   components: {
@@ -96,6 +98,8 @@ export default {
         .getCertificate(token)
         .then((response) => {
           this.certificate = response.data
+          this.certificate.dateIssued = format(new Date(this.certificate.dateIssued), 'YYYY-MM-DD')
+          this.certificate.dateExpiry = format(new Date(this.certificate.dateExpiry), 'YYYY-MM-DD')
         })
         .catch((error) => {
           this.notification.message = error.response.data.message
