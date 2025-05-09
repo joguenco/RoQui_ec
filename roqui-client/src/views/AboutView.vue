@@ -1,7 +1,6 @@
 <template>
   <AppHeader />
-  <br />
-  <article class="message is-link m-6">
+  <article class="message is-info m-6">
     <div class="message-header">
       <p>Aplicación para firmar, enviar y autorizar comprobantes electrónicos</p>
     </div>

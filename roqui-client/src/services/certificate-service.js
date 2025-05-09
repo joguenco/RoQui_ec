@@ -10,7 +10,7 @@ certificateService.getCertificate = async (token) => {
   })
 }
 
-certificateService.loadCertificate = async (formData, token) => {
+certificateService.loadCertificate = async (token, formData) => {
   return await client.post('/certificate/load', formData, {
     headers: {
       Authorization: `Bearer ${token}`,

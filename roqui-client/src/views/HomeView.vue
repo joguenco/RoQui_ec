@@ -8,7 +8,9 @@
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
-      Facturas
+      <router-link to="/invoice" class="navbar-item" active-class="is-active"
+        ><strong class="has-text-grey-dark">Facturas</strong></router-link
+      >
     </a>
     <a class="panel-block">
       <span class="panel-icon">

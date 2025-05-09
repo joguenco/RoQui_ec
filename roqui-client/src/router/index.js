@@ -49,6 +49,11 @@ const router = createRouter({
       name: 'logo',
       component: () => import('@/views/parameter/LogoView.vue'),
     },
+    {
+      path: '/invoice',
+      name: 'invoice',
+      component: () => import('@/views/invoice/InvoiceView.vue'),
+    },
   ],
 })
 

@@ -76,7 +76,7 @@ export default {
     document.addEventListener('keyup', this.handleEscapeKey)
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keyup', this.handleEscapeKey)
   },
 
@@ -113,8 +113,7 @@ export default {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
         formData.append('password', this.passwordFile)
-        certificateService.loadCertificate(formData, this.user.accessToken).then((res) => {
-          // console.log(res)
+        certificateService.loadCertificate(this.user.accessToken, formData).then((res) => {
           if (res.status === 200) {
             this.getCertificate(this.user.accessToken)
           }

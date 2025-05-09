@@ -66,8 +66,8 @@ export default {
   },
 
   methods: {
-    getBaseDirectory(token) {
-      parameterService.getBaseDirectory(token).then((response) => {
+    getBaseDirectory() {
+      parameterService.getBaseDirectory(this.user.accessToken).then((response) => {
         this.parameter = response.data
       })
     },
