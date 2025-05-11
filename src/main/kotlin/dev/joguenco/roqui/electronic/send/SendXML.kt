@@ -26,7 +26,7 @@ class SendXML(
         }
 
         val pathSigned =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Signed", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}signed", dateAccessKey)
 
         val statusSend = Send.execute("$pathSigned${File.separatorChar}$accessKey.xml")
 

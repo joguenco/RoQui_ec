@@ -16,9 +16,9 @@ class SignerXml(
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
 
         val pathGenerated =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Generated", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}generated", dateAccessKey)
         val pathSigned =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Signed", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}signed", dateAccessKey)
 
         val signer = Signer()
         signer.sign(

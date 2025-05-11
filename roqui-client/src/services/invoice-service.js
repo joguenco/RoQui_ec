@@ -10,4 +10,8 @@ invoiceService.find = async (token, startDate, endDate) => {
   )
 }
 
+invoiceService.authorize = async (token, code, number) => {
+  return await client.post(`/invoice/authorize`, { code, number }, headerAuthorization(token))
+}
+
 export default invoiceService

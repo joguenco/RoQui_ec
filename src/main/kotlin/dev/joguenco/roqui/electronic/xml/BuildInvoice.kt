@@ -43,7 +43,7 @@ class BuildInvoice(
 
             val pathGenerated =
                 FilesUtil.directory(
-                    baseDirectory + "${File.separatorChar}Generated",
+                    baseDirectory + "${File.separatorChar}generated",
                     tributaryInformation.invoice.date!!,
                 )
 
