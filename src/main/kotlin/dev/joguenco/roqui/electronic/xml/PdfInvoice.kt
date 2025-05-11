@@ -30,10 +30,10 @@ class PdfInvoice(
         val reportFolder = classLoader.getResource("./report").path
 
         val pathXmlFile =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Generated", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}generated", dateAccessKey)
 
         val pdfOutFolder =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Pdf", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}pdf", dateAccessKey)
 
         val report =
             InvoiceReport(

@@ -2,6 +2,7 @@ package dev.joguenco.roqui.electronic
 
 import dev.joguenco.definition.AutorizacionEstado
 import dev.joguenco.definition.Estado
+import dev.joguenco.roqui.electronic.ErrorMessage.getErrorResponse
 import dev.joguenco.roqui.electronic.model.Document
 import dev.joguenco.roqui.electronic.send.SendXML
 import dev.joguenco.roqui.electronic.send.WebService
@@ -33,7 +34,7 @@ class ElectronicDocument(
     }
 
     fun process(type: TypeDocument): String {
-        var statusResponse = "NO PROCESADO"
+        var statusResponse = Estado.NO_PROCESADO.descripcion
 
         if (type == TypeDocument.FACTURA) {
             val build = BuildInvoice(code, number, baseDirectory, invoiceService)
@@ -53,13 +54,16 @@ class ElectronicDocument(
 
         val signer = SignerXml(accessKey, baseDirectory, certificatePath, certificatePassword)
 
-        if (signer.sign()) {
+        val (status, message) = signer.sign()
+        if (status) {
             val xml = SendXML(accessKey, baseDirectory, webService)
             val response = xml.send()
 
-            response?.let { statusResponse = saveResponse(it) }
+            response.let { statusResponse = saveResponse(it) }
 
             return statusResponse
+        } else {
+            statusResponse = saveResponse(getErrorResponse(message, accessKey))
         }
 
         return statusResponse
@@ -109,6 +113,8 @@ class ElectronicDocument(
                             messageResponse.informacionAdicional
                 }
             }
+        } else {
+            return Estado.NO_PROCESADO.descripcion
         }
 
         try {

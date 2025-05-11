@@ -65,7 +65,7 @@
           </td>
           <td>
             <a class="button is-info is-loading" style="display: none">A</a
-            ><a class="button is-info no_enviado_autorizar">A</a>
+            ><a class="button is-info" @click="authorize(d.code, d.number)">A</a>
           </td>
         </tr>
       </tbody>
@@ -73,13 +73,36 @@
   </div>
 </template>
 <script>
+import invoiceService from '@/services/invoice-service'
+
 export default {
   data: () => ({
     user: {},
   }),
 
+  mounted() {
+    if (localStorage.getItem('user')) {
+      this.user = JSON.parse(localStorage.getItem('user'))
+    } else {
+      this.$router.push('/')
+    }
+  },
+
   props: {
     details: { type: Array, required: true },
+  },
+
+  methods: {
+    authorize(code, number) {
+      invoiceService
+        .authorize(this.user.accessToken, code, number)
+        .then((response) => {
+          console.log('update', response.data)
+        })
+        .catch((error) => {
+          console.error('Error authorizing invoice:', error)
+        })
+    },
   },
 }
 </script>

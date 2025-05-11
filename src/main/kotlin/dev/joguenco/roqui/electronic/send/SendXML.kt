@@ -3,11 +3,11 @@ package dev.joguenco.roqui.electronic.send
 import dev.joguenco.client.sri.Check
 import dev.joguenco.client.sri.Send
 import dev.joguenco.definition.AutorizacionEstado
+import dev.joguenco.roqui.electronic.ErrorMessage.getErrorAuthorization
+import dev.joguenco.roqui.electronic.ErrorMessage.getErrorResponse
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
-import recepcion.ws.sri.gob.ec.Comprobante
-import recepcion.ws.sri.gob.ec.Mensaje
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 
 class SendXML(
@@ -22,11 +22,11 @@ class SendXML(
 
         val (status, message) = isAliveService(ambientType)
         if (!status) {
-            return getErrorResponse(message)
+            return getErrorResponse(message, accessKey)
         }
 
         val pathSigned =
-            FilesUtil.directory(baseDirectory + "${File.separatorChar}Signed", dateAccessKey)
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}signed", dateAccessKey)
 
         val statusSend = Send.execute("$pathSigned${File.separatorChar}$accessKey.xml")
 
@@ -36,6 +36,11 @@ class SendXML(
     fun check(): AutorizacionEstado {
         val ambientType = getAmbientType(accessKey)
 
+        val (status, message) = isAliveService(ambientType)
+        if (!status) {
+            return getErrorAuthorization(message)
+        }
+
         val response = Check.execute(accessKey)
         return response
     }
@@ -43,12 +48,14 @@ class SendXML(
     private fun isAliveService(ambientType: AmbientType): Pair<Boolean, String> {
         if (ambientType == AmbientType.PRODUCTION) {
             if (!WebService.isAlive(webService.productionReception)) {
-                val message = webService.productionReception
+                val message =
+                    "Error de conexión con el servicio web $webService.productionReception"
                 return false to message
             }
         } else {
             if (!WebService.isAlive(webService.developmentReception)) {
-                val message = webService.developmentReception
+                val message =
+                    "Error de conexión con el servicio web $webService.developmentReception"
                 return false to message
             }
         }
@@ -62,25 +69,5 @@ class SendXML(
         } else {
             AmbientType.DEVELOPMENT
         }
-    }
-
-    private fun getErrorResponse(webServiceUrl: String): RespuestaSolicitud {
-        val response = RespuestaSolicitud()
-        val receipt = Comprobante()
-        receipt.claveAcceso = accessKey
-
-        val message = Mensaje()
-        message.mensaje = "Error web service connection $webServiceUrl"
-        message.tipo = "ERROR"
-
-        receipt.mensajes = Comprobante.Mensajes()
-
-        receipt.mensajes.mensaje.add(message)
-
-        response.comprobantes = RespuestaSolicitud.Comprobantes()
-        response.comprobantes.comprobante.add(receipt)
-
-        response.estado = "ERROR"
-        return response
     }
 }

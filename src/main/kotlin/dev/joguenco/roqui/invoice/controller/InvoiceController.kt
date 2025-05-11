@@ -11,11 +11,13 @@ import dev.joguenco.roqui.parameter.service.ParameterService
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/roqui/v1")
 class InvoiceController {
@@ -45,12 +47,14 @@ class InvoiceController {
                 documentService,
             )
 
-        val state = StateDto(buildInvoice.process(TypeDocument.FACTURA))
+        try {
+            val state = StateDto(buildInvoice.process(TypeDocument.FACTURA))
+            TimeUnit.SECONDS.sleep(3)
+            state.state = buildInvoice.check()
 
-        TimeUnit.SECONDS.sleep(3)
-
-        state.state = buildInvoice.check()
-
-        return ResponseEntity.ok(state)
+            return ResponseEntity.ok(state)
+        } catch (e: Exception) {
+            return ResponseEntity.badRequest().body(e.message)
+        }
     }
 }
