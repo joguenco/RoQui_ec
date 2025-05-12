@@ -25,7 +25,7 @@ class WebService {
     }
 
     companion object {
-        fun isAlive(urlWebServices: String): Boolean {
+        fun isAlive(urlWebServices: String): Pair<Boolean, String> {
             var c: HttpURLConnection? = null
             try {
                 val u = URI(urlWebServices).toURL()
@@ -33,15 +33,14 @@ class WebService {
                 c.requestMethod = "GET"
                 c.inputStream
                 if (c.responseCode == 200) {
-                    return true
+                    return true to "Successful connection"
                 }
             } catch (e: IOException) {
                 println("Error SRI web service connection : " + e.message)
-                return false
             } finally {
                 c?.disconnect()
             }
-            return false
+            return false to "Error de conexión con el servicio web $urlWebServices"
         }
     }
 }

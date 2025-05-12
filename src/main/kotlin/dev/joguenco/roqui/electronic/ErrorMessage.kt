@@ -37,6 +37,7 @@ object ErrorMessage {
         receipt.mensajes = Autorizacion.Mensajes()
 
         receipt.mensajes.mensaje.add(message)
+        receipt.estado = "ERROR"
 
         return AutorizacionEstado(receipt, Estado.NO_PROCESADO)
     }

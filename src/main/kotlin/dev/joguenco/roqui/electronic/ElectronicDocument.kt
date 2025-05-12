@@ -101,16 +101,7 @@ class ElectronicDocument(
             for (i in response.autorizacion.mensajes.mensaje.indices) {
                 val messageResponse = response.autorizacion.mensajes.mensaje[i]
                 if (messageResponse.mensaje != null) {
-                    message =
-                        message +
-                            " " +
-                            messageResponse.mensaje +
-                            " " +
-                            messageResponse.tipo +
-                            " " +
-                            messageResponse.identificador +
-                            " " +
-                            messageResponse.informacionAdicional
+                    message = message + concatMessage(messageResponse)
                 }
             }
         } else {
@@ -120,7 +111,7 @@ class ElectronicDocument(
         try {
             val document = documentService.getByCodeAndNumber(code, number)
 
-            if (document.observation!!.length > 2400) {
+            if (document.observation!!.length > 4500) {
                 document.observation = ""
             }
 
@@ -173,16 +164,7 @@ class ElectronicDocument(
                 for (m in receipt.mensajes.mensaje.indices) {
                     val messageReceipt = receipt.mensajes.mensaje[m]
                     if (messageReceipt.mensaje != null) {
-                        message =
-                            message +
-                                " " +
-                                messageReceipt.mensaje +
-                                " " +
-                                messageReceipt.tipo +
-                                " " +
-                                messageReceipt.identificador +
-                                " " +
-                                messageReceipt.informacionAdicional
+                        message = message + concatMessage(messageReceipt)
                     }
                 }
                 message += " "
@@ -201,5 +183,13 @@ class ElectronicDocument(
         }
 
         return response.estado
+    }
+
+    fun concatMessage(message: recepcion.ws.sri.gob.ec.Mensaje): String {
+        return " ${message.tipo} ${message.identificador}: ${message.mensaje} - ${message.informacionAdicional}"
+    }
+
+    fun concatMessage(message: autorizacion.ws.sri.gob.ec.Mensaje): String {
+        return " ${message.tipo} ${message.identificador}: ${message.mensaje} - ${message.informacionAdicional}"
     }
 }

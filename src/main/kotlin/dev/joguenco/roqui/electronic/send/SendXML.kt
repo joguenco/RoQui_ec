@@ -20,7 +20,7 @@ class SendXML(
 
         val ambientType = getAmbientType(accessKey)
 
-        val (status, message) = isAliveService(ambientType)
+        val (status, message) = isAliveServiceReception(ambientType)
         if (!status) {
             return getErrorResponse(message, accessKey)
         }
@@ -36,7 +36,7 @@ class SendXML(
     fun check(): AutorizacionEstado {
         val ambientType = getAmbientType(accessKey)
 
-        val (status, message) = isAliveService(ambientType)
+        val (status, message) = isAliveServiceAuthorization(ambientType)
         if (!status) {
             return getErrorAuthorization(message)
         }
@@ -45,22 +45,36 @@ class SendXML(
         return response
     }
 
-    private fun isAliveService(ambientType: AmbientType): Pair<Boolean, String> {
+    private fun isAliveServiceReception(ambientType: AmbientType): Pair<Boolean, String> {
         if (ambientType == AmbientType.PRODUCTION) {
-            if (!WebService.isAlive(webService.productionReception)) {
-                val message =
-                    "Error de conexión con el servicio web $webService.productionReception"
+            val (status, message) = WebService.isAlive(webService.productionReception)
+            if (!status) {
                 return false to message
             }
         } else {
-            if (!WebService.isAlive(webService.developmentReception)) {
-                val message =
-                    "Error de conexión con el servicio web $webService.developmentReception"
+            val (status, message) = WebService.isAlive(webService.developmentReception)
+            if (!status) {
                 return false to message
             }
         }
 
-        return true to ""
+        return true to "Successful connection"
+    }
+
+    private fun isAliveServiceAuthorization(ambientType: AmbientType): Pair<Boolean, String> {
+        if (ambientType == AmbientType.PRODUCTION) {
+            val (status, message) = WebService.isAlive(webService.productionAuthorization)
+            if (!status) {
+                return false to message
+            }
+        } else {
+            val (status, message) = WebService.isAlive(webService.developmentAuthorization)
+            if (!status) {
+                return false to message
+            }
+        }
+
+        return true to "Successful connection"
     }
 
     private fun getAmbientType(accessKey: String): AmbientType {
