@@ -18,16 +18,23 @@
           placeholder="2025-02-31"
           v-model="startDate"
           ref="startDate"
+          @keyup.enter="findInvoices"
         />
       </div>
       <div class="field">
         <label class="label">Fecha Final</label>
-        <input class="input" type="text" placeholder="2025-02-31" v-model="endDate" />
+        <input
+          class="input"
+          type="text"
+          placeholder="2025-02-31"
+          v-model="endDate"
+          @keyup.enter="findInvoices"
+        />
       </div>
       <div class="container">
         {{ finderMessage }}
       </div>
-      <button class="button is-primary" @click="getInvoice">Buscar</button>
+      <button class="button is-primary" @click="findInvoices">Buscar</button>
       <button class="button is-warning" @click="setDefault">f</button>
     </div>
     <AppDetail v-bind:details="invoice.details" />
@@ -94,7 +101,7 @@ export default {
   },
 
   methods: {
-    getInvoice() {
+    findInvoices() {
       if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
         this.notification.message = 'Rango de fechas no válido'
         this.notification.type = 'is-danger'

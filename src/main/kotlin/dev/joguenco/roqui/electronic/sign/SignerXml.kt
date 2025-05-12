@@ -12,7 +12,7 @@ class SignerXml(
     private val certificatePassword: String,
 ) {
 
-    fun sign(): Boolean {
+    fun sign(): Pair<Boolean, String> {
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
 
         val pathGenerated =
@@ -21,13 +21,16 @@ class SignerXml(
             FilesUtil.directory(baseDirectory + "${File.separatorChar}signed", dateAccessKey)
 
         val signer = Signer()
-        signer.sign(
-            certificatePath,
-            certificatePassword,
-            "$pathGenerated${File.separatorChar}$accessKey.xml",
-            "$pathSigned${File.separatorChar}$accessKey.xml",
-        )
-
-        return true
+        try {
+            signer.sign(
+                certificatePath,
+                certificatePassword,
+                "$pathGenerated${File.separatorChar}$accessKey.xml",
+                "$pathSigned${File.separatorChar}$accessKey.xml",
+            )
+            return true to "Successfully signed"
+        } catch (e: Exception) {
+            return false to e.message.toString().substring(e.message.toString().indexOf(":") + 1)
+        }
     }
 }
