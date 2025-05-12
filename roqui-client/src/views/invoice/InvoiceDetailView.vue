@@ -55,7 +55,11 @@
             <a class="button button is-text is-outlined">{{ d.email }}</a>
           </td>
           <td>
-            <a class="button is-info is-outlined no_enviado">{{ d.status }}</a>
+            <a
+              class="button is-info is-outlined no_enviado"
+              @click="showDocument(d.code, d.number)"
+              >{{ d.status }}</a
+            >
           </td>
           <td>
             <a href="" target="_blank" class="button is-link is-outlined no_enviado">pdf</a>
@@ -74,6 +78,7 @@
 </template>
 <script>
 import invoiceService from '@/services/invoice-service'
+import documentService from '@/services/document-service'
 
 export default {
   data: () => ({
@@ -101,6 +106,17 @@ export default {
         })
         .catch((error) => {
           console.error('Error authorizing invoice:', error)
+        })
+    },
+
+    showDocument(code, number) {
+      documentService
+        .find(this.user.accessToken, code, number)
+        .then((response) => {
+          console.log('document', response.data)
+        })
+        .catch((error) => {
+          console.error('Error fetching document:', error)
         })
     },
   },
