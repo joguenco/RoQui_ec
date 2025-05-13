@@ -31,11 +31,25 @@
           @keyup.enter="findInvoices"
         />
       </div>
-      <div class="container">
-        {{ finderMessage }}
+      <div class="radios">
+        <label class="radio">
+          <input type="radio" value="All" v-model="status" @keyup.enter="findInvoices" />
+          Todos
+        </label>
+        <label class="radio">
+          <input type="radio" value="Unauthorized" v-model="status" @keyup.enter="findInvoices" />
+          No Autorizados
+        </label>
+        <label class="radio">
+          <input type="radio" value="Authorized" v-model="status" @keyup.enter="findInvoices" />
+          Autorizados
+        </label>
       </div>
       <button class="button is-primary" @click="findInvoices">Buscar</button>
-      <button class="button is-warning" @click="setDefault">f</button>
+      <button class="button is-warning" @click="setDefault" title="Añadir fecha actual">f</button>
+    </div>
+    <div class="container">
+      {{ finderMessage }}
     </div>
     <AppDetail v-bind:details="invoice.details" />
   </section>
@@ -60,6 +74,7 @@ export default {
   data: () => ({
     startDate: format(new Date(), 'YYYY-MM-DD'),
     endDate: format(new Date(), 'YYYY-MM-DD'),
+    status: 'All',
     invoice: {
       details: [],
     },
@@ -112,7 +127,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .find(this.user.accessToken, this.startDate, this.endDate)
+        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
         .then((response) => {
           this.invoice.details = response.data.map((detail) => ({
             ...detail,

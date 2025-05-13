@@ -3,9 +3,9 @@ import headerAuthorization from '@/services/header-authorization'
 
 const invoiceService = {}
 
-invoiceService.find = async (token, startDate, endDate) => {
+invoiceService.find = async (token, startDate, endDate, status) => {
   return await client.get(
-    `/invoice/report/dates/${startDate}/${endDate}/status/Unauthorized`,
+    `/invoice/report/dates/${startDate}/${endDate}/status/${status}`,
     headerAuthorization(token),
   )
 }

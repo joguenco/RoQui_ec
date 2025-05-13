@@ -13,13 +13,21 @@ class ReportInvoiceRepository : CustomReportInvoiceRepository {
 
     @PersistenceContext lateinit var entityManager: EntityManager
 
+    /**
+     * Find ReportInvoice by date and status
+     *
+     * @param startDate start date
+     * @param endDate end date
+     * @param status status = Authorized, Unauthorized or All
+     * @return list of ReportInvoice
+     */
     override fun findByDatesAndStatus(
         startDate: Date,
         endDate: Date,
         status: String,
     ): MutableList<ReportInvoice> {
 
-        if (status.equals("Authorized")) {
+        if ("Authorized" == status) {
             return entityManager
                 .createQuery(
                     "from ReportInvoice " +
@@ -29,13 +37,19 @@ class ReportInvoiceRepository : CustomReportInvoiceRepository {
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .resultList as MutableList<ReportInvoice>
-        } else {
+        } else if ("Unauthorized" == status) {
             return entityManager
                 .createQuery(
                     "from ReportInvoice " +
                         "where date between :startDate and :endDate " +
                         "and status != 'AUTORIZADO'"
                 )
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .resultList as MutableList<ReportInvoice>
+        } else {
+            return entityManager
+                .createQuery("from ReportInvoice " + "where date between :startDate and :endDate ")
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .resultList as MutableList<ReportInvoice>

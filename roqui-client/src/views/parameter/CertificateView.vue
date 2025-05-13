@@ -36,7 +36,7 @@
       <footer class="modal-card-foot">
         <div class="buttons">
           <button class="button is-success" @click="uploadFile">Guardar</button>
-          <button class="button" @click="closeModal">Cancelar</button>
+          <button class="button is-warning" @click="closeModal">Cancelar</button>
         </div>
       </footer>
     </div>
@@ -71,11 +71,10 @@ export default {
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
       this.getCertificate(this.user.accessToken)
+      document.addEventListener('keyup', this.handleEscapeKey)
     } else {
       this.$router.push('/')
     }
-
-    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
