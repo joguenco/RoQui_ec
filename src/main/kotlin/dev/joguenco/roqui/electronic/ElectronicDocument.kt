@@ -13,6 +13,8 @@ import dev.joguenco.roqui.electronic.xml.PdfInvoice
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
+import dev.joguenco.roqui.util.FilesUtil
+import java.io.File
 import kotlin.NoSuchElementException
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
@@ -88,6 +90,29 @@ class ElectronicDocument(
                     ),
                 )
             printPdf.pdf()
+
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
+            val authorizedFolder =
+                FilesUtil.directory(
+                    baseDirectory + "${File.separatorChar}authorized",
+                    dateAccessKey,
+                )
+            if (FilesUtil.isFileExists(tempDir + "${File.separatorChar}$accessKey.xml")) {
+                val file = File(tempDir + "${File.separatorChar}$accessKey.xml")
+                file.copyTo(File(authorizedFolder + "${File.separatorChar}$accessKey.xml"), true)
+                file.delete()
+            }
+        } else {
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
+            val refusedFolder =
+                FilesUtil.directory(baseDirectory + "${File.separatorChar}refused", dateAccessKey)
+            if (FilesUtil.isFileExists(tempDir + "${File.separatorChar}$accessKey.xml")) {
+                val file = File(tempDir + "${File.separatorChar}$accessKey.xml")
+                file.copyTo(File(refusedFolder + "${File.separatorChar}$accessKey.xml"), true)
+                file.delete()
+            }
         }
 
         return status

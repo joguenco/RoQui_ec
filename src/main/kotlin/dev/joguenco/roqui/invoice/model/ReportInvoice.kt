@@ -19,6 +19,8 @@ class ReportInvoice {
 
     @Column(name = "number") val number: String? = null
 
+    @Column(name = "access_key") val accessKey: String? = null
+
     @Column(name = "date", columnDefinition = "DATE") val date: Date? = null
 
     @Column(name = "total") val total: BigDecimal? = null

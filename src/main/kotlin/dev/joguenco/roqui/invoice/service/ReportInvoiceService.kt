@@ -26,6 +26,7 @@ class ReportInvoiceService(private val reportInvoiceRepository: CustomReportInvo
                     id = it.id,
                     code = it.code,
                     number = it.number,
+                    accessKey = it.accessKey,
                     date = it.date,
                     total = it.total,
                     identification = it.identification,

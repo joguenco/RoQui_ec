@@ -63,10 +63,22 @@
             >
           </td>
           <td>
-            <a href="" target="_blank" class="button is-link is-outlined">pdf</a>
+            <a
+              v-bind:href="`${pdf}/${d.accessKey}`"
+              target="_blank"
+              class="button is-danger is-light"
+            >
+              PDF</a
+            >
           </td>
           <td>
-            <a href="" target="_blank" class="button is-success is-outlined">xml</a>
+            <a
+              v-bind:href="`${xml}/${d.accessKey}`"
+              target="_blank"
+              class="button is-success is-light"
+            >
+              XML</a
+            >
           </td>
           <td>
             <a
@@ -138,6 +150,15 @@ export default {
     details: { type: Array, required: true },
   },
 
+  computed: {
+    pdf() {
+      return documentService.pdf()
+    },
+    xml() {
+      return documentService.xml()
+    },
+  },
+
   methods: {
     authorize(code, number) {
       invoiceService
@@ -146,7 +167,11 @@ export default {
           console.log('update', response.data)
         })
         .catch((error) => {
-          console.error('Error authorizing invoice:', error)
+          if (error.response) {
+            alert('Error: ' + error.response.data)
+          } else {
+            console.error('Error message:', error.message)
+          }
         })
     },
 

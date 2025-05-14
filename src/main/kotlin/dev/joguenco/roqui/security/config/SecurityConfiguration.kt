@@ -21,7 +21,14 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/roqui/v1/login", "api/auth/refresh", "/error", "/ping")
+                it.requestMatchers(
+                        "/roqui/v1/login",
+                        "api/auth/refresh",
+                        "/error",
+                        "/ping",
+                        "/files/pdf/*",
+                        "/files/xml/*",
+                    )
                     .permitAll()
                     .requestMatchers("/roqui/v1**")
                     .hasRole("ADMIN")

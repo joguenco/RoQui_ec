@@ -23,6 +23,22 @@ class FilesUtil {
             return directory
         }
 
+        fun onlyGetDirectory(path: String, date: Date): String {
+            val dateLocal: LocalDateTime = java.sql.Timestamp(date.time).toLocalDateTime()
+            val year = dateLocal.year
+            val month = dateLocal.month.value
+
+            val directory = path + "${File.separatorChar}" + year + "${File.separatorChar}" + month
+
+            val folder = File(directory)
+
+            if (!folder.isDirectory) {
+                return ""
+            }
+
+            return directory
+        }
+
         fun isDirectoryExists(path: String): Boolean {
             val file = File(path)
             return file.exists() && file.isDirectory

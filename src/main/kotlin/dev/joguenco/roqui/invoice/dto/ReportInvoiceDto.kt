@@ -7,6 +7,7 @@ data class ReportInvoiceDto(
     val id: Long? = null,
     val code: String? = null,
     val number: String? = null,
+    val accessKey: String? = null,
     val date: Date? = null,
     val total: BigDecimal? = null,
     val identification: String? = null,

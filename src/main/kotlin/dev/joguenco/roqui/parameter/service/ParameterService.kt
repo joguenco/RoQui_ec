@@ -28,9 +28,13 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
     }
 
     fun getCertificatePassword(): String {
-        val password = parameterRepository.findValueByName("Certificate Password")
-        OwnEncryption.setKey(keyProperty)
-        return OwnEncryption.decrypt(password)
+        try {
+            val password = parameterRepository.findValueByName("Certificate Password")
+            OwnEncryption.setKey(keyProperty)
+            return OwnEncryption.decrypt(password)
+        } catch (e: Exception) {
+            throw NoSuchElementException("No se pudo obtener la contraseña del certificado")
+        }
     }
 
     fun getPathLogo(): String {
