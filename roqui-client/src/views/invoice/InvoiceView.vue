@@ -10,46 +10,58 @@
   <section class="section" v-show="!isLoading">
     <div class="container">
       <h1 class="title">Facturas Electrónicas</h1>
+
+      <div class="columns">
+        <div class="column is-half">
+          <div class="field">
+            <label class="label">Fecha Inicial</label>
+            <input
+              class="input"
+              type="text"
+              placeholder="2025-02-31"
+              v-model="startDate"
+              ref="startDate"
+              @keyup.enter="findInvoices"
+            />
+          </div>
+          <div class="field">
+            <label class="label">Fecha Final</label>
+            <input
+              class="input"
+              type="text"
+              placeholder="2025-02-31"
+              v-model="endDate"
+              @keyup.enter="findInvoices"
+            />
+          </div>
+        </div>
+      </div>
+
       <div class="field">
-        <label class="label">Fecha Inicial</label>
-        <input
-          class="input"
-          type="text"
-          placeholder="2025-02-31"
-          v-model="startDate"
-          ref="startDate"
-          @keyup.enter="findInvoices"
-        />
+        <div class="radios">
+          <label class="radio">
+            <input type="radio" value="All" v-model="status" @keyup.enter="findInvoices" />
+            Todos
+          </label>
+          <label class="radio">
+            <input type="radio" value="Unauthorized" v-model="status" @keyup.enter="findInvoices" />
+            No Autorizados
+          </label>
+          <label class="radio">
+            <input type="radio" value="Authorized" v-model="status" @keyup.enter="findInvoices" />
+            Autorizados
+          </label>
+        </div>
       </div>
-      <div class="field">
-        <label class="label">Fecha Final</label>
-        <input
-          class="input"
-          type="text"
-          placeholder="2025-02-31"
-          v-model="endDate"
-          @keyup.enter="findInvoices"
-        />
+      <div class="field is-grouped">
+        <button class="button is-primary" @click="findInvoices">Buscar</button>
+        <button class="button is-link">Autorizar</button>
+        <button class="button is-success">Verificar</button>
+        <button class="button is-warning" @click="setDefault" title="Añadir fecha actual">f</button>
       </div>
-      <div class="radios">
-        <label class="radio">
-          <input type="radio" value="All" v-model="status" @keyup.enter="findInvoices" />
-          Todos
-        </label>
-        <label class="radio">
-          <input type="radio" value="Unauthorized" v-model="status" @keyup.enter="findInvoices" />
-          No Autorizados
-        </label>
-        <label class="radio">
-          <input type="radio" value="Authorized" v-model="status" @keyup.enter="findInvoices" />
-          Autorizados
-        </label>
-      </div>
-      <button class="button is-primary" @click="findInvoices">Buscar</button>
-      <button class="button is-warning" @click="setDefault" title="Añadir fecha actual">f</button>
     </div>
-    <div class="container">
-      {{ finderMessage }}
+    <div class="container p-2">
+      Encontrados: {{ finderMessage }}
     </div>
     <AppDetail v-bind:details="invoice.details" />
   </section>
@@ -99,9 +111,9 @@ export default {
   computed: {
     finderMessage() {
       if (this.invoice.details && this.invoice.details.length > 0) {
-        return `Encontrados: ${this.invoice.details.length}`
+        return `${this.invoice.details.length}`
       }
-      return 'Encontrados: 0'
+      return '0'
     },
   },
 
@@ -132,6 +144,7 @@ export default {
           this.invoice.details = response.data.map((detail) => ({
             ...detail,
             date: format(new Date(detail.date), 'YYYY-MM-DD'),
+            isLoading: false,
           }))
 
           this.isLoading = false

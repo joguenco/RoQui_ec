@@ -130,7 +130,7 @@ class ElectronicDocument(
                 }
             }
         } else {
-            return Estado.NO_PROCESADO.descripcion
+            return ""
         }
 
         try {

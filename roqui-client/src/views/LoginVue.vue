@@ -7,9 +7,7 @@
 
   <section class="hero is-primary">
     <div class="hero-body">
-      <h1 class="title has-text-centered is-size-3 has-text-primary-15">
-        Comprobantes Electrónicos
-      </h1>
+      <h1 class="title has-text-centered is-size-3 has-text-primary-15">Documentos Electrónicos</h1>
       <div class="columns is-centered">
         <div class="column is-half">
           <div class="notification is-light">

@@ -3,7 +3,7 @@ package dev.joguenco.roqui.invoice.controller
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
-import dev.joguenco.roqui.electronic.dto.StateDto
+import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.invoice.service.InvoiceService
@@ -48,11 +48,16 @@ class InvoiceController {
             )
 
         try {
-            val state = StateDto(buildInvoice.process(TypeDocument.FACTURA))
+            val stateSend = StatusDto(buildInvoice.process(TypeDocument.FACTURA))
             TimeUnit.SECONDS.sleep(3)
-            state.state = buildInvoice.check()
 
-            return ResponseEntity.ok(state)
+            val stateCheck = StatusDto(buildInvoice.check())
+
+            if (stateCheck.status.isEmpty()) {
+                return ResponseEntity.ok(stateSend)
+            }
+
+            return ResponseEntity.ok(stateCheck)
         } catch (e: Exception) {
             return ResponseEntity.badRequest().body(e.message)
         }

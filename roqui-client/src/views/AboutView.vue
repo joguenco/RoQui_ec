@@ -2,7 +2,7 @@
   <AppHeader />
   <article class="message is-info m-6">
     <div class="message-header">
-      <p>Aplicación para firmar, enviar y autorizar comprobantes electrónicos</p>
+      <p>Aplicación para firmar, enviar y autorizar documentos electrónicos</p>
     </div>
     <div class="message-body">
       <p class="has-text-centered">

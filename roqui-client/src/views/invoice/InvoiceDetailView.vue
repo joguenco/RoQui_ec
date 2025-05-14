@@ -4,10 +4,10 @@
       <thead>
         <tr>
           <th class="titulo">
-            <a title="Número de comprobante" class="button">Factura</a>
+            <a title="Número de Documento" class="button">Factura</a>
           </th>
           <th class="titulo">
-            <a title="Fecha de comprobante ( aaaa-mm-dd )" class="button">Fecha</a>
+            <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
           <th class="titulo">Total</th>
           <th class="titulo">Documento</th>
@@ -24,10 +24,10 @@
       <tfoot>
         <tr>
           <th class="titulo">
-            <a title="Número de comprobante" class="button">Factura</a>
+            <a title="Número de Documento" class="button">Factura</a>
           </th>
           <th class="titulo">
-            <a title="Fecha de comprobante ( aaaa-mm-dd )" class="button">Fecha</a>
+            <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
           <th class="titulo">Total</th>
           <th class="titulo">Documento</th>
@@ -42,7 +42,7 @@
         </tr>
       </tfoot>
       <tbody>
-        <tr v-for="d in details" :key="d.id">
+        <tr v-for="(d, index) in details" :key="d.id">
           <td class="no_enviado">
             <p>{{ d.code }}</p>
             <p>{{ d.number }}</p>
@@ -67,6 +67,8 @@
               v-bind:href="`${pdf}/${d.accessKey}`"
               target="_blank"
               class="button is-danger is-light"
+              v-bind:class="'status_' + d.status.toLowerCase().replaceAll(' ', '_')"
+              title="Ver archivo PDF"
             >
               PDF</a
             >
@@ -76,15 +78,20 @@
               v-bind:href="`${xml}/${d.accessKey}`"
               target="_blank"
               class="button is-success is-light"
+              v-bind:class="'status_' + d.status.toLowerCase().replaceAll(' ', '_')"
+              title="Ver archivo XML"
             >
               XML</a
             >
           </td>
           <td>
+            <a class="button is-info is-loading" v-show="d.isLoading">A</a>
             <a
               class="button is-info"
-              @click="authorize(d.code, d.number)"
+              @click="authorize(d.code, d.number, index)"
               v-bind:class="'button_' + d.status.toLowerCase()"
+              v-show="!d.isLoading"
+              title="Autorizar"
               >A</a
             >
           </td>
@@ -160,11 +167,13 @@ export default {
   },
 
   methods: {
-    authorize(code, number) {
+    authorize(code, number, index) {
+      this.details[index].isLoading = true
       invoiceService
         .authorize(this.user.accessToken, code, number)
         .then((response) => {
-          console.log('update', response.data)
+          this.details[index].status = response.data.status
+          this.details[index].isLoading = false
         })
         .catch((error) => {
           if (error.response) {
@@ -172,6 +181,7 @@ export default {
           } else {
             console.error('Error message:', error.message)
           }
+          this.details[index].isLoading = false
         })
     },
 

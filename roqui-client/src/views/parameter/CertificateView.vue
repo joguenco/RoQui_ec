@@ -7,7 +7,7 @@
   />
   <article class="message is-info m-6">
     <div class="message-header">
-      <p>Certificado para firmar los comprobantes electrónicos</p>
+      <p>Certificado para firmar los documentos electrónicos</p>
     </div>
     <div class="message-body">
       <p><strong>Entidad Dueña del Certificado: </strong>{{ certificate.ownerCertificate }}</p>
