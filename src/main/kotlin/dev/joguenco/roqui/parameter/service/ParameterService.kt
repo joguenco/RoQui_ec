@@ -37,16 +37,20 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
         }
     }
 
-    fun getPathLogo(): String {
+    fun getLogoPath(): String {
         return getBaseDirectory() +
             File.separatorChar +
             "image" +
             File.separatorChar +
-            parameterRepository.findValueByName("Logo")
+            findValueByName("Logo")
     }
 
     fun findByName(name: String): Parameter {
         return parameterRepository.findByName(name)
+    }
+
+    fun findValueByName(name: String): String {
+        return parameterRepository.findValueByName(name)
     }
 
     fun update(parameter: Parameter) {

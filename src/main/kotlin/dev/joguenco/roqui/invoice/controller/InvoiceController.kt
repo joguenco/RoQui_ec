@@ -8,6 +8,7 @@ import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
+import dev.joguenco.roqui.parameter.service.LogoService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
@@ -35,6 +36,8 @@ class InvoiceController {
     @Autowired lateinit var webService: WebService
 
     @Autowired lateinit var reportInvoiceService: ReportInvoiceService
+
+    @Autowired lateinit var logoService: LogoService
 
     @PostMapping("/invoice/authorize")
     fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {

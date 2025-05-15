@@ -51,7 +51,7 @@ class ElectronicDocument(
             return ""
         }
 
-        val pathLogo = parameterService.getPathLogo()
+        val pathLogo = parameterService.getLogoPath()
         val printPdf = PdfInvoice(accessKey, baseDirectory, pathLogo)
         printPdf.pdf()
 
@@ -82,7 +82,7 @@ class ElectronicDocument(
         val status = saveResponse(response)
 
         if (Estado.AUTORIZADO.descripcion.equals(response.autorizacion.estado)) {
-            val pathLogo = parameterService.getPathLogo()
+            val pathLogo = parameterService.getLogoPath()
             val printPdf =
                 PdfInvoice(
                     accessKey,

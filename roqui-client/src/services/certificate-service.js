@@ -7,7 +7,7 @@ certificateService.getCertificate = async (token) => {
   return await client.get('/certificate', headerAuthorization(token))
 }
 
-certificateService.loadCertificate = async (token, formData) => {
+certificateService.uploadCertificate = async (token, formData) => {
   return await client.post('/certificate/load', formData, headerAuthorization(token))
 }
 

@@ -17,4 +17,16 @@ parameterService.setBaseDirectory = async (token, baseDirectory) => {
   )
 }
 
+parameterService.getLogo = async (token) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+    responseType: 'blob',
+  }
+  return await client.get('/parameter/logo', config)
+}
+
+parameterService.uploadLogo = async (token, formData) => {
+  return await client.post('/parameter/logo/load', formData, headerAuthorization(token))
+}
+
 export default parameterService

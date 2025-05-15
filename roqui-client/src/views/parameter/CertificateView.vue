@@ -116,7 +116,7 @@ export default {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
         formData.append('password', this.passwordFile)
-        certificateService.loadCertificate(this.user.accessToken, formData).then((res) => {
+        certificateService.uploadCertificate(this.user.accessToken, formData).then((res) => {
           if (res.status === 200) {
             this.getCertificate(this.user.accessToken)
           }
