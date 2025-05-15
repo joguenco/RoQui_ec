@@ -11,28 +11,47 @@
     <div class="container">
       <h1 class="title">Facturas Electrónicas</h1>
 
-      <div class="columns">
-        <div class="column is-half">
-          <div class="field">
-            <label class="label">Fecha Inicial</label>
-            <input
-              class="input"
-              type="text"
-              placeholder="2025-02-31"
-              v-model="startDate"
-              ref="startDate"
-              @keyup.enter="findInvoices"
-            />
+      <div class="field is-horizontal m-2">
+        <div class="field p-3">
+          <div class="field-label"></div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static"> Fecha Inicial </a>
+                </p>
+                <p class="control is-expanded">
+                  <input
+                    class="input"
+                    placeholder="2025-02-31"
+                    v-model="startDate"
+                    ref="startDate"
+                    @keyup.enter="findInvoices"
+                  />
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label class="label">Fecha Final</label>
-            <input
-              class="input"
-              type="text"
-              placeholder="2025-02-31"
-              v-model="endDate"
-              @keyup.enter="findInvoices"
-            />
+        </div>
+
+        <div class="field p-3">
+          <div class="field-label"></div>
+          <div class="field-body">
+            <div class="field is-expanded">
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button is-static"> Fecha Final </a>
+                </p>
+                <p class="control is-expanded">
+                  <input
+                    class="input"
+                    placeholder="2025-02-31"
+                    v-model="endDate"
+                    @keyup.enter="findInvoices"
+                  />
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -55,14 +74,12 @@
       </div>
       <div class="field is-grouped">
         <button class="button is-primary" @click="findInvoices">Buscar</button>
-        <button class="button is-link">Autorizar</button>
-        <button class="button is-success">Verificar</button>
+        <button class="button is-link" @click="authorizeAll">Autorizar</button>
+        <button class="button is-success" @click="checkAll">Verificar</button>
         <button class="button is-warning" @click="setDefault" title="Añadir fecha actual">f</button>
       </div>
     </div>
-    <div class="container p-2">
-      Encontrados: {{ finderMessage }}
-    </div>
+    <div class="container p-2">Encontrados: {{ finderMessage }}</div>
     <AppDetail v-bind:details="invoice.details" />
   </section>
 </template>
@@ -151,6 +168,58 @@ export default {
         })
         .catch((error) => {
           console.error('Error fetching invoice:', error)
+        })
+    },
+
+    authorizeAll() {
+      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
+        this.notification.message = 'Rango de fechas no válido'
+        this.notification.type = 'is-danger'
+        this.showNotification = true
+        return
+      }
+
+      this.isLoading = true
+
+      invoiceService
+        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .then((response) => {
+          this.invoice.details = response.data.map((detail) => ({
+            ...detail,
+            date: format(new Date(detail.date), 'YYYY-MM-DD'),
+            isLoading: false,
+          }))
+
+          this.isLoading = false
+        })
+        .catch((error) => {
+          console.error('Error to authorize all invoices:', error)
+        })
+    },
+
+    checkAll() {
+      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
+        this.notification.message = 'Rango de fechas no válido'
+        this.notification.type = 'is-danger'
+        this.showNotification = true
+        return
+      }
+
+      this.isLoading = true
+
+      invoiceService
+        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .then((response) => {
+          this.invoice.details = response.data.map((detail) => ({
+            ...detail,
+            date: format(new Date(detail.date), 'YYYY-MM-DD'),
+            isLoading: false,
+          }))
+
+          this.isLoading = false
+        })
+        .catch((error) => {
+          console.error('Error to check all invoices:', error)
         })
     },
 

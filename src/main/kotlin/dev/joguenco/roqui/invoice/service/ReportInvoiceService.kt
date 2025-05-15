@@ -11,7 +11,7 @@ class ReportInvoiceService(private val reportInvoiceRepository: CustomReportInvo
     fun getInvoiceByDatesAndStatus(
         startDate: String,
         endDate: String,
-        status: String,
+        status: String = "All",
     ): MutableList<ReportInvoiceDto> {
 
         val startDateForQuery = DateUtil.toDate(startDate)

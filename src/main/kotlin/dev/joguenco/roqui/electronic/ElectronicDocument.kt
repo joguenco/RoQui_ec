@@ -35,6 +35,10 @@ class ElectronicDocument(
         baseDirectory = parameterService.getBaseDirectory()
     }
 
+    fun setAccessKey(accessKey: String) {
+        this.accessKey = accessKey
+    }
+
     fun process(type: TypeDocument): String {
         var statusResponse = Estado.NO_PROCESADO.descripcion
 
