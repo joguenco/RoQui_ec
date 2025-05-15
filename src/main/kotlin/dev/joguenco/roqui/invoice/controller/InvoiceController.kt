@@ -6,16 +6,15 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
-import dev.joguenco.roqui.invoice.dto.ReportInvoiceDto
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.shared.dto.Message
+import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -65,18 +64,23 @@ class InvoiceController {
 
             return ResponseEntity.ok(stateCheck)
         } catch (e: Exception) {
-            println("Error postAuthorize ${e.message}")
-            return ResponseEntity.badRequest().body(e.message)
+            println("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message!!))
         }
     }
 
-    @GetMapping("/invoice/authorize/dates/{startDate}/{endDate}")
-    fun getAuthorizeAll(
+    @PostMapping("/invoice/authorize/dates/{startDate}/{endDate}")
+    fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
     ): ResponseEntity<out Any?> {
 
-        var reportInvoice =
+        val (status, message) = Validate.rangeOfDates(startDate, endDate)
+        if (!status) {
+            return ResponseEntity.badRequest().body(message)
+        }
+
+        val reportInvoice =
             reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, "Unauthorized")
 
         for (invoice in reportInvoice) {
@@ -93,24 +97,30 @@ class InvoiceController {
             try {
                 StatusDto(buildInvoice.process(TypeDocument.FACTURA))
             } catch (e: Exception) {
-                println("Error getAuthorizeAll ${e.message}")
-                return ResponseEntity.badRequest().body(e.message)
+                println("Error AuthorizeAll ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message!!))
             }
         }
 
-        reportInvoice.clear()
-        reportInvoice = reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate)
-
-        return ResponseEntity<MutableList<ReportInvoiceDto>>(reportInvoice, HttpStatus.OK)
+        return checkAll(startDate, endDate)
     }
 
-    @GetMapping("/invoice/check/dates/{startDate}/{endDate}")
-    fun getCheckAll(
+    @PostMapping("/invoice/check/dates/{startDate}/{endDate}")
+    fun postCheckAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
     ): ResponseEntity<out Any?> {
 
-        var reportInvoice =
+        val (status, message) = Validate.rangeOfDates(startDate, endDate)
+        if (!status) {
+            return ResponseEntity.badRequest().body(message)
+        }
+
+        return checkAll(startDate, endDate)
+    }
+
+    fun checkAll(startDate: String, endDate: String): ResponseEntity<out Any?> {
+        val reportInvoice =
             reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, "Unauthorized")
 
         for (invoice in reportInvoice) {
@@ -128,14 +138,11 @@ class InvoiceController {
             try {
                 StatusDto(buildInvoice.check())
             } catch (e: Exception) {
-                println("Error getCheckAll ${e.message}")
-                return ResponseEntity.badRequest().body(e.message)
+                println("Error checkAll ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message!!))
             }
         }
 
-        reportInvoice.clear()
-        reportInvoice = reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate)
-
-        return ResponseEntity<MutableList<ReportInvoiceDto>>(reportInvoice, HttpStatus.OK)
+        return ResponseEntity.ok().body(Message("Completed successfully"))
     }
 }

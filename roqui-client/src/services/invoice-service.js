@@ -11,15 +11,17 @@ invoiceService.find = async (token, startDate, endDate, status) => {
 }
 
 invoiceService.authorizeAll = async (token, startDate, endDate) => {
-  return await client.get(
+  return await client.post(
     `/invoice/authorize/dates/${startDate}/${endDate}`,
+    {},
     headerAuthorization(token),
   )
 }
 
 invoiceService.checkAll = async (token, startDate, endDate) => {
-  return await client.get(
+  return await client.post(
     `/invoice/check/dates/${startDate}/${endDate}`,
+    {},
     headerAuthorization(token),
   )
 }

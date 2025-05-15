@@ -29,5 +29,6 @@ class DocumentRepository : CustomDocumentRepository {
 
     override fun saveDocument(document: Document) {
         entityManager.persist(document)
+        entityManager.flush()
     }
 }

@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="field">
+      <div class="field is-horizontal m-3">
         <div class="radios">
           <label class="radio">
             <input type="radio" value="All" v-model="status" @keyup.enter="findInvoices" />
@@ -72,7 +72,8 @@
           </label>
         </div>
       </div>
-      <div class="field is-grouped">
+
+      <div class="field is-grouped m-3">
         <button class="button is-primary" @click="findInvoices">Buscar</button>
         <button class="button is-link" @click="authorizeAll">Autorizar</button>
         <button class="button is-success" @click="checkAll">Verificar</button>
@@ -146,12 +147,7 @@ export default {
 
   methods: {
     findInvoices() {
-      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
-        this.notification.message = 'Rango de fechas no válido'
-        this.notification.type = 'is-danger'
-        this.showNotification = true
-        return
-      }
+      if (!this.isValidDates()) return
 
       this.isLoading = true
 
@@ -172,25 +168,14 @@ export default {
     },
 
     authorizeAll() {
-      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
-        this.notification.message = 'Rango de fechas no válido'
-        this.notification.type = 'is-danger'
-        this.showNotification = true
-        return
-      }
+      if (!this.isValidDates()) return
 
       this.isLoading = true
 
       invoiceService
         .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
-        .then((response) => {
-          this.invoice.details = response.data.map((detail) => ({
-            ...detail,
-            date: format(new Date(detail.date), 'YYYY-MM-DD'),
-            isLoading: false,
-          }))
-
-          this.isLoading = false
+        .then(() => {
+          this.findInvoices()
         })
         .catch((error) => {
           console.error('Error to authorize all invoices:', error)
@@ -198,25 +183,14 @@ export default {
     },
 
     checkAll() {
-      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
-        this.notification.message = 'Rango de fechas no válido'
-        this.notification.type = 'is-danger'
-        this.showNotification = true
-        return
-      }
+      if (!this.isValidDates()) return
 
       this.isLoading = true
 
       invoiceService
         .checkAll(this.user.accessToken, this.startDate, this.endDate)
-        .then((response) => {
-          this.invoice.details = response.data.map((detail) => ({
-            ...detail,
-            date: format(new Date(detail.date), 'YYYY-MM-DD'),
-            isLoading: false,
-          }))
-
-          this.isLoading = false
+        .then(() => {
+          this.findInvoices()
         })
         .catch((error) => {
           console.error('Error to check all invoices:', error)
@@ -227,6 +201,16 @@ export default {
       this.$refs.startDate.focus()
       this.startDate = format(new Date(), 'YYYY-MM-DD')
       this.endDate = format(new Date(), 'YYYY-MM-DD')
+    },
+
+    isValidDates() {
+      if (!validate.isDate(this.startDate) || !validate.isDate(this.endDate)) {
+        this.notification.message = 'Rango de fechas no válido'
+        this.notification.type = 'is-danger'
+        this.showNotification = true
+        return false
+      }
+      return true
     },
   },
 }
