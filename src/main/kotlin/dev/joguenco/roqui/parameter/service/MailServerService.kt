@@ -7,12 +7,31 @@ import org.springframework.stereotype.Service
 class MailServerService(private val parameterService: ParameterService) {
 
     fun getMailServerInformation(): MailServerDto {
-        val server = parameterService.findValueByName("Mail Server")
-        val port = parameterService.findValueByName("Mail Server Port")
-        val email = parameterService.findValueByName("Account Mail Server")
-        val password = "******"
-        val template = parameterService.findValueByName("Template")
+        val server =
+            try {
+                parameterService.findValueByName("Mail Server")
+            } catch (e: Exception) {
+                ""
+            }
+        val port =
+            try {
+                parameterService.findValueByName("Mail Server Port")
+            } catch (e: Exception) {
+                "0"
+            }
+        val email =
+            try {
+                parameterService.findValueByName("Account Mail Server")
+            } catch (e: Exception) {
+                "0"
+            }
+        val template =
+            try {
+                parameterService.findValueByName("Template")
+            } catch (e: Exception) {
+                ""
+            }
 
-        return MailServerDto(server, port.toInt(), email, password, template)
+        return MailServerDto(server, port.toInt(), email, "", template)
     }
 }

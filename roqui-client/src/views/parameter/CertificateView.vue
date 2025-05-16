@@ -141,3 +141,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.modal-card-head {
+  background-color: #66d1ff;
+}
+</style>

@@ -234,4 +234,7 @@ a.status_no_enviado {
   cursor: default;
   opacity: 0.4;
 }
+.modal-card-head {
+  background-color: #66d1ff;
+}
 </style>

@@ -5,18 +5,26 @@
     :message="notification.message"
     v-if="showNotification"
   />
-  <article class="message is-info m-6">
-    <div class="message-header">
-      <p>Configuración de Servidor de Correo</p>
-    </div>
-    <div class="message-body">
-      <p><strong>Servidor: </strong>{{ mail.server }}</p>
-      <p><strong>Puerto: </strong>{{ mail.port }}</p>
-      <p><strong>Correo Electrónico: </strong>{{ mail.email }}</p>
-      <p><strong>Plantilla: </strong>{{ mail.template }}</p>
-      <div class="buttons mt-3">
-        <button class="button is-primary" @click="showModal">Editar</button>
+  <article class="message m-6">
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">Configuración de Servidor de Correo</p>
+      </header>
+      <div class="card-content">
+        <div class="content">
+          <p><strong>Servidor: </strong>{{ mail.server }}</p>
+          <p><strong>Puerto: </strong>{{ mail.port }}</p>
+          <p><strong>Correo Electrónico: </strong>{{ mail.email }}</p>
+          <p><strong>Plantilla: </strong>{{ mail.template }}</p>
+        </div>
       </div>
+      <footer class="card-footer">
+        <a class="card-footer-item" style="background-color: aquamarine" @click="showModal"
+          >Editar</a
+        >
+        <a class="card-footer-item" style="background-color: cornflowerblue">Cargar Plantilla</a>
+        <a class="card-footer-item" style="background-color: darkorange">Probar</a>
+      </footer>
     </div>
   </article>
 
@@ -137,3 +145,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.card-header {
+  background-color: #66d1ff;
+}
+.modal-card-head {
+  background-color: #66d1ff;
+}
+</style>
