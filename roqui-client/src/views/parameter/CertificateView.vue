@@ -16,7 +16,7 @@
       <p><strong>Fecha de Caducidad: </strong>{{ certificate.dateExpiry }}</p>
       <p><strong>El certificado caducará en: </strong>{{ certificate.daysToExpiry }}</p>
       <div class="buttons mt-3">
-        <button class="button is-primary" @click="showModal">Cargar</button>
+        <button class="button is-primary" @click="showModal">Cargar Certificado</button>
       </div>
     </div>
   </article>
@@ -29,7 +29,20 @@
       </header>
       <section class="modal-card-body">
         <p><strong>Archivo P12: </strong></p>
-        <input type="file" accept=".p12" class="input" @change="onFileSelected" />
+        <div class="file">
+          <label class="file-label">
+            <input
+              class="file-input"
+              type="file"
+              name="resume"
+              accept=".p12"
+              @change="onFileSelected"
+            />
+            <span class="file-cta">
+              <span class="file-label">Cargar Certificado</span>
+            </span>
+          </label>
+        </div>
         <p><strong>Contraseña: </strong></p>
         <input class="input" type="password" v-model="passwordFile" />
       </section>

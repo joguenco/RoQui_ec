@@ -28,8 +28,8 @@
                   accept=".jpeg"
                   @change="onFileSelected"
                 />
-                <span class="file-cta">
-                  <span class="file-label"> Cargar </span>
+                <span class="button is-success">
+                  <span class="file-label"> Cargar Logo</span>
                 </span>
               </label>
             </div>

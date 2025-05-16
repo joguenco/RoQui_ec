@@ -19,11 +19,26 @@
         </div>
       </div>
       <footer class="card-footer">
-        <a class="card-footer-item" style="background-color: aquamarine" @click="showModal"
-          >Editar</a
-        >
-        <a class="card-footer-item" style="background-color: cornflowerblue">Cargar Plantilla</a>
-        <a class="card-footer-item" style="background-color: darkorange">Probar</a>
+        <div class="buttons p-3 m-3">
+          <div class="buttons">
+            <button class="button is-success" @click="showModal">Editar</button>
+
+            <label class="file-label">
+              <input
+                class="file-input"
+                type="file"
+                name="resume"
+                accept=".html"
+                @change="onFileSelected"
+              />
+              <span class="button is-info">
+                <span class="file-label">Cargar Plantilla</span>
+              </span>
+            </label>
+
+            <button class="button is-warning" @click="closeModal">Probar</button>
+          </div>
+        </div>
       </footer>
     </div>
   </article>
@@ -152,5 +167,8 @@ export default {
 }
 .modal-card-head {
   background-color: #66d1ff;
+}
+.card-footer {
+  background-color: #f9fafb;
 }
 </style>
