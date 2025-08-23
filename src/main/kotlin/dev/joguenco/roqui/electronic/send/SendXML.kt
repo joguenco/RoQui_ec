@@ -41,8 +41,13 @@ class SendXML(
             return getErrorAuthorization(message)
         }
 
-        val response = Check.execute(accessKey)
-        return response
+        if (ambientType == AmbientType.PRODUCTION) {
+            val response = Check.execute(webService.productionAuthorization,accessKey)
+            return response
+        } else {
+            val response = Check.execute(webService.developmentAuthorization,accessKey)
+            return response
+        }
     }
 
     private fun isAliveServiceReception(ambientType: AmbientType): Pair<Boolean, String> {

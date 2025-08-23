@@ -7,7 +7,7 @@ E-Invoicing for Ecuador developed in Kotlin with Spring Boot 3
 - MariaDB 11.4
 
 ## Libraries
-- https://github.com/joguenco/RoquiSigner
+- https://github.com/joguenco/RoQuiSigner
 - https://github.com/joguenco/RoQuiPrinter
 - https://github.com/joguenco/RoQuiClientSri
 

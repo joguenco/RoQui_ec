@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     war
-    id("org.springframework.boot") version "3.4.4"
+    id("org.springframework.boot") version "3.4.9"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
@@ -46,11 +46,11 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.6.3")
     kapt("org.mapstruct:mapstruct-processor:1.6.3")
     // Signer
-    implementation("dev.joguenco.signer:RoquiSigner:1.0.0")
+    implementation("dev.joguenco.signer:RoQuiSigner:1.0.0")
     implementation("com.googlecode.xades4j:xades4j:1.7.0")
     implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
     // Printer
-    implementation("dev.joguenco.printer:RoquiPrinter:1.0.0")
+    implementation("dev.joguenco.printer:RoQuiPrinter:1.1.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.1")
     implementation("net.sf.jasperreports:jasperreports:6.21.2")
@@ -58,7 +58,7 @@ dependencies {
     implementation("org.apache.xmlgraphics:batik-all:1.17")
     implementation("com.github.librepdf:openpdf:1.3.30")
     // Client SRI
-    implementation("dev.joguenco.client:RoquiClientSri:1.0.1")
+    implementation("dev.joguenco.client:RoQuiClientSri:1.1.0")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
     implementation("com.thoughtworks.xstream:xstream:1.4.20")
     implementation("commons-io:commons-io:2.12.0")
