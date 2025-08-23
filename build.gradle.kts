@@ -13,7 +13,7 @@ plugins {
 
 group = "dev.joguenco"
 
-version = "0.1.0"
+version = "0.9.0"
 
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
@@ -58,10 +58,10 @@ dependencies {
     implementation("org.apache.xmlgraphics:batik-all:1.17")
     implementation("com.github.librepdf:openpdf:1.3.30")
     // Client SRI
-    implementation("dev.joguenco.client:RoQuiClientSri:1.1.0")
+    implementation("dev.joguenco.client:RoQuiClientSri:1.2.0")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
-    implementation("com.thoughtworks.xstream:xstream:1.4.20")
-    implementation("commons-io:commons-io:2.12.0")
+    implementation("com.thoughtworks.xstream:xstream:1.4.21")
+    implementation("commons-io:commons-io:2.15.1")
     // Utils
     implementation("joda-time:joda-time:2.14.0")
 }

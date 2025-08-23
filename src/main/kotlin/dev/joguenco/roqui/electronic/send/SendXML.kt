@@ -28,9 +28,21 @@ class SendXML(
         val pathSigned =
             FilesUtil.directory(baseDirectory + "${File.separatorChar}signed", dateAccessKey)
 
-        val statusSend = Send.execute("$pathSigned${File.separatorChar}$accessKey.xml")
-
-        return statusSend
+        if (ambientType == AmbientType.PRODUCTION) {
+            val statusSend =
+                Send.execute(
+                    webService.productionReception,
+                    "$pathSigned${File.separatorChar}$accessKey.xml",
+                )
+            return statusSend
+        } else {
+            val statusSend =
+                Send.execute(
+                    webService.developmentReception,
+                    "$pathSigned${File.separatorChar}$accessKey.xml",
+                )
+            return statusSend
+        }
     }
 
     fun check(): AutorizacionEstado {
@@ -42,10 +54,10 @@ class SendXML(
         }
 
         if (ambientType == AmbientType.PRODUCTION) {
-            val response = Check.execute(webService.productionAuthorization,accessKey)
+            val response = Check.execute(webService.productionAuthorization, accessKey)
             return response
         } else {
-            val response = Check.execute(webService.developmentAuthorization,accessKey)
+            val response = Check.execute(webService.developmentAuthorization, accessKey)
             return response
         }
     }
