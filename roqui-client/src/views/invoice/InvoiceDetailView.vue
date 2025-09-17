@@ -42,7 +42,7 @@
         </tr>
       </tfoot>
       <tbody>
-        <tr v-for="(d, index) in details" :key="d.id">
+        <tr v-for="(d, index) in localDetails" :key="d.id">
           <td class="no_enviado">
             <p>{{ d.code }}</p>
             <p>{{ d.number }}</p>
@@ -115,7 +115,7 @@
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
-          <button class="button is-warning" @click="closeModal">Cancelar</button>
+          <button class="button is-warning" @click="closeModal">Cerrar</button>
         </div>
       </footer>
     </div>
@@ -138,6 +138,8 @@ export default {
       status: '',
       observation: '',
     },
+    // For not mutating the prop directly
+    localDetails: [],
   }),
 
   mounted() {
@@ -157,6 +159,17 @@ export default {
     details: { type: Array, required: true },
   },
 
+  watch: {
+    // Sync localDetails with prop changes
+    details: {
+      immediate: true,
+      handler(newVal) {
+        // Deep clone to avoid mutating prop
+        this.localDetails = JSON.parse(JSON.stringify(newVal))
+      },
+    },
+  },
+
   computed: {
     pdf() {
       return documentService.pdf()
@@ -168,12 +181,12 @@ export default {
 
   methods: {
     authorize(code, number, index) {
-      this.details[index].isLoading = true
+      this.localDetails[index].isLoading = true
       invoiceService
         .authorize(this.user.accessToken, code, number)
         .then((response) => {
-          this.details[index].status = response.data.status
-          this.details[index].isLoading = false
+          this.localDetails[index].status = response.data.status
+          this.localDetails[index].isLoading = false
         })
         .catch((error) => {
           if (error.response) {
@@ -181,7 +194,7 @@ export default {
           } else {
             console.error('Error message:', error.message)
           }
-          this.details[index].isLoading = false
+          this.localDetails[index].isLoading = false
         })
     },
 
