@@ -3,9 +3,9 @@ package dev.joguenco.roqui.invoice.dto
 import java.math.BigDecimal
 
 data class TaxTotal(
-    val taxCode: String,
-    val percentageCode: String,
-    val taxIva: BigDecimal,
-    val taxBase: BigDecimal,
-    val value: BigDecimal,
+    var taxCode: String? = null,
+    var percentageCode: String? = null,
+    var taxIva: BigDecimal? = null,
+    var taxBase: BigDecimal? = null,
+    var value: BigDecimal? = null,
 )

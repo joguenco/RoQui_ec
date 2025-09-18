@@ -11,6 +11,8 @@ import dev.joguenco.roqui.invoice.repository.CustomInvoiceRepository
 import dev.joguenco.roqui.parameter.repository.ParameterRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
 import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
+import java.math.BigDecimal
+import kotlin.collections.forEach
 import org.springframework.stereotype.Service
 
 @Service
@@ -58,7 +60,54 @@ class InvoiceService(
     }
 
     fun getInvoiceTax(code: String, number: String): MutableList<TaxTotal> {
-        return invoiceRepository.findTotalTaxByCodeAndNumber(code, number)
+        val taxDetails = invoiceRepository.findTotalTaxByCodeAndNumber(code, number)
+
+        val groupedTaxes = mutableMapOf<Pair<String, String>, TaxTotal>()
+
+        for (taxDetail in taxDetails) {
+            val key = Pair(taxDetail.taxCode, taxDetail.percentageCode)
+            val totalTax =
+                groupedTaxes.getOrDefault(
+                    key,
+                    TaxTotal().apply {
+                        taxCode = taxDetail.taxCode
+                        percentageCode = taxDetail.percentageCode
+                        taxIva = BigDecimal.ZERO
+                        taxBase = BigDecimal.ZERO
+                        value = BigDecimal.ZERO
+                    },
+                )
+
+            groupedTaxes[key as Pair<String, String>] = totalTax
+        }
+
+        groupedTaxes.values.forEach {
+            taxDetails
+                .stream()
+                .filter { imp ->
+                    it.taxCode == imp.taxCode && it.percentageCode == imp.percentageCode
+                }
+                .forEach { imp ->
+                    it.taxBase = it.taxBase?.add(imp.taxBase ?: BigDecimal.ZERO)
+                    it.taxIva = imp.taxIva ?: BigDecimal.ZERO
+                    it.value = it.value?.add(imp.value ?: BigDecimal.ZERO)
+                }
+        }
+
+        val taxTotals = mutableListOf<TaxTotal>()
+
+        groupedTaxes.values.forEach { i ->
+            val totalTax = TaxTotal()
+            totalTax.taxCode = i.taxCode
+            totalTax.percentageCode = i.percentageCode
+            totalTax.taxIva = i.taxIva?.setScale(2, BigDecimal.ROUND_HALF_UP)
+            totalTax.taxBase = i.taxBase?.setScale(2, BigDecimal.ROUND_HALF_UP)
+            totalTax.value = i.value?.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            taxTotals.add(totalTax)
+        }
+
+        return taxTotals
     }
 
     fun getInvoicePayment(code: String, number: String): MutableList<Payment> {

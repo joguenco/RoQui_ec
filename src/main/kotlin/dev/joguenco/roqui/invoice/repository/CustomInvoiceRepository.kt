@@ -1,6 +1,5 @@
 package dev.joguenco.roqui.invoice.repository
 
-import dev.joguenco.roqui.invoice.dto.TaxTotal
 import dev.joguenco.roqui.invoice.model.Invoice
 import dev.joguenco.roqui.invoice.model.InvoiceDetail
 import dev.joguenco.roqui.invoice.model.Payment
@@ -21,7 +20,7 @@ interface CustomInvoiceRepository {
         line: Long,
     ): MutableList<TaxDetail>
 
-    fun findTotalTaxByCodeAndNumber(code: String, number: String): MutableList<TaxTotal>
+    fun findTotalTaxByCodeAndNumber(code: String, number: String): MutableList<TaxDetail>
 
     fun findPaymentByCodeAndNumber(code: String, number: String): MutableList<Payment>
 }
