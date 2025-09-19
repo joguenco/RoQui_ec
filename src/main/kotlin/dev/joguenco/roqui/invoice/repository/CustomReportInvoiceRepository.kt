@@ -1,13 +1,8 @@
 package dev.joguenco.roqui.invoice.repository
 
-import dev.joguenco.roqui.invoice.model.ReportInvoice
 import java.util.Date
 
-interface CustomReportInvoiceRepository {
+interface CustomReportInvoiceRepository<T> {
 
-    fun findByDatesAndStatus(
-        startDate: Date,
-        endDate: Date,
-        status: String,
-    ): MutableList<ReportInvoice>
+    fun findByDatesAndStatus(startDate: Date, endDate: Date, status: String): MutableList<T>
 }

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Repository
-class ReportInvoiceRepository : CustomReportInvoiceRepository {
+class ReportInvoiceRepository : CustomReportInvoiceRepository<ReportInvoice> {
 
     @PersistenceContext lateinit var entityManager: EntityManager
 
