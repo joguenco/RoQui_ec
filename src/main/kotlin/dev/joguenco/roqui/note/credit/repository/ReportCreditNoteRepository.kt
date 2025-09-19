@@ -1,21 +1,20 @@
-package dev.joguenco.roqui.invoice.repository
+package dev.joguenco.roqui.note.credit.repository
 
 import dev.joguenco.roqui.common.repository.CustomReportRepository
-import dev.joguenco.roqui.invoice.model.ReportInvoice
+import dev.joguenco.roqui.note.credit.model.ReportCreditNote
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
-import java.util.*
+import java.util.Date
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Repository
-class ReportInvoiceRepository : CustomReportRepository<ReportInvoice> {
-
+class ReportCreditNoteRepository : CustomReportRepository<ReportCreditNote> {
     @PersistenceContext lateinit var entityManager: EntityManager
 
     /**
-     * Find ReportInvoice by date and status
+     * Find ReportCreditNote by date and status
      *
      * @param startDate start date
      * @param endDate end date
@@ -26,34 +25,35 @@ class ReportInvoiceRepository : CustomReportRepository<ReportInvoice> {
         startDate: Date,
         endDate: Date,
         status: String,
-    ): MutableList<ReportInvoice> {
-
+    ): MutableList<ReportCreditNote> {
         if ("Authorized" == status) {
             return entityManager
                 .createQuery(
-                    "from ReportInvoice " +
+                    "from ReportCreditNote " +
                         "where date between :startDate and :endDate " +
                         "and status = 'AUTORIZADO'"
                 )
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
-                .resultList as MutableList<ReportInvoice>
+                .resultList as MutableList<ReportCreditNote>
         } else if ("Unauthorized" == status) {
             return entityManager
                 .createQuery(
-                    "from ReportInvoice " +
+                    "from ReportCreditNote " +
                         "where date between :startDate and :endDate " +
                         "and status != 'AUTORIZADO'"
                 )
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
-                .resultList as MutableList<ReportInvoice>
+                .resultList as MutableList<ReportCreditNote>
         } else {
             return entityManager
-                .createQuery("from ReportInvoice " + "where date between :startDate and :endDate ")
+                .createQuery(
+                    "from ReportCreditNote " + "where date between :startDate and :endDate "
+                )
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
-                .resultList as MutableList<ReportInvoice>
+                .resultList as MutableList<ReportCreditNote>
         }
     }
 }

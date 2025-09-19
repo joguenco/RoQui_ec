@@ -1,6 +1,6 @@
 package dev.joguenco.roqui.invoice.controller
 
-import dev.joguenco.roqui.invoice.dto.ReportInvoiceDto
+import dev.joguenco.roqui.common.dto.ReportReciptDto
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
@@ -16,10 +16,18 @@ import org.springframework.web.bind.annotation.RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/roqui/v1")
-class ReportController {
+class ReportInvoiceController {
 
     @Autowired lateinit var reportInvoiceService: ReportInvoiceService
 
+    /**
+     * Retrieves invoices filtered by date range and status.
+     *
+     * @param startDate the start date of the range (format: yyyy-MM-dd)
+     * @param endDate the end date of the range (format: yyyy-MM-dd)
+     * @param status the invoice status to filter by Authorized, Unauthorized, or All
+     * @return ResponseEntity containing a list of ReportInvoiceDto or an error message
+     */
     @GetMapping("/invoice/report/dates/{startDate}/{endDate}/status/{status}")
     fun getInvoiceByDatesAndStatus(
         @PathVariable(value = "startDate") startDate: String,
@@ -33,6 +41,6 @@ class ReportController {
         }
         val reportInvoice =
             reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, status)
-        return ResponseEntity<MutableList<ReportInvoiceDto>>(reportInvoice, HttpStatus.OK)
+        return ResponseEntity<MutableList<ReportReciptDto>>(reportInvoice, HttpStatus.OK)
     }
 }

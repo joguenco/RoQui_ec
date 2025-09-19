@@ -59,6 +59,11 @@ const router = createRouter({
       name: 'invoice',
       component: () => import('@/views/invoice/InvoiceView.vue'),
     },
+    {
+      path: '/credit/note',
+      name: 'credit-note',
+      component: () => import('@/views/credit/note/CreditNoteView.vue'),
+    },
   ],
 })
 

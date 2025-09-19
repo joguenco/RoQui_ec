@@ -1,16 +1,15 @@
-package dev.joguenco.roqui.invoice.service
+package dev.joguenco.roqui.note.credit.service
 
 import dev.joguenco.roqui.common.dto.ReportReciptDto
 import dev.joguenco.roqui.common.repository.CustomReportRepository
-import dev.joguenco.roqui.invoice.model.ReportInvoice
+import dev.joguenco.roqui.note.credit.model.ReportCreditNote
 import dev.joguenco.roqui.util.DateUtil
 import org.springframework.stereotype.Service
 
 @Service
-class ReportInvoiceService(
-    private val reportInvoiceRepository: CustomReportRepository<ReportInvoice>
+class ReportCreditNoteService(
+    private val reportCreditNoteRepository: CustomReportRepository<ReportCreditNote>
 ) {
-
     fun getInvoiceByDatesAndStatus(
         startDate: String,
         endDate: String,
@@ -21,7 +20,11 @@ class ReportInvoiceService(
         val endDateForQuery = DateUtil.toDate(endDate)
 
         val result =
-            reportInvoiceRepository.findByDatesAndStatus(startDateForQuery, endDateForQuery, status)
+            reportCreditNoteRepository.findByDatesAndStatus(
+                startDateForQuery,
+                endDateForQuery,
+                status,
+            )
 
         return result
             .map {
