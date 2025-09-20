@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.note.credit.service
 
+import dev.joguenco.roqui.information.model.Information
 import dev.joguenco.roqui.information.repository.InformationRepository
 import dev.joguenco.roqui.invoice.dto.TaxTotal
 import dev.joguenco.roqui.invoice.model.TaxDetail
@@ -56,7 +57,7 @@ class CreditNoteService(
         return creditNoteRepository.findDetailTax(code, number, principalCode, line)
     }
 
-    fun getInvoiceTax(code: String, number: String): MutableList<TaxTotal> {
+    fun getCreditNoteTax(code: String, number: String): MutableList<TaxTotal> {
         val taxDetails = creditNoteRepository.findTotalTaxByCodeAndNumber(code, number)
 
         val groupedTaxes = mutableMapOf<Pair<String, String>, TaxTotal>()
@@ -105,5 +106,9 @@ class CreditNoteService(
         }
 
         return taxTotals
+    }
+
+    fun getCreditNoteInformation(identification: String): MutableList<Information> {
+        return informationRepository.findInformationByIdentification(identification)
     }
 }

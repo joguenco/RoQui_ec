@@ -11,6 +11,7 @@ import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.PdfInvoice
 import dev.joguenco.roqui.invoice.service.InvoiceService
+import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
@@ -22,11 +23,35 @@ import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 class ElectronicDocument(
     val code: String,
     val number: String,
-    private val invoiceService: InvoiceService,
     private val webService: WebService,
     private val parameterService: ParameterService,
     private val documentService: DocumentService,
 ) {
+
+    private var invoiceService: InvoiceService? = null
+    private var creditNoteService: CreditNoteService? = null
+
+    constructor(
+        code: String,
+        number: String,
+        invoiceService: InvoiceService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.invoiceService = invoiceService
+    }
+
+    constructor(
+        code: String,
+        number: String,
+        creditNoteService: CreditNoteService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.creditNoteService = creditNoteService
+    }
 
     private var accessKey: String = ""
     private var baseDirectory = ""
@@ -43,7 +68,7 @@ class ElectronicDocument(
         var statusResponse = Estado.NO_PROCESADO.descripcion
 
         if (type == TypeDocument.FACTURA) {
-            val build = BuildInvoice(code, number, baseDirectory, invoiceService)
+            val build = BuildInvoice(code, number, baseDirectory, invoiceService!!)
             accessKey = build.xml()
         }
 
