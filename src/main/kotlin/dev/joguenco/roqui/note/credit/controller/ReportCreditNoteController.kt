@@ -1,7 +1,7 @@
-package dev.joguenco.roqui.credit.note.controller
+package dev.joguenco.roqui.note.credit.controller
 
 import dev.joguenco.roqui.common.dto.ReportReciptDto
-import dev.joguenco.roqui.credit.note.service.ReportCreditNoteService
+import dev.joguenco.roqui.note.credit.service.ReportCreditNoteService
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
 import org.springframework.beans.factory.annotation.Autowired

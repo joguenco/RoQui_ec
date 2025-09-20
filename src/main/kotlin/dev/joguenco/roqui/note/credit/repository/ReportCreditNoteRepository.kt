@@ -1,7 +1,7 @@
-package dev.joguenco.roqui.credit.note.repository
+package dev.joguenco.roqui.note.credit.repository
 
 import dev.joguenco.roqui.common.repository.CustomReportRepository
-import dev.joguenco.roqui.credit.note.model.ReportCreditNote
+import dev.joguenco.roqui.note.credit.model.ReportCreditNote
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import java.util.Date

@@ -1,8 +1,8 @@
-package dev.joguenco.roqui.credit.note.service
+package dev.joguenco.roqui.note.credit.service
 
 import dev.joguenco.roqui.common.dto.ReportReciptDto
 import dev.joguenco.roqui.common.repository.CustomReportRepository
-import dev.joguenco.roqui.credit.note.model.ReportCreditNote
+import dev.joguenco.roqui.note.credit.model.ReportCreditNote
 import dev.joguenco.roqui.util.DateUtil
 import org.springframework.stereotype.Service
 

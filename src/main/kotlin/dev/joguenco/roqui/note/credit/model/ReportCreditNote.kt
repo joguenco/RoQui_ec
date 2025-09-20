@@ -1,4 +1,4 @@
-package dev.joguenco.roqui.credit.note.model
+package dev.joguenco.roqui.note.credit.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
