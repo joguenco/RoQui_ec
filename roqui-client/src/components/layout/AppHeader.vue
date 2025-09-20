@@ -1,12 +1,16 @@
 <template>
   <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item"><strong class="has-text-grey-darker">RoQui Ec</strong></a>
+      <a class="navbar-item">
+        <img src="@/assets/star.svg" alt="star" />
+        <strong class="has-text-grey-darker">RoQui Ec</strong></a
+      >
     </div>
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <router-link to="/home" class="navbar-item" active-class="is-active"
-          ><strong class="has-text-grey-dark">Inicio</strong></router-link
+        <router-link to="/home" class="navbar-item" active-class="is-active">
+          <img src="@/assets/home.svg" alt="home" />
+          <strong class="has-text-grey-dark"> Inicio</strong></router-link
         >
         <router-link to="/taxpayer" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Empresa</strong></router-link

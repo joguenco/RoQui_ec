@@ -4,8 +4,8 @@
 - Vue 3.5
 - Bulma 1
 - Node 22
-- Vite
-- pnpm
+- Vite 7
+- pnpm 10
 
 ## Initialization
 ```
@@ -32,4 +32,9 @@ pnpm lint
 
 ```
 pnpm outdated
+```
+### List installed dependencies
+
+```
+pnpm list
 ```
