@@ -5,7 +5,11 @@ import dev.joguenco.roqui.note.credit.model.CreditNote
 import dev.joguenco.roqui.note.credit.model.CreditNoteDetail
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
+@Repository
 class CreditNoteRepository : CustomCreditNoteRepository {
     @PersistenceContext lateinit var entityManager: EntityManager
 
