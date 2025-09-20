@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.invoice.repository
 
+import dev.joguenco.roqui.common.repository.CustomReportRepository
 import dev.joguenco.roqui.invoice.model.ReportInvoice
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Repository
-class ReportInvoiceRepository : CustomReportInvoiceRepository<ReportInvoice> {
+class ReportInvoiceRepository : CustomReportRepository<ReportInvoice> {
 
     @PersistenceContext lateinit var entityManager: EntityManager
 

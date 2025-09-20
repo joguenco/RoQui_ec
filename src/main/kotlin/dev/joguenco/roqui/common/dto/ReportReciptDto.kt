@@ -1,9 +1,9 @@
-package dev.joguenco.roqui.invoice.dto
+package dev.joguenco.roqui.common.dto
 
 import java.math.BigDecimal
 import java.util.Date
 
-data class ReportInvoiceDto(
+data class ReportReciptDto(
     val id: Long? = null,
     val code: String? = null,
     val number: String? = null,

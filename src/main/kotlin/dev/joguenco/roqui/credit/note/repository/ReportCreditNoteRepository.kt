@@ -1,7 +1,7 @@
 package dev.joguenco.roqui.credit.note.repository
 
+import dev.joguenco.roqui.common.repository.CustomReportRepository
 import dev.joguenco.roqui.credit.note.model.ReportCreditNote
-import dev.joguenco.roqui.invoice.repository.CustomReportInvoiceRepository
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import java.util.Date
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Repository
-class ReportCreditNoteRepository : CustomReportInvoiceRepository<ReportCreditNote> {
+class ReportCreditNoteRepository : CustomReportRepository<ReportCreditNote> {
     @PersistenceContext lateinit var entityManager: EntityManager
 
     /**
@@ -26,6 +26,34 @@ class ReportCreditNoteRepository : CustomReportInvoiceRepository<ReportCreditNot
         endDate: Date,
         status: String,
     ): MutableList<ReportCreditNote> {
-        TODO("Not yet implemented")
+        if ("Authorized" == status) {
+            return entityManager
+                .createQuery(
+                    "from ReportCreditNote " +
+                        "where date between :startDate and :endDate " +
+                        "and status = 'AUTORIZADO'"
+                )
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .resultList as MutableList<ReportCreditNote>
+        } else if ("Unauthorized" == status) {
+            return entityManager
+                .createQuery(
+                    "from ReportCreditNote " +
+                        "where date between :startDate and :endDate " +
+                        "and status != 'AUTORIZADO'"
+                )
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .resultList as MutableList<ReportCreditNote>
+        } else {
+            return entityManager
+                .createQuery(
+                    "from ReportCreditNote " + "where date between :startDate and :endDate "
+                )
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .resultList as MutableList<ReportCreditNote>
+        }
     }
 }
