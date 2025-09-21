@@ -26,8 +26,6 @@ class CreditNoteDetail {
 
     @Column(name = "quantity") val quantity: BigDecimal? = null
 
-    @Column(name = "unit") val unit: String? = null
-
     @Column(name = "unit_price") val unitPrice: BigDecimal? = null
 
     @Column(name = "tax_code") val taxCode: String? = null

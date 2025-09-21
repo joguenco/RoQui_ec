@@ -126,11 +126,27 @@ class BuildCreditNote(
         infoNotaCredito.identificacionComprador = tributaryInformation.creditNote.identification
         infoNotaCredito.razonSocialComprador = tributaryInformation.creditNote.legalName
 
+        infoNotaCredito.codDocModificado = tributaryInformation.creditNote.updatedCodeDocument
+        if (tributaryInformation.creditNote.updatedNumberDocument?.length == 15) {
+            val establishment =
+                tributaryInformation.creditNote.updatedNumberDocument!!.substring(0, 3)
+            val emissionPoint =
+                tributaryInformation.creditNote.updatedNumberDocument!!.substring(3, 6)
+            val secuential =
+                tributaryInformation.creditNote.updatedNumberDocument!!.substring(6, 15)
+            infoNotaCredito.numDocModificado = "$establishment-$emissionPoint-$secuential"
+        }
+        infoNotaCredito.fechaEmisionDocSustento =
+            SimpleDateFormat("dd/MM/yyyy")
+                .format(tributaryInformation.creditNote.updatedDateDocument!!)
+        infoNotaCredito.motivo = tributaryInformation.creditNote.reason
+
         infoNotaCredito.totalSinImpuestos =
             tributaryInformation.creditNote.totalWithoutTaxes!!.setScale(
                 2,
                 BigDecimal.ROUND_HALF_UP,
             )
+        infoNotaCredito.valorModificacion = tributaryInformation.creditNote.total!!.setScale(2)
         infoNotaCredito.moneda = "DOLAR"
 
         infoNotaCredito.totalConImpuestos = buildTotals()
@@ -146,9 +162,8 @@ class BuildCreditNote(
             val totalImpuesto = TotalConImpuestos.TotalImpuesto()
             totalImpuesto.codigo = taxTotal.taxCode
             totalImpuesto.codigoPorcentaje = taxTotal.percentageCode
-            totalImpuesto.baseImponible = taxTotal.taxBase!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-            totalImpuesto.tarifa = taxTotal.taxIva!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-            totalImpuesto.valor = taxTotal.value!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            totalImpuesto.baseImponible = taxTotal.taxBase!!.setScale(2)
+            totalImpuesto.valor = taxTotal.value!!.setScale(2)
 
             totalConImpuestos.totalImpuesto.add(totalImpuesto)
         }

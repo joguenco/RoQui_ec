@@ -8,8 +8,9 @@ import dev.joguenco.roqui.electronic.send.SendXML
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.electronic.sign.SignerXml
+import dev.joguenco.roqui.electronic.xml.BuildCreditNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
-import dev.joguenco.roqui.electronic.xml.PdfInvoice
+import dev.joguenco.roqui.electronic.xml.PdfBuilder
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
@@ -70,6 +71,9 @@ class ElectronicDocument(
         if (type == TypeDocument.FACTURA) {
             val build = BuildInvoice(code, number, baseDirectory, invoiceService!!)
             accessKey = build.xml()
+        } else if (type == TypeDocument.NOTA_CREDITO) {
+            val build = BuildCreditNote(code, number, baseDirectory, creditNoteService!!)
+            accessKey = build.xml()
         }
 
         if (accessKey.isEmpty()) {
@@ -77,7 +81,7 @@ class ElectronicDocument(
         }
 
         val pathLogo = parameterService.getLogoPath()
-        val printPdf = PdfInvoice(accessKey, baseDirectory, pathLogo)
+        val printPdf = PdfBuilder(accessKey, baseDirectory, pathLogo)
         printPdf.pdf()
 
         val certificatePath = parameterService.getCertificatePath()
@@ -109,7 +113,7 @@ class ElectronicDocument(
         if (Estado.AUTORIZADO.descripcion.equals(response.autorizacion.estado)) {
             val pathLogo = parameterService.getLogoPath()
             val printPdf =
-                PdfInvoice(
+                PdfBuilder(
                     accessKey,
                     baseDirectory,
                     pathLogo,
