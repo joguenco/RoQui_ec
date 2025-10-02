@@ -52,7 +52,11 @@
           <td class="numero">{{ d.identification }}</td>
           <td>{{ d.legalName }}</td>
           <td>
-            <a class="button button is-text is-outlined">{{ d.email }}</a>
+            <a
+              class="button button is-text is-outlined"
+              @click="sendEmail(d.code, d.number, index)"
+              >{{ d.email }}</a
+            >
           </td>
           <td>
             <a
@@ -124,6 +128,7 @@
 <script>
 import invoiceService from '@/services/invoice-service'
 import documentService from '@/services/document-service'
+import { emailService } from '@/services/email-client-service'
 import { format } from '@formkit/tempo'
 
 export default {
@@ -186,6 +191,23 @@ export default {
         .authorize(this.user.accessToken, code, number)
         .then((response) => {
           this.localDetails[index].status = response.data.status
+          this.localDetails[index].isLoading = false
+        })
+        .catch((error) => {
+          if (error.response) {
+            alert('Error: ' + error.response.data)
+          } else {
+            console.error('Error message:', error.message)
+          }
+          this.localDetails[index].isLoading = false
+        })
+    },
+
+    sendEmail(code, number, index) {
+      this.localDetails[index].isLoading = true
+      emailService
+        .send(this.user.accessToken, code, number)
+        .then(() => {
           this.localDetails[index].isLoading = false
         })
         .catch((error) => {

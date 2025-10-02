@@ -26,7 +26,13 @@
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
-      <router-link class="nav-item" to="parameter/mail">Servidor de Correo</router-link>
+      <router-link class="nav-item" to="parameter/mail/smtp">Cliente de Correo SMTP</router-link>
+    </a>
+    <a class="panel-block">
+      <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+      </span>
+      <router-link class="nav-item" to="parameter/mail/http">Cliente de Correo HTTP</router-link>
     </a>
   </article>
 </template>

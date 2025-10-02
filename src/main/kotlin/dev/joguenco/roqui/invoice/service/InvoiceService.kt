@@ -8,7 +8,6 @@ import dev.joguenco.roqui.invoice.model.InvoiceDetail
 import dev.joguenco.roqui.invoice.model.Payment
 import dev.joguenco.roqui.invoice.model.TaxDetail
 import dev.joguenco.roqui.invoice.repository.CustomInvoiceRepository
-import dev.joguenco.roqui.parameter.repository.ParameterRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
 import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
 import java.math.BigDecimal
@@ -20,7 +19,6 @@ class InvoiceService(
     private val invoiceRepository: CustomInvoiceRepository,
     private val taxPayerRepository: TaxpayerRepository,
     private val establishmentRepository: EstablishmentRepository,
-    private val parameterRepository: ParameterRepository,
     private val informationRepository: InformationRepository,
 ) {
 

@@ -6,6 +6,8 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.email.EmailSmtp
+import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
@@ -36,6 +38,8 @@ class InvoiceController {
 
     @Autowired lateinit var reportInvoiceService: ReportInvoiceService
 
+    @Autowired lateinit var informationService: InformationService
+
     @PostMapping("/invoice/authorize")
     fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {
 
@@ -60,6 +64,12 @@ class InvoiceController {
             val stateCheck = StatusDto(buildInvoice.check())
             if (stateCheck.status.isEmpty()) {
                 return ResponseEntity.ok(stateSend)
+            }
+
+            if (stateCheck.status == "AUTORIZADO") {
+                val emailSmtp =
+                    EmailSmtp(document.code, document.number, parameterService, informationService)
+                emailSmtp.send()
             }
 
             return ResponseEntity.ok(stateCheck)

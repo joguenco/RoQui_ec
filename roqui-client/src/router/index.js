@@ -50,9 +50,14 @@ const router = createRouter({
       component: () => import('@/views/parameter/LogoView.vue'),
     },
     {
-      path: '/parameter/mail',
-      name: 'mail',
-      component: () => import('@/views/parameter/EmailServerView.vue'),
+      path: '/parameter/mail/smtp',
+      name: 'mail-smtp',
+      component: () => import('@/views/parameter/EmailClientSmtpView.vue'),
+    },
+    {
+      path: '/parameter/mail/http',
+      name: 'mail-http',
+      component: () => import('@/views/parameter/EmailClientHttpView.vue'),
     },
     {
       path: '/invoice',
