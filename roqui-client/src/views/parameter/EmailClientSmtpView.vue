@@ -8,12 +8,13 @@
   <article class="message m-6">
     <div class="card">
       <header class="card-header">
-        <p class="card-header-title">Configuración del Servidor de Correo</p>
+        <p class="card-header-title">Configuración del Cliente de Correo SMTP</p>
       </header>
       <div class="card-content">
         <div class="content">
-          <p><strong>URL: </strong>{{ email.url }}</p>
-          <p><strong>Token: </strong>{{ email.token }}</p>
+          <p><strong>URL: </strong>{{ emailConfiguration.url }}</p>
+          <p><strong>Puerto: </strong>{{ emailConfiguration.port }}</p>
+          <p><strong>Cuenta de Correo: </strong>{{ emailConfiguration.account }}</p>
         </div>
       </div>
       <footer class="card-footer">
@@ -35,9 +36,13 @@
       </header>
       <section class="modal-card-body">
         <p><strong>URL: </strong></p>
-        <input class="input" v-model="email.url" />
-        <p><strong>Token: </strong></p>
-        <input class="input" v-model="email.token" />
+        <input class="input" v-model="emailConfiguration.url" />
+        <p><strong>Puerto: </strong></p>
+        <input class="input" v-model="emailConfiguration.port" />
+        <p><strong>Cuenta de Correo: </strong></p>
+        <input class="input" v-model="emailConfiguration.account" />
+        <p><strong>Contraseña: </strong></p>
+        <input class="input" type="password" v-model="emailConfiguration.password" />
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
@@ -49,7 +54,7 @@
   </div>
 </template>
 <script>
-import emailServerService from '@/services/email-server-service'
+import { emailClientSmtpService } from '@/services/email-client-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
@@ -60,7 +65,7 @@ export default {
   },
 
   data: () => ({
-    email: {},
+    emailConfiguration: {},
     user: {},
     notification: {
       message: '',
@@ -96,10 +101,10 @@ export default {
 
   methods: {
     getConfiguration(token) {
-      emailServerService
+      emailClientSmtpService
         .getConfiguration(token)
         .then((response) => {
-          this.email = response.data
+          this.emailConfiguration = response.data
         })
         .catch((error) => {
           this.notification.message = error.response.data.message
@@ -109,8 +114,14 @@ export default {
     },
 
     updateConfiguration() {
-      emailServerService
-        .update(this.user.accessToken, this.email.url, this.email.token)
+      emailClientSmtpService
+        .update(
+          this.user.accessToken,
+          this.emailConfiguration.url,
+          this.emailConfiguration.port,
+          this.emailConfiguration.account,
+          this.emailConfiguration.password,
+        )
         .then((res) => {
           if (res.status === 200) {
             this.getConfiguration(this.user.accessToken)

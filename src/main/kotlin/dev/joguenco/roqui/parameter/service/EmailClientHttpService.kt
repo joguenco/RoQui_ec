@@ -1,35 +1,35 @@
 package dev.joguenco.roqui.parameter.service
 
-import dev.joguenco.roqui.parameter.dto.EmailServerDto
+import dev.joguenco.roqui.parameter.dto.EmailServerHttpDto
 import org.springframework.stereotype.Service
 
 @Service
-class EmailServerService(private val parameterService: ParameterService) {
+class EmailClientHttpService(private val parameterService: ParameterService) {
 
-    fun getEmailServerConfiguration(): EmailServerDto {
+    fun getEmailServerConfiguration(): EmailServerHttpDto {
         val server =
             try {
-                parameterService.findValueByName("Email Server")
+                parameterService.findValueByName("Email HTTP Server")
             } catch (e: Exception) {
                 ""
             }
         val token =
             try {
-                parameterService.findValueByName("Email Server Token")
+                parameterService.findValueByName("Email HTTP Server Token")
             } catch (e: Exception) {
                 ""
             }
 
-        return EmailServerDto(server, token)
+        return EmailServerHttpDto(server, token)
     }
 
-    fun update(emailServerDto: EmailServerDto): Boolean {
+    fun update(emailServerDto: EmailServerHttpDto): Boolean {
         return try {
-            val emailServerParam = parameterService.findByName("Email Server")
+            val emailServerParam = parameterService.findByName("Email HTTP Server")
             emailServerParam.value = emailServerDto.url
             parameterService.update(emailServerParam)
 
-            val emailServerTokenParam = parameterService.findByName("Email Server Token")
+            val emailServerTokenParam = parameterService.findByName("Email HTTP Server Token")
             emailServerTokenParam.value = emailServerDto.token
             parameterService.update(emailServerTokenParam)
 
