@@ -7,7 +7,6 @@ import dev.joguenco.roqui.invoice.model.TaxDetail
 import dev.joguenco.roqui.note.credit.dto.TributaryInformation
 import dev.joguenco.roqui.note.credit.model.CreditNoteDetail
 import dev.joguenco.roqui.note.credit.repository.CustomCreditNoteRepository
-import dev.joguenco.roqui.parameter.repository.ParameterRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
 import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
 import java.math.BigDecimal
@@ -19,7 +18,6 @@ class CreditNoteService(
     private val creditNoteRepository: CustomCreditNoteRepository,
     private val taxPayerRepository: TaxpayerRepository,
     private val establishmentRepository: EstablishmentRepository,
-    private val parameterRepository: ParameterRepository,
     private val informationRepository: InformationRepository,
 ) {
     fun count(code: String, number: String): Long {
