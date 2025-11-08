@@ -84,6 +84,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             this.notification.message = response.data.message
+            this.notification.type = 'is-success'
             this.showNotification = true
           }
         })
