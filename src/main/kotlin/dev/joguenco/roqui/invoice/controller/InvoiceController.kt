@@ -1,12 +1,12 @@
 package dev.joguenco.roqui.invoice.controller
 
-import dev.joguenco.roqui.common.EmailSmtp
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.email.EmailSmtp
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService

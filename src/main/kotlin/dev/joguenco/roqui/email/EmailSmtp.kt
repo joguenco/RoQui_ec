@@ -1,8 +1,9 @@
-package dev.joguenco.roqui.common
+package dev.joguenco.roqui.email
 
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.service.ParameterService
+import java.io.File
 import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.EmailAttachment
 import org.apache.commons.mail.HtmlEmail
@@ -34,7 +35,11 @@ class EmailSmtp(
             val legalName = informationService.getLegalNameOfTaxpayer()
             initializeSmtpEmail(configuration, legalName)
 
-            TODO("Implement email sending functionality")
+            val baseDirectory = parameterService.getBaseDirectory()
+            htmlEmail.subject = "Envio de Documento Electrónico $code-$number"
+
+            htmlEmail.addTo(receiverEmail)
+            htmlEmail.send()
         }
     }
 
@@ -46,9 +51,28 @@ class EmailSmtp(
 
         htmlEmail.hostName = server
         htmlEmail.setSmtpPort(port.toInt())
-        htmlEmail.isSSLOnConnect = true
+        htmlEmail.sslSmtpPort = port
+        //        htmlEmail.isSSLOnConnect = true
 
         htmlEmail.setFrom(account, sender)
         htmlEmail.setAuthenticator(DefaultAuthenticator(account, password))
+    }
+
+    private fun attachFile(file: File): EmailAttachment {
+        val attachment = EmailAttachment()
+        attachment.path = file.absolutePath
+        attachment.name = file.name
+        attachment.disposition = EmailAttachment.ATTACHMENT
+        return attachment
+    }
+
+    private fun setXmlAttachment(file: File, description: String) {
+        xmlAttachment = attachFile(file)
+        xmlAttachment.description = description
+    }
+
+    private fun setPdfAttachment(file: File, description: String) {
+        pdfAttachment = attachFile(file)
+        pdfAttachment.description = description
     }
 }

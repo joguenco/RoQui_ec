@@ -29,3 +29,8 @@ gradle ktfmtFormat
 
 # RoQui Web Client
 [Frontend for RoQui_ec](roqui-client/README.md)
+
+# Email Server for Development
+```
+docker run --name mailhog -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+```
