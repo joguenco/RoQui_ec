@@ -64,6 +64,9 @@ dependencies {
     implementation("commons-io:commons-io:2.15.1")
     // Utils
     implementation("joda-time:joda-time:2.14.0")
+    // Email
+    implementation("org.apache.commons:commons-email:1.6.0")
+    implementation("com.sun.mail:javax.mail:1.6.2")
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }

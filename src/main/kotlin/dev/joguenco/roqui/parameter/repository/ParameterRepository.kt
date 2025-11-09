@@ -37,4 +37,9 @@ class ParameterRepository : CustomParameterRepository {
         p.value = parameter.value
         entityManager.flush()
     }
+
+    override fun findEmailSmtpConfiguration(): MutableList<Parameter> {
+        return entityManager.createQuery("from Parameter " + "where type = 'Email SMTP'").resultList
+            as MutableList<Parameter>
+    }
 }

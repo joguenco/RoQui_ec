@@ -9,4 +9,6 @@ interface CustomParameterRepository {
     fun findByName(name: String): Parameter
 
     fun update(parameter: Parameter)
+
+    fun findEmailSmtpConfiguration(): MutableList<Parameter>
 }

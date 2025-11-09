@@ -11,7 +11,7 @@ class InformationService(
     private val creditNoteRepository: CustomInvoiceRepository,
 ) {
 
-    fun getEmailByIdentification(identification: String): String {
+    fun getEmailByIdentification(identification: String): String? {
         return informationRepository.findEmailByIdentification(identification)
     }
 
@@ -20,4 +20,8 @@ class InformationService(
 
     fun getCreditNote(code: String, number: String) =
         creditNoteRepository.findByCodeAndNumber(code, number)
+
+    fun getLegalNameOfTaxpayer(): String {
+        return informationRepository.findLegalNameOfTaxpayer()
+    }
 }

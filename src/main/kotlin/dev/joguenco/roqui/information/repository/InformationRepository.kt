@@ -22,7 +22,7 @@ class InformationRepository : CustomIInformationRepository {
         return information
     }
 
-    override fun findEmailByIdentification(identification: String): String {
+    override fun findEmailByIdentification(identification: String): String? {
         val email =
             entityManager
                 .createQuery(
@@ -31,8 +31,12 @@ class InformationRepository : CustomIInformationRepository {
                         "and name = 'Email'"
                 )
                 .setParameter("identification", identification)
-                .singleResult as String
+                .resultList
 
-        return email
+        return if (email.isNotEmpty()) email[0] as String else null
+    }
+
+    override fun findLegalNameOfTaxpayer(): String {
+        return entityManager.createQuery("select legalName from Taxpayer").singleResult as String
     }
 }

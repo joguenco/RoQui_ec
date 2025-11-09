@@ -56,4 +56,8 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
     fun update(parameter: Parameter) {
         parameterRepository.update(parameter)
     }
+
+    fun getEmailSmtpConfiguration(): MutableList<Parameter> {
+        return parameterRepository.findEmailSmtpConfiguration()
+    }
 }

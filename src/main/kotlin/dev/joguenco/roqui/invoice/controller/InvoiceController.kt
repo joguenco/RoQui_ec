@@ -1,6 +1,6 @@
 package dev.joguenco.roqui.invoice.controller
 
-import dev.joguenco.roqui.common.Email
+import dev.joguenco.roqui.common.EmailSmtp
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
@@ -66,8 +66,11 @@ class InvoiceController {
                 return ResponseEntity.ok(stateSend)
             }
 
-            val email = Email(document.code, document.number, parameterService, informationService)
-            email.send()
+            if (stateCheck.status == "AUTORIZADO") {
+                val emailSmtp =
+                    EmailSmtp(document.code, document.number, parameterService, informationService)
+                emailSmtp.send()
+            }
 
             return ResponseEntity.ok(stateCheck)
         } catch (e: Exception) {
