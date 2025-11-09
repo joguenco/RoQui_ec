@@ -21,4 +21,18 @@ class InformationRepository : CustomIInformationRepository {
 
         return information
     }
+
+    override fun findEmailByIdentification(identification: String): String {
+        val email =
+            entityManager
+                .createQuery(
+                    "select value from Information " +
+                        "where identification = :identification " +
+                        "and name = 'Email'"
+                )
+                .setParameter("identification", identification)
+                .singleResult as String
+
+        return email
+    }
 }
