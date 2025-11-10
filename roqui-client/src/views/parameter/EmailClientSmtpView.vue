@@ -15,6 +15,14 @@
           <p><strong>URL: </strong>{{ emailConfiguration.url }}</p>
           <p><strong>Puerto: </strong>{{ emailConfiguration.port }}</p>
           <p><strong>Cuenta de Correo: </strong>{{ emailConfiguration.account }}</p>
+          <p>
+            <strong>Cifrado: </strong
+            >{{
+              emailConfiguration.encryption === 'None'
+                ? 'Ninguno'
+                : emailConfiguration.encryption || '-'
+            }}
+          </p>
         </div>
       </div>
       <footer class="card-footer">
@@ -35,14 +43,37 @@
         <p><strong>Servidor de Correo</strong></p>
       </header>
       <section class="modal-card-body">
-        <p><strong>URL: </strong></p>
+        <p class="pt-3"><strong>URL: </strong></p>
         <input class="input" v-model="emailConfiguration.url" />
-        <p><strong>Puerto: </strong></p>
+        <p class="pt-3"><strong>Puerto: </strong></p>
         <input class="input" v-model="emailConfiguration.port" />
-        <p><strong>Cuenta de Correo: </strong></p>
+        <p class="pt-3"><strong>Cuenta de Correo: </strong></p>
         <input class="input" v-model="emailConfiguration.account" />
-        <p><strong>Contraseña: </strong></p>
+        <p class="pt-3"><strong>Contraseña: </strong></p>
         <input class="input" type="password" v-model="emailConfiguration.password" />
+        <p class="pt-3"><strong>Cifrado: </strong></p>
+        <div class="field is-narrow">
+          <div class="control">
+            <label class="radio mr-4">
+              <input
+                type="radio"
+                value="None"
+                name="member"
+                v-model="emailConfiguration.encryption"
+              />
+              Ninguno
+            </label>
+            <label class="radio mr-4">
+              <input
+                type="radio"
+                value="SSL/TLS"
+                name="member"
+                v-model="emailConfiguration.encryption"
+              />
+              SSL/TLS
+            </label>
+          </div>
+        </div>
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
@@ -121,6 +152,7 @@ export default {
           this.emailConfiguration.port,
           this.emailConfiguration.account,
           this.emailConfiguration.password,
+          this.emailConfiguration.encryption,
         )
         .then((res) => {
           if (res.status === 200) {

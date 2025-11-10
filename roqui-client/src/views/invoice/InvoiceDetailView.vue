@@ -128,7 +128,7 @@
 <script>
 import invoiceService from '@/services/invoice-service'
 import documentService from '@/services/document-service'
-import emailService from '@/services/email-service'
+import { emailService } from '@/services/email-client-service'
 import { format } from '@formkit/tempo'
 
 export default {
@@ -207,7 +207,7 @@ export default {
       this.localDetails[index].isLoading = true
       emailService
         .send(this.user.accessToken, code, number)
-        .then((response) => {
+        .then(() => {
           alert('Correo enviado exitosamente.')
           this.localDetails[index].isLoading = false
         })

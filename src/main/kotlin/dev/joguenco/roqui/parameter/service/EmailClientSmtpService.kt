@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.parameter.service
 
+import dev.joguenco.roqui.parameter.dto.EmailEncryption
 import dev.joguenco.roqui.parameter.dto.EmailServerSmtpDto
 import org.springframework.stereotype.Service
 
@@ -7,32 +8,26 @@ import org.springframework.stereotype.Service
 class EmailClientSmtpService(private val parameterService: ParameterService) {
 
     fun getEmailServerConfiguration(): EmailServerSmtpDto {
-        val server =
-            try {
-                parameterService.findValueByName("Email SMTP Server")
-            } catch (e: Exception) {
-                ""
-            }
-        val port =
-            try {
-                Integer.parseInt(parameterService.findValueByName("Port Email SMTP Server"))
-            } catch (e: Exception) {
-                0
-            }
-        val account =
-            try {
-                parameterService.findValueByName("Email Account")
-            } catch (e: Exception) {
-                ""
-            }
-        val password =
-            try {
-                parameterService.findValueByName("Email Password Account")
-            } catch (e: Exception) {
-                ""
-            }
 
-        return EmailServerSmtpDto(server, port, account, password)
+        val configuration = parameterService.getEmailSmtpConfiguration()
+
+        val server = configuration.first { it.name == "Email SMTP Server" }.value!!
+        val port = configuration.first { it.name == "Port Email SMTP Server" }.value!!
+        val account = configuration.first { it.name == "Email Account" }.value!!
+        val password = configuration.first { it.name == "Email Password Account" }.value!!
+        val encryption = configuration.first { it.name == "Email Encryption" }.value!!
+
+        return EmailServerSmtpDto(
+            server,
+            port.toInt(),
+            account,
+            password,
+            when (encryption) {
+                "None" -> EmailEncryption.NONE
+                "SSL/TLS" -> EmailEncryption.SSL_TLS
+                else -> EmailEncryption.NONE
+            },
+        )
     }
 
     fun update(emailServerSmtpDto: EmailServerSmtpDto): Boolean {
@@ -52,6 +47,14 @@ class EmailClientSmtpService(private val parameterService: ParameterService) {
             val password = parameterService.findByName("Email Password Account")
             password.value = emailServerSmtpDto.password
             parameterService.update(password)
+
+            val encryption = parameterService.findByName("Email Encryption")
+            encryption.value =
+                when (emailServerSmtpDto.encryption) {
+                    EmailEncryption.NONE -> "None"
+                    EmailEncryption.SSL_TLS -> "SSL/TLS"
+                }
+            parameterService.update(encryption)
 
             true
         } catch (e: Exception) {
