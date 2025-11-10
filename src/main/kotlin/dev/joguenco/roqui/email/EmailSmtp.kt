@@ -4,6 +4,7 @@ import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.service.ParameterService
 import java.io.File
+import java.nio.charset.StandardCharsets
 import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.EmailAttachment
 import org.apache.commons.mail.HtmlEmail
@@ -38,6 +39,10 @@ class EmailSmtp(
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = "Envio de Documento Electrónico $code-$number"
 
+            val cid = htmlEmail.embed(File(parameterService.getLogoPath()))
+            val message = getHtmlMessage(parameterService.getResourcePath("mail.html"))
+            htmlEmail.setHtmlMsg(message.replace("cid_replace", cid))
+
             htmlEmail.addTo(receiverEmail)
             htmlEmail.send()
         }
@@ -56,6 +61,11 @@ class EmailSmtp(
 
         htmlEmail.setFrom(account, sender)
         htmlEmail.setAuthenticator(DefaultAuthenticator(account, password))
+    }
+
+    private fun getHtmlMessage(templatePath: String): String {
+        val encoded = File(templatePath).readBytes()
+        return String(encoded, StandardCharsets.UTF_8)
     }
 
     private fun attachFile(file: File): EmailAttachment {
