@@ -3,6 +3,8 @@ package dev.joguenco.roqui.email
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.util.DateUtil
+import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
 import java.nio.charset.StandardCharsets
 import org.apache.commons.mail.DefaultAuthenticator
@@ -17,11 +19,13 @@ class EmailSmtp(
 ) {
 
     private val htmlEmail = HtmlEmail()
-    private var pdfAttachment = EmailAttachment()
-    private var xmlAttachment = EmailAttachment()
 
-    fun send() {
-        val (subject, identification) = getSubjectAndIdentification()
+    fun send(): Boolean {
+        if (!informationService.isAuthorized(code, number)) {
+            return false
+        }
+
+        val (subject, identification, accessKey) = getSubjectIdentificationAndAccessKey()
         val receiverEmail = informationService.getEmailByIdentification(identification)
 
         if (!receiverEmail.isNullOrEmpty()) {
@@ -32,13 +36,21 @@ class EmailSmtp(
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = subject
 
-            val cid = htmlEmail.embed(File(parameterService.getLogoPath()))
             val message = getHtmlMessage(parameterService.getResourcePath("mail.html"))
+            val cid = htmlEmail.embed(File(parameterService.getLogoPath()))
             htmlEmail.setHtmlMsg(message.replace("cid_replace", cid))
 
+            val xml = attachmentResource(baseDirectory, accessKey, "XML")
+            val pdf = attachmentResource(baseDirectory, accessKey, "PDF")
+
+            htmlEmail.attach(xml)
+            htmlEmail.attach(pdf)
             htmlEmail.addTo(receiverEmail)
             htmlEmail.send()
+
+            return true
         }
+        return false
     }
 
     private fun initializeSmtpEmail(configuration: MutableList<Parameter>, sender: String) {
@@ -72,31 +84,50 @@ class EmailSmtp(
         return attachment
     }
 
-    private fun setXmlAttachment(file: File, description: String) {
-        xmlAttachment = attachFile(file)
-        xmlAttachment.description = description
+    private fun attachmentResource(
+        baseDirectory: String,
+        accessKey: String,
+        description: String,
+    ): EmailAttachment {
+        var resourceToAttach = EmailAttachment()
+
+        if (description == "XML") {
+            val authorizedPath =
+                FilesUtil.directory(
+                    baseDirectory + "${File.separatorChar}authorized",
+                    DateUtil.accessKeyToDate(accessKey),
+                )
+            resourceToAttach =
+                attachFile(File(authorizedPath + "${File.separatorChar}$accessKey.xml"))
+        } else {
+            val authorizedPath =
+                FilesUtil.directory(
+                    baseDirectory + "${File.separatorChar}pdf",
+                    DateUtil.accessKeyToDate(accessKey),
+                )
+            resourceToAttach =
+                attachFile(File(authorizedPath + "${File.separatorChar}$accessKey.pdf"))
+        }
+
+        resourceToAttach.description = description
+        return resourceToAttach
     }
 
-    private fun setPdfAttachment(file: File, description: String) {
-        pdfAttachment = attachFile(file)
-        pdfAttachment.description = description
-    }
-
-    private fun getSubjectAndIdentification(): Pair<String, String> {
+    private fun getSubjectIdentificationAndAccessKey(): Triple<String, String, String> {
         when (code) {
             "FV" -> {
-                val document =
-                    informationService.getInvoice(code, number).establishment +
-                        "-" +
-                        informationService.getInvoice(code, number).emissionPoint +
-                        "-" +
-                        informationService.getInvoice(code, number).sequence
-                return Pair(
-                    "Factura Electrónica $document",
+                val invoice = informationService.getInvoice(code, number)
+                val serieNumber =
+                    invoice.establishment + "-" + invoice.emissionPoint + "-" + invoice.sequence
+                val accessKey = invoice.accessKey!!
+
+                return Triple(
+                    "Factura Electrónica $serieNumber",
                     informationService.getInvoice(code, number).identification!!,
+                    accessKey,
                 )
             }
         }
-        return Pair("", "")
+        return Triple("", "", "")
     }
 }
