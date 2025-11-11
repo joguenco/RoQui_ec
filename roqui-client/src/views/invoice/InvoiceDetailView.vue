@@ -208,7 +208,6 @@ export default {
       emailService
         .send(this.user.accessToken, code, number)
         .then(() => {
-          alert('Correo enviado exitosamente.')
           this.localDetails[index].isLoading = false
         })
         .catch((error) => {

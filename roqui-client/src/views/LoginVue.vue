@@ -82,7 +82,7 @@ export default {
   methods: {
     async login() {
       if (this.username === '' || this.password === '') {
-        this.notification.type = 'is-link'
+        this.notification.type = 'is-danger'
         this.notification.message = 'Ingrese usuario y contraseña'
         this.showNotification = true
         return
@@ -96,7 +96,7 @@ export default {
         }
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          this.notification.type = 'is-link'
+          this.notification.type = 'is-danger'
           this.notification.message = 'Usuario o contraseña incorrectos'
         } else {
           this.notification.type = 'is-danger'

@@ -21,14 +21,7 @@ class EmailSmtp(
     private var xmlAttachment = EmailAttachment()
 
     fun send() {
-        val identification: String =
-            when (code) {
-                "FV" -> {
-                    informationService.getInvoice(code, number).identification
-                }
-                else -> ""
-            }.toString()
-
+        val (subject, identification) = getSubjectAndIdentification()
         val receiverEmail = informationService.getEmailByIdentification(identification)
 
         if (!receiverEmail.isNullOrEmpty()) {
@@ -37,7 +30,7 @@ class EmailSmtp(
             initializeSmtpEmail(configuration, legalName)
 
             val baseDirectory = parameterService.getBaseDirectory()
-            htmlEmail.subject = "Envio de Documento Electrónico $code-$number"
+            htmlEmail.subject = subject
 
             val cid = htmlEmail.embed(File(parameterService.getLogoPath()))
             val message = getHtmlMessage(parameterService.getResourcePath("mail.html"))
@@ -53,11 +46,14 @@ class EmailSmtp(
         val port = configuration.first { it.name == "Port Email SMTP Server" }.value!!
         val account = configuration.first { it.name == "Email Account" }.value!!
         val password = configuration.first { it.name == "Email Password Account" }.value!!
+        val encryption = configuration.first { it.name == "Email Encryption" }.value!!
 
         htmlEmail.hostName = server
         htmlEmail.setSmtpPort(port.toInt())
-        htmlEmail.sslSmtpPort = port
-        //        htmlEmail.isSSLOnConnect = true
+        if (encryption == "SSL/TLS") {
+            htmlEmail.sslSmtpPort = port
+            htmlEmail.isSSLOnConnect = true
+        }
 
         htmlEmail.setFrom(account, sender)
         htmlEmail.setAuthenticator(DefaultAuthenticator(account, password))
@@ -84,5 +80,23 @@ class EmailSmtp(
     private fun setPdfAttachment(file: File, description: String) {
         pdfAttachment = attachFile(file)
         pdfAttachment.description = description
+    }
+
+    private fun getSubjectAndIdentification(): Pair<String, String> {
+        when (code) {
+            "FV" -> {
+                val document =
+                    informationService.getInvoice(code, number).establishment +
+                        "-" +
+                        informationService.getInvoice(code, number).emissionPoint +
+                        "-" +
+                        informationService.getInvoice(code, number).sequence
+                return Pair(
+                    "Factura Electrónica $document",
+                    informationService.getInvoice(code, number).identification!!,
+                )
+            }
+        }
+        return Pair("", "")
     }
 }
