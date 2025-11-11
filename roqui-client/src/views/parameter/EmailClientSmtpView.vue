@@ -28,15 +28,17 @@
       <footer class="card-footer">
         <div class="buttons p-3 m-3">
           <div class="buttons">
-            <button class="button is-success" @click="showModal">Editar</button>
-            <button class="button is-warning" @click="closeModal">Probar</button>
+            <button class="button is-success" @click="showModalEdit">Editar</button>
+            <button class="button is-link" @click="showModalResource">Recursos</button>
+            <button class="button is-warning" @click="closeModalEdit">Probar</button>
           </div>
         </div>
       </footer>
     </div>
   </article>
 
-  <div class="modal" v-bind:class="{ 'is-active': isActive }">
+  <!-- Edit Modal -->
+  <div class="modal" v-bind:class="{ 'is-active': isActiveEdit }">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
@@ -78,7 +80,55 @@
       <footer class="modal-card-foot">
         <div class="buttons">
           <button class="button is-success" @click="updateConfiguration">Guardar</button>
-          <button class="button is-warning" @click="closeModal">Cancelar</button>
+          <button class="button is-warning" @click="closeModalEdit">Cancelar</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Resorces Modal -->
+  <div class="modal" v-bind:class="{ 'is-active': isActiveResorce }">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p><strong>Recursos</strong></p>
+      </header>
+      <section class="modal-card-body">
+        <p class="pt-3"><strong>Plantilla: </strong></p>
+        <div class="file">
+          <label class="file-label">
+            <input
+              class="file-input"
+              type="file"
+              name="template"
+              accept=".html"
+              @change="onFileTemplateSelected"
+            />
+            <span class="file-cta">
+              <span class="file-label">Cargar Plantilla</span>
+            </span>
+          </label>
+        </div>
+        <p class="pt-3"><strong>Logotipo PNG: </strong></p>
+        <div class="file">
+          <label class="file-label">
+            <input
+              class="file-input"
+              type="file"
+              name="logo"
+              accept=".png"
+              @change="onFileLogoSelected"
+            />
+            <span class="file-cta">
+              <span class="file-label">Cargar Logotipo</span>
+            </span>
+          </label>
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons">
+          <button class="button is-success" @click="">Guardar</button>
+          <button class="button is-warning" @click="closeModalResource">Cancelar</button>
         </div>
       </footer>
     </div>
@@ -102,8 +152,11 @@ export default {
       message: '',
       type: 'is-link',
     },
+    selectedFileTemplate: null,
+    selectedFileLogo: null,
     showNotification: false,
-    isActive: false,
+    isActiveEdit: false,
+    isActiveResorce: false,
   }),
 
   mounted() {
@@ -158,21 +211,39 @@ export default {
           if (res.status === 200) {
             this.getConfiguration(this.user.accessToken)
           }
-          this.isActive = false
+          this.isActiveEdit = false
         })
     },
 
-    showModal() {
-      this.isActive = true
+    onFileTemplateSelected(event) {
+      this.selectedFileTemplate = event.target.files[0]
     },
 
-    closeModal() {
-      this.isActive = false
+    onFileLogoSelected(event) {
+      this.selectedFileLogo = event.target.files[0]
+    },
+
+    showModalEdit() {
+      this.isActiveEdit = true
+    },
+
+    showModalResource() {
+      this.isActiveResorce = true
+    },
+
+    closeModalEdit() {
+      this.isActiveEdit = false
+    },
+
+    closeModalResource() {
+      this.isActiveResorce = false
     },
 
     handleEscapeKey(event) {
-      if (event.key === 'Escape' && this.isActive) {
-        this.closeModal()
+      if (event.key === 'Escape' && this.isActiveEdit) {
+        this.closeModalEdit()
+      } else if (event.key === 'Escape' && this.isActiveResorce) {
+        this.closeModalResource()
       }
     },
   },
