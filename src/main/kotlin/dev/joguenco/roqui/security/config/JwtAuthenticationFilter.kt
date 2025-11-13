@@ -2,6 +2,7 @@ package dev.joguenco.roqui.security.config
 
 import dev.joguenco.roqui.security.service.CustomUserDetailsService
 import dev.joguenco.roqui.security.service.TokenService
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -23,22 +24,27 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        val authHeader: String? = request.getHeader("Authorization")
+        try {
 
-        if (authHeader.doesNotContainBearerToken()) {
-            filterChain.doFilter(request, response)
-            return
-        }
+            val authHeader: String? = request.getHeader("Authorization")
 
-        val jwtToken = authHeader!!.extractTokenValue()
-        val email = tokenService.extractEmail(jwtToken)
+            if (authHeader.doesNotContainBearerToken()) {
+                filterChain.doFilter(request, response)
+                return
+            }
 
-        if (email != null && SecurityContextHolder.getContext().authentication == null) {
-            val foundUser = userDetailsService.loadUserByUsername(email)
+            val jwtToken = authHeader!!.extractTokenValue()
+            val email = tokenService.extractEmail(jwtToken)
 
-            if (tokenService.isValid(jwtToken, foundUser)) updateContext(foundUser, request)
+            if (email != null && SecurityContextHolder.getContext().authentication == null) {
+                val foundUser = userDetailsService.loadUserByUsername(email)
 
-            filterChain.doFilter(request, response)
+                if (tokenService.isValid(jwtToken, foundUser)) updateContext(foundUser, request)
+
+                filterChain.doFilter(request, response)
+            }
+        } catch (e: ExpiredJwtException) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired")
         }
     }
 
