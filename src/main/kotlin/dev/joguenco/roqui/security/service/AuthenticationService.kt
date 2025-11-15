@@ -1,7 +1,7 @@
 package dev.joguenco.roqui.security.service
 
 import dev.joguenco.roqui.security.config.JwtProperties
-import dev.joguenco.roqui.security.dto.LoginDto
+import dev.joguenco.roqui.security.dto.AuthTokensDto
 import dev.joguenco.roqui.security.dto.UserDto
 import dev.joguenco.roqui.security.repository.RefreshTokenRepository
 import java.util.*
@@ -19,7 +19,7 @@ class AuthenticationService(
     private val refreshTokenRepository: RefreshTokenRepository,
 ) {
 
-    fun authentication(authenticationRequest: UserDto): LoginDto {
+    fun authentication(authenticationRequest: UserDto): AuthTokensDto {
         authManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 authenticationRequest.username,
@@ -33,13 +33,13 @@ class AuthenticationService(
 
         refreshTokenRepository.save(refreshToken, user)
 
-        return LoginDto(accessToken = accessToken, refreshToken = refreshToken)
+        return AuthTokensDto(accessToken = accessToken, refreshToken = refreshToken)
     }
 
     fun refreshAccessToken(refreshToken: String): String? {
-        val extractedEmail = tokenService.extractEmail(refreshToken)
+        val extractedUsername = tokenService.extractUsername(refreshToken)
 
-        return extractedEmail?.let { email ->
+        return extractedUsername?.let { email ->
             val currentUserDetails = userDetailsService.loadUserByUsername(email)
             val refreshTokenUserDetails =
                 refreshTokenRepository.findUserDetailsByToken(refreshToken)
