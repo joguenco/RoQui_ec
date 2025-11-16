@@ -14,7 +14,7 @@ const refreshClient = axios.create({
 })
 
 loginService.refreshToken = async (refreshToken) => {
-  return await refreshClient.post('/refresh', { refreshToken })
+  return await refreshClient.post('/refresh', { token: refreshToken })
 }
 
 export default loginService

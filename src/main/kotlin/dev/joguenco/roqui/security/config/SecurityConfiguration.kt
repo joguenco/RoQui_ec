@@ -23,7 +23,7 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
             .authorizeHttpRequests {
                 it.requestMatchers(
                         "/roqui/v1/login",
-                        "roqui/v1/refresh",
+                        "/roqui/v1/refresh",
                         "/error",
                         "/ping",
                         "/files/pdf/*",
