@@ -45,7 +45,7 @@
 <script>
 import AppFooter from '@/components/layout/AppFooter.vue'
 import AppNotification from '@/components/shared/AppNotification.vue'
-import loginService from '@/services/login-service'
+import { useAuthStore } from '@/stores/auth'
 
 export default {
   components: {
@@ -89,11 +89,9 @@ export default {
       }
 
       try {
-        const res = await loginService.login(this.username, this.password)
-        if (res.status === 200) {
-          localStorage.setItem('user', JSON.stringify(res.data))
-          this.$router.push('/home')
-        }
+        const authStore = useAuthStore()
+        await authStore.login(this.username, this.password)
+        this.$router.push('/home')
       } catch (error) {
         if (error.response && error.response.status === 403) {
           this.notification.type = 'is-danger'
