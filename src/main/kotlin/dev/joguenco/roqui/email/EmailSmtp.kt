@@ -18,10 +18,15 @@ class EmailSmtp(
     val informationService: InformationService,
 ) {
 
+    constructor(
+        parameterService: ParameterService,
+        informationService: InformationService,
+    ) : this("", "", parameterService, informationService)
+
     private val htmlEmail = HtmlEmail()
 
     fun send(): Boolean {
-        if (!informationService.isAuthorized(code, number)) {
+        if (!informationService.isAuthorized(code, number) || code == "" || number == "") {
             return false
         }
 
@@ -36,8 +41,8 @@ class EmailSmtp(
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = subject
 
-            val message = getHtmlMessage(parameterService.getResourcePath("mail.html"))
-            val cid = htmlEmail.embed(File(parameterService.getLogoPath()))
+            val message = getHtmlMessage(parameterService.getEmailTemplate())
+            val cid = htmlEmail.embed(File(parameterService.getLogoPngPath()))
             htmlEmail.setHtmlMsg(message.replace("cid_replace", cid))
 
             val xml = attachmentResource(baseDirectory, accessKey, "XML")
@@ -129,5 +134,29 @@ class EmailSmtp(
             }
         }
         return Triple("", "", "")
+    }
+
+    fun sendTest(emailAddress: String): Pair<Boolean, String> {
+        val configuration = parameterService.getEmailSmtpConfiguration()
+        val legalName = informationService.getLegalNameOfTaxpayer()
+        initializeSmtpEmail(configuration, legalName)
+
+        htmlEmail.subject = "RoQui Ecuador"
+
+        var message = getHtmlMessage(parameterService.getEmailTemplate())
+        message = message.replace("Nombre_Empresa", legalName)
+        message = message.replace("Tipo_Comprobante", "Mi Comprobante de Prueba")
+        message = message.replace("Numero_Comprobante", "000-000-000000001")
+        val cid = htmlEmail.embed(File(parameterService.getLogoPngPath()))
+        htmlEmail.setHtmlMsg(message.replace("cid_replace", cid))
+
+        htmlEmail.addTo(emailAddress)
+        try {
+            htmlEmail.send()
+        } catch (e: Exception) {
+            return Pair(false, e.message.toString())
+        }
+
+        return Pair(true, "Test email sent successfully")
     }
 }

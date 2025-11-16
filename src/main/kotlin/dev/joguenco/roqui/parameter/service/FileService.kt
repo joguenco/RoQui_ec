@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class LogoFileService(private val parameterService: ParameterService) {
+class FileService(private val parameterService: ParameterService) {
 
     fun uploadFile(file: MultipartFile): String {
         throwIfFileEmpty(file)
@@ -25,7 +25,16 @@ class LogoFileService(private val parameterService: ParameterService) {
                 StandardCopyOption.REPLACE_EXISTING,
             )
 
-            updateFile(file.originalFilename!!)
+            val extension = file.originalFilename!!.substringAfterLast('.', "")
+            if (extension.lowercase() == "jpeg") {
+                updateFile(file.originalFilename!!, "Logo JPEG")
+            } else if (extension.lowercase() == "png") {
+                updateFile(file.originalFilename!!, "Logo PNG")
+            } else if (extension.lowercase() == "html") {
+                updateFile(file.originalFilename!!, "Template Email")
+            } else {
+                throw BadRequestException("Unsupported file type")
+            }
 
             return "Load file complete"
         } catch (ex: Exception) {
@@ -34,15 +43,15 @@ class LogoFileService(private val parameterService: ParameterService) {
         }
     }
 
-    fun updateFile(file: String) {
-        val parameter = parameterService.findByName("Logo")
+    fun updateFile(file: String, parameterName: String) {
+        val parameter = parameterService.findByName(parameterName)
 
         parameter.value = file
         parameterService.update(parameter)
     }
 
     fun renameCurrentFile(): String {
-        val logo = parameterService.getLogoPath()
+        val logo = parameterService.getLogoJpegPath()
 
         val fileAndPath = File(logo)
         if (fileAndPath.exists()) {
@@ -55,5 +64,11 @@ class LogoFileService(private val parameterService: ParameterService) {
 
     private fun throwIfFileEmpty(file: MultipartFile) {
         if (file.isEmpty) throw BadRequestException("Empty file")
+    }
+
+    fun existResource(name: String): Boolean {
+        val directory = parameterService.getResourceDirectory()
+        val fileAndPath = File(directory + File.separator + name)
+        return fileAndPath.exists()
     }
 }

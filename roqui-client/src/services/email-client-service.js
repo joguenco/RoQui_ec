@@ -42,4 +42,8 @@ emailService.send = async (token, code, number) => {
   return await client.post(`/email/send`, { code, number }, headerAuthorization(token))
 }
 
+emailService.sendTest = async (token, address) => {
+  return await client.post(`/email/send/test`, { address }, headerAuthorization(token))
+}
+
 export { emailClientHttpService, emailClientSmtpService, emailService }

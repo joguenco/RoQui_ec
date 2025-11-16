@@ -16,6 +16,10 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
         return parameterRepository.findValueByName("Base Directory")
     }
 
+    fun getResourceDirectory(): String {
+        return getBaseDirectory() + File.separatorChar + "resource"
+    }
+
     fun getCertificatePath(): String {
         val certificatePath =
             getBaseDirectory() +
@@ -37,20 +41,16 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
         }
     }
 
-    fun getLogoPath(): String {
-        return getBaseDirectory() +
-            File.separatorChar +
-            "image" +
-            File.separatorChar +
-            findValueByName("Logo")
+    fun getLogoJpegPath(): String {
+        return getResourceDirectory() + File.separatorChar + findValueByName("Logo JPEG")
     }
 
-    fun getResourcePath(resourceName: String): String {
-        return getBaseDirectory() +
-            File.separatorChar +
-            "resource" +
-            File.separatorChar +
-            resourceName
+    fun getLogoPngPath(): String {
+        return getResourceDirectory() + File.separatorChar + findValueByName("Logo PNG")
+    }
+
+    fun getEmailTemplate(): String {
+        return getResourceDirectory() + File.separatorChar + findValueByName("Template Email")
     }
 
     fun findByName(name: String): Parameter {

@@ -10,8 +10,8 @@
   "entry": {
     "name": "RoQui_ec",
     "icon": {
-      "color": "green",
-      "name": "star"
+      "name": "star",
+      "color": "green"
     },
     "auth": {
       "type": "none"
@@ -278,7 +278,7 @@
       },
       {
         "name": "Certificate / Information",
-        "url": "{{_.base_url}}/roqui/v1/certificate",
+        "url": "{{base_url}}/roqui/v1/certificate",
         "method": "GET",
         "headers": [
           {
@@ -293,7 +293,53 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ2NDgzMDg3LCJleHAiOjE3NDY0ODY2ODd9._7kb_HtmxLxP4Yh_IAFHM0jOabV90u4xKQmHHATf9VlRY8wtoeq1JLQKN6qtFa1Y"
+            "password": "{{token}}"
+          },
+          "target": "headers"
+        },
+        "body": {
+          "type": "none",
+          "file": {
+            "name": ""
+          },
+          "text": {
+            "value": "",
+            "format": "application/json"
+          },
+          "form": {
+            "isMultipart": false,
+            "fields": []
+          },
+          "graphql": {
+            "query": "",
+            "variables": ""
+          }
+        }
+      },
+      {
+        "name": "Resource / Name",
+        "url": "{{base_url}}/roqui/v1/resource/name",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "User-Agent",
+            "value": "insomnium/0.2.3-a",
+            "enabled": true
+          }
+        ],
+        "queryParams": [
+          {
+            "name": "name",
+            "value": "Logo PNG",
+            "enabled": true
+          }
+        ],
+        "pathParams": [],
+        "auth": {
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
           },
           "target": "headers"
         },

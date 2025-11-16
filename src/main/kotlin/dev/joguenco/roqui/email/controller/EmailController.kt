@@ -2,6 +2,7 @@ package dev.joguenco.roqui.email.controller
 
 import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.email.EmailSmtp
+import dev.joguenco.roqui.email.dto.EmailDto
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,5 +27,16 @@ class EmailController {
             EmailSmtp(document.code, document.number, parameterService, informationService)
         emailSmtp.send()
         return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/email/send/test")
+    fun postSendEmailTest(@RequestBody email: EmailDto): ResponseEntity<Any> {
+        val emailSmtp = EmailSmtp(parameterService, informationService)
+        val (status, message) = emailSmtp.sendTest(email.address)
+        print(message)
+        if (status) {
+            return ResponseEntity.ok().body(message)
+        }
+        return ResponseEntity.internalServerError().body(message)
     }
 }

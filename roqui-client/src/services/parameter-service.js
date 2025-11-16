@@ -17,16 +17,28 @@ parameterService.setBaseDirectory = async (token, baseDirectory) => {
   )
 }
 
-parameterService.getLogo = async (token) => {
+parameterService.getLogoJpeg = async (token) => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
     responseType: 'blob',
   }
-  return await client.get('/parameter/logo', config)
+  return await client.get('/resource/logo/jpeg', config)
 }
 
-parameterService.uploadLogo = async (token, formData) => {
-  return await client.post('/parameter/logo/load', formData, headerAuthorization(token))
+parameterService.uploadLogoJpeg = async (token, formData) => {
+  return await client.post('/resource/logo/jpeg/load', formData, headerAuthorization(token))
+}
+
+parameterService.uploadLogoPng = async (token, formData) => {
+  return await client.post('/resource/logo/png/load', formData, headerAuthorization(token))
+}
+
+parameterService.uploadEmailTemplateHtml = async (token, formData) => {
+  return await client.post('/resource/template/html/load', formData, headerAuthorization(token))
+}
+
+parameterService.getResource = async (token, name) => {
+  return await client.get(`/resource/name?name=${name}`, headerAuthorization(token))
 }
 
 export default parameterService

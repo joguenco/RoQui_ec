@@ -54,7 +54,7 @@ class ParameterController {
         parameterService.update(parameter)
 
         createDirectory(baseDirectory + File.separatorChar + "certificate")
-        createDirectory(baseDirectory + File.separatorChar + "image")
+        createDirectory(baseDirectory + File.separatorChar + "resource")
 
         return ResponseEntity(Message("Successfully set base directory"), HttpStatus.OK)
     }

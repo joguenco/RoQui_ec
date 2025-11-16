@@ -32,28 +32,24 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(username, password) {
-    try {
-      const response = await loginService.login(username, password)
-      const data = response.data
+    const response = await loginService.login(username, password)
+    const data = response.data
 
-      // Store tokens
-      if (data.accessToken) {
-        setTokens({
-          accessToken: data.accessToken,
-          refreshToken: data.refreshToken || refreshToken.value,
-        })
-      }
-
-      // Store user data (excluding tokens for security)
-      const userData = { ...data }
-      delete userData.accessToken
-      delete userData.refreshToken
-      setUser(userData)
-
-      return response
-    } catch (error) {
-      throw error
+    // Store tokens
+    if (data.accessToken) {
+      setTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken || refreshToken.value,
+      })
     }
+
+    // Store user data (excluding tokens for security)
+    const userData = { ...data }
+    delete userData.accessToken
+    delete userData.refreshToken
+    setUser(userData)
+
+    return response
   }
 
   async function refreshAccessToken() {
@@ -73,10 +69,10 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       return data.accessToken
-    } catch (error) {
+    } catch {
       // If refresh fails, logout user
       logout()
-      throw error
+      // throw error
     }
   }
 
@@ -115,7 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (storedUser) {
       try {
         user.value = JSON.parse(storedUser)
-      } catch (e) {
+      } catch {
         user.value = null
       }
     }

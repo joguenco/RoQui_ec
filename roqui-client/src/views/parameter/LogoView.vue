@@ -7,7 +7,7 @@
   />
   <article class="message is-info m-6">
     <div class="message-header">
-      <p>Logotipo</p>
+      <p>Logotipo JPEG</p>
     </div>
     <div class="message-body">
       <div class="columns is-vcentered">
@@ -15,7 +15,7 @@
           <div class="container p-3">
             <li>El logotipo debe tener una resolución de 270 x 108 aproximadamente.</li>
             <li>El tamaño del archivo se recomienda que tenga 100 KB aproximadamente.</li>
-            <li>El fondo debe ser blanco y puede contener información adicional.</li>
+            <li>El fondo debe ser blanco.</li>
             <li>El logotipo debe ser en formato JPEG (.jpeg).</li>
           </div>
           <div class="container p-3">
@@ -88,7 +88,7 @@ export default {
   methods: {
     getLogo() {
       parameterService
-        .getLogo(this.user.accessToken)
+        .getLogoJpeg(this.user.accessToken)
         .then((response) => {
           const blob = new Blob([response.data], { type: 'image/jpeg' })
           this.blobUrl = URL.createObjectURL(blob)
@@ -110,7 +110,7 @@ export default {
       if (this.selectedFile) {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
-        parameterService.uploadLogo(this.user.accessToken, formData).then((res) => {
+        parameterService.uploadLogoJpeg(this.user.accessToken, formData).then((res) => {
           if (res.status === 200) {
             this.getLogo()
           }

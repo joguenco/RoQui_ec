@@ -24,13 +24,53 @@
             }}
           </p>
         </div>
+        <div name="logo" class="mb-3">
+          <div class="file is-info has-name">
+            <label class="file-label">
+              <input
+                class="file-input"
+                type="file"
+                name="resume"
+                accept=".png"
+                @change="onFileSelected"
+              />
+              <span class="file-cta">
+                <span class="file-icon">
+                  <img src="@/assets/upload.svg" />
+                </span>
+                <span class="file-label"> Logotipo PNG&nbsp;&nbsp; </span>
+              </span>
+              <span class="file-name"> {{ emailConfiguration.logo }} </span>
+            </label>
+          </div>
+        </div>
+
+        <div name="template" class="mb-3">
+          <div class="file is-info has-name">
+            <label class="file-label">
+              <input
+                class="file-input"
+                type="file"
+                name="resume"
+                accept=".html"
+                @change="onFileSelected"
+              />
+              <span class="file-cta">
+                <span class="file-icon">
+                  <img src="@/assets/upload.svg" />
+                </span>
+                <span class="file-label"> Plantilla HTML </span>
+              </span>
+              <span class="file-name"> {{ emailConfiguration.template }} </span>
+            </label>
+          </div>
+        </div>
       </div>
       <footer class="card-footer">
         <div class="buttons p-3 m-3">
           <div class="buttons">
             <button class="button is-success" @click="showModalEdit">Editar</button>
-            <button class="button is-link" @click="showModalResource">Recursos</button>
-            <button class="button is-warning" @click="closeModalEdit">Probar</button>
+            <button class="button is-warning" @click="showModalSend">Probar</button>
           </div>
         </div>
       </footer>
@@ -80,62 +120,35 @@
       <footer class="modal-card-foot">
         <div class="buttons">
           <button class="button is-success" @click="updateConfiguration">Guardar</button>
-          <button class="button is-warning" @click="closeModalEdit">Cancelar</button>
+          <button class="button is-warning" @click="closeModal">Cancelar</button>
         </div>
       </footer>
     </div>
   </div>
 
-  <!-- Resorces Modal -->
-  <div class="modal" v-bind:class="{ 'is-active': isActiveResorce }">
+  <!-- Send Modal -->
+  <div class="modal" v-bind:class="{ 'is-active': isActiveSend }">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p><strong>Recursos</strong></p>
+        <p><strong>Prueba de Envío de Correo</strong></p>
       </header>
       <section class="modal-card-body">
-        <p class="pt-3"><strong>Plantilla: </strong></p>
-        <div class="file">
-          <label class="file-label">
-            <input
-              class="file-input"
-              type="file"
-              name="template"
-              accept=".html"
-              @change="onFileTemplateSelected"
-            />
-            <span class="file-cta">
-              <span class="file-label">Cargar Plantilla</span>
-            </span>
-          </label>
-        </div>
-        <p class="pt-3"><strong>Logotipo PNG: </strong></p>
-        <div class="file">
-          <label class="file-label">
-            <input
-              class="file-input"
-              type="file"
-              name="logo"
-              accept=".png"
-              @change="onFileLogoSelected"
-            />
-            <span class="file-cta">
-              <span class="file-label">Cargar Logotipo</span>
-            </span>
-          </label>
-        </div>
+        <p class="pt-3"><strong>Dirección de Correo: </strong></p>
+        <input class="input" placeholder="hola@tu.correo" v-model="emailAddress" />
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
-          <button class="button is-success" @click="">Guardar</button>
-          <button class="button is-warning" @click="closeModalResource">Cancelar</button>
+          <button class="button is-success" @click="sendEmail">Enviar</button>
+          <button class="button is-warning" @click="closeModal">Cancelar</button>
         </div>
       </footer>
     </div>
   </div>
 </template>
 <script>
-import { emailClientSmtpService } from '@/services/email-client-service'
+import { emailService, emailClientSmtpService } from '@/services/email-client-service'
+import parameterService from '@/services/parameter-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
@@ -152,11 +165,11 @@ export default {
       message: '',
       type: 'is-link',
     },
-    selectedFileTemplate: null,
-    selectedFileLogo: null,
+    emailAddress: '',
+    selectedFile: null,
     showNotification: false,
     isActiveEdit: false,
-    isActiveResorce: false,
+    isActiveSend: false,
   }),
 
   mounted() {
@@ -184,8 +197,8 @@ export default {
   },
 
   methods: {
-    getConfiguration(token) {
-      emailClientSmtpService
+    async getConfiguration(token) {
+      await emailClientSmtpService
         .getConfiguration(token)
         .then((response) => {
           this.emailConfiguration = response.data
@@ -194,6 +207,24 @@ export default {
           this.notification.message = error.response.data.message
           this.notification.type = 'is-danger'
           this.showNotification = true
+        })
+
+      await parameterService
+        .getResource(token, 'Logo PNG')
+        .then((response) => {
+          this.emailConfiguration.logo = response.data.value
+        })
+        .catch(() => {
+          this.emailConfiguration.logo = 'No está cargado'
+        })
+
+      await parameterService
+        .getResource(token, 'Template Email')
+        .then((response) => {
+          this.emailConfiguration.template = response.data.value
+        })
+        .catch(() => {
+          this.emailConfiguration.template = 'No está cargado'
         })
     },
 
@@ -219,31 +250,93 @@ export default {
       this.selectedFileTemplate = event.target.files[0]
     },
 
-    onFileLogoSelected(event) {
-      this.selectedFileLogo = event.target.files[0]
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0]
+
+      if (this.selectedFile) {
+        const fileExtension = this.selectedFile.name.split('.').pop()
+        const formData = new FormData()
+        formData.append('file', this.selectedFile, this.selectedFile.name)
+        if (fileExtension === 'png') {
+          parameterService.uploadLogoPng(this.user.accessToken, formData).then((res) => {
+            if (res.status === 200) {
+              parameterService
+                .getResource(this.user.accessToken, 'Logo PNG')
+                .then((response) => {
+                  this.emailConfiguration.logo = response.data.value
+                })
+                .catch(() => {
+                  this.emailConfiguration.logo = 'No está cargado'
+                })
+            }
+            this.isActive = false
+          })
+        } else if (fileExtension === 'html') {
+          parameterService.uploadEmailTemplateHtml(this.user.accessToken, formData).then((res) => {
+            if (res.status === 200) {
+              parameterService
+                .getResource(this.user.accessToken, 'Template Email')
+                .then((response) => {
+                  this.emailConfiguration.template = response.data.value
+                })
+                .catch(() => {
+                  this.emailConfiguration.template = 'No está cargado'
+                })
+            }
+            this.isActive = false
+          })
+        } else {
+          this.notification.type = 'is-danger'
+          this.notification.message = 'Tipo de archivo no soportado'
+          this.showNotification = true
+        }
+      }
+    },
+
+    sendEmail() {
+      if (this.emailAddress === '') {
+        this.isActiveSend = false
+        this.notification.type = 'is-danger'
+        this.notification.message = 'Ingrese una dirección de correo válida.'
+        this.showNotification = true
+        return
+      }
+      emailService
+        .sendTest(this.user.accessToken, this.emailAddress)
+        .then((res) => {
+          if (res.status === 200) {
+            this.isActiveSend = false
+            this.notification.type = 'is-success'
+            this.notification.message = 'Correo de prueba enviado correctamente.'
+            this.showNotification = true
+          }
+        })
+        .catch(() => {
+          this.isActiveSend = false
+          this.notification.type = 'is-danger'
+          this.notification.message = 'Error al enviar el correo de prueba.'
+          this.showNotification = true
+        })
     },
 
     showModalEdit() {
       this.isActiveEdit = true
     },
 
-    showModalResource() {
-      this.isActiveResorce = true
+    showModalSend() {
+      this.isActiveSend = true
     },
 
-    closeModalEdit() {
+    closeModal() {
       this.isActiveEdit = false
-    },
-
-    closeModalResource() {
-      this.isActiveResorce = false
+      this.isActiveSend = false
     },
 
     handleEscapeKey(event) {
       if (event.key === 'Escape' && this.isActiveEdit) {
-        this.closeModalEdit()
-      } else if (event.key === 'Escape' && this.isActiveResorce) {
-        this.closeModalResource()
+        this.closeModal()
+      } else if (event.key === 'Escape' && this.isActiveSend) {
+        this.closeModal()
       }
     },
   },

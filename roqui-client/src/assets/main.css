@@ -1,1 +1,6 @@
 @import '../../node_modules/bulma/versions/bulma-no-dark-mode.scss';
+@import '../../node_modules/@fontsource/commit-mono/500.css';
+
+body {
+  font-family: 'Commit Mono', monospace;
+}
