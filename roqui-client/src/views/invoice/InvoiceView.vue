@@ -160,8 +160,8 @@ export default {
             ...detail,
             date: format(new Date(detail.date), 'YYYY-MM-DD'),
             isLoading: false,
+            isSending: false,
           }))
-
           this.isLoading = false
         })
         .catch((error) => {

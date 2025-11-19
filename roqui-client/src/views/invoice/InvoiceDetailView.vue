@@ -52,9 +52,11 @@
           <td class="numero">{{ d.identification }}</td>
           <td>{{ d.legalName }}</td>
           <td>
+            <a class="button is-loading" v-show="d.isSending">{{ d.email }}</a>
             <a
-              class="button button is-text is-outlined"
+              class="button is-text is-outlined"
               @click="sendEmail(d.code, d.number, index)"
+              v-show="!d.isSending"
               >{{ d.email }}</a
             >
           </td>
@@ -104,6 +106,7 @@
     </table>
   </div>
 
+  <!-- Modal Document Status -->
   <div class="modal" v-bind:class="{ 'is-active': isActive }">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -204,19 +207,19 @@ export default {
     },
 
     sendEmail(code, number, index) {
-      this.localDetails[index].isLoading = true
+      this.localDetails[index].isSending = true
       emailService
         .send(this.user.accessToken, code, number)
         .then(() => {
-          this.localDetails[index].isLoading = false
+          this.localDetails[index].isSending = false
         })
         .catch((error) => {
           if (error.response) {
-            alert('Error: ' + error.response.data)
+            console.error('Error: ' + error.response.data)
           } else {
             console.error('Error message:', error.message)
           }
-          this.localDetails[index].isLoading = false
+          this.localDetails[index].isSending = false
         })
     },
 

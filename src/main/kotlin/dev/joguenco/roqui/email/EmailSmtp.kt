@@ -31,7 +31,7 @@ class EmailSmtp(
             return false
         }
 
-        val (subject, identification, accessKey) = getSubjectIdentificationAndAccessKey()
+        val (serieNumber, identification, accessKey) = getSubjectIdentificationAndAccessKey()
         val receiverEmail = informationService.getEmailByIdentification(identification)
 
         if (!receiverEmail.isNullOrEmpty()) {
@@ -40,9 +40,13 @@ class EmailSmtp(
             initializeSmtpEmail(configuration, legalName)
 
             val baseDirectory = parameterService.getBaseDirectory()
-            htmlEmail.subject = subject
+            htmlEmail.subject = getDocumentTypeName() + " $serieNumber"
 
-            val message = getHtmlMessage(parameterService.getEmailTemplate())
+            var message = getHtmlMessage(parameterService.getEmailTemplate())
+            message = message.replace("Nombre_Empresa", legalName)
+            message = message.replace("Tipo_Comprobante", getDocumentTypeName())
+            message = message.replace("Numero_Comprobante", serieNumber)
+
             val cid = htmlEmail.embed(File(parameterService.getLogoPngPath()))
             htmlEmail.setHtmlMsg(message.replace("cid_replace", cid))
 
@@ -121,6 +125,9 @@ class EmailSmtp(
         return resourceToAttach
     }
 
+    /*
+    returns: serieNumber, identification, accessKey
+     */
     private fun getSubjectIdentificationAndAccessKey(): Triple<String, String, String> {
         when (code) {
             "FV" -> {
@@ -130,13 +137,20 @@ class EmailSmtp(
                 val accessKey = invoice.accessKey!!
 
                 return Triple(
-                    "Factura Electrónica $serieNumber",
+                    serieNumber,
                     informationService.getInvoice(code, number).identification!!,
                     accessKey,
                 )
             }
         }
         return Triple("", "", "")
+    }
+
+    private fun getDocumentTypeName(): String {
+        return when (code) {
+            "FV" -> "Factura"
+            else -> ""
+        }
     }
 
     fun sendTest(emailAddress: String): Pair<Boolean, String> {
