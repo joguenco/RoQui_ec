@@ -5,6 +5,7 @@ import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
+import dev.joguenco.roqui.util.OwnEncryption
 import java.io.File
 import java.nio.charset.StandardCharsets
 import org.apache.commons.mail.DefaultAuthenticator
@@ -73,7 +74,9 @@ class EmailSmtp(
         }
 
         htmlEmail.setFrom(account, sender)
-        htmlEmail.setAuthenticator(DefaultAuthenticator(account, password))
+
+        OwnEncryption.setKey(parameterService.keyProperty)
+        htmlEmail.setAuthenticator(DefaultAuthenticator(account, OwnEncryption.decrypt(password)))
     }
 
     private fun getHtmlMessage(templatePath: String): String {

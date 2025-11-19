@@ -2,6 +2,7 @@ package dev.joguenco.roqui.parameter.service
 
 import dev.joguenco.roqui.parameter.dto.EmailEncryption
 import dev.joguenco.roqui.parameter.dto.EmailServerSmtpDto
+import dev.joguenco.roqui.util.OwnEncryption
 import org.springframework.stereotype.Service
 
 @Service
@@ -44,8 +45,9 @@ class EmailClientSmtpService(private val parameterService: ParameterService) {
             account.value = emailServerSmtpDto.account
             parameterService.update(account)
 
+            OwnEncryption.setKey(parameterService.keyProperty)
             val password = parameterService.findByName("Email Password Account")
-            password.value = emailServerSmtpDto.password
+            password.value = OwnEncryption.encrypt(emailServerSmtpDto.password)
             parameterService.update(password)
 
             val encryption = parameterService.findByName("Email Encryption")
