@@ -11,10 +11,12 @@ import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.credit.service.ReportCreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.shared.dto.Message
+import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -56,7 +58,7 @@ class CreditNoteController {
 
         try {
             val stateSend = StatusDto(buildCreditNote.process(TypeDocument.NOTA_CREDITO))
-            TimeUnit.SECONDS.sleep(3)
+            TimeUnit.MILLISECONDS.sleep(2700)
 
             val stateCheck = StatusDto(buildCreditNote.check(informationService))
             if (stateCheck.status.isEmpty()) {
@@ -68,5 +70,91 @@ class CreditNoteController {
             println("Error Authorize ${e.message}")
             return ResponseEntity.badRequest().body(Message(e.message!!))
         }
+    }
+
+    @PostMapping("/credit/note/authorize/dates/{startDate}/{endDate}")
+    fun postAuthorizeAll(
+        @PathVariable(value = "startDate") startDate: String,
+        @PathVariable(value = "endDate") endDate: String,
+    ): ResponseEntity<out Any?> {
+
+        val (status, message) = Validate.rangeOfDates(startDate, endDate)
+        if (!status) {
+            return ResponseEntity.badRequest().body(message)
+        }
+
+        val reportCreditNote =
+            reportCreditNoteService.getCreditNoteByDatesAndStatus(
+                startDate,
+                endDate,
+                "Unauthorized",
+            )
+
+        for (creditNote in reportCreditNote) {
+            val buildCreditNote =
+                ElectronicDocument(
+                    creditNote.code!!,
+                    creditNote.number!!,
+                    creditNoteService,
+                    webService,
+                    parameterService,
+                    documentService,
+                )
+
+            try {
+                StatusDto(buildCreditNote.process(TypeDocument.NOTA_CREDITO))
+            } catch (e: Exception) {
+                println("Error AuthorizeAll ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message!!))
+            }
+        }
+
+        TimeUnit.MILLISECONDS.sleep(2700)
+        return checkAll(startDate, endDate)
+    }
+
+    @PostMapping("/credit/note/check/dates/{startDate}/{endDate}")
+    fun postCheckAll(
+        @PathVariable(value = "startDate") startDate: String,
+        @PathVariable(value = "endDate") endDate: String,
+    ): ResponseEntity<out Any?> {
+
+        val (status, message) = Validate.rangeOfDates(startDate, endDate)
+        if (!status) {
+            return ResponseEntity.badRequest().body(message)
+        }
+
+        return checkAll(startDate, endDate)
+    }
+
+    fun checkAll(startDate: String, endDate: String): ResponseEntity<out Any?> {
+        val reportCreditNote =
+            reportCreditNoteService.getCreditNoteByDatesAndStatus(
+                startDate,
+                endDate,
+                "Unauthorized",
+            )
+
+        for (creditNote in reportCreditNote) {
+            val buildCreditNote =
+                ElectronicDocument(
+                    creditNote.code!!,
+                    creditNote.number!!,
+                    creditNoteService,
+                    webService,
+                    parameterService,
+                    documentService,
+                )
+            buildCreditNote.setAccessKey(creditNote.accessKey!!)
+
+            try {
+                StatusDto(buildCreditNote.check(informationService))
+            } catch (e: Exception) {
+                println("Error checkAll ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message!!))
+            }
+        }
+
+        return ResponseEntity.ok().body(Message("Completed successfully"))
     }
 }

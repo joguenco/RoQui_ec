@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class ReportCreditNoteService(
     private val reportCreditNoteRepository: CustomReportRepository<ReportCreditNote>
 ) {
-    fun getInvoiceByDatesAndStatus(
+    fun getCreditNoteByDatesAndStatus(
         startDate: String,
         endDate: String,
         status: String = "All",

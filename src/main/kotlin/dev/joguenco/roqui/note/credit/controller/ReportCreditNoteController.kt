@@ -40,7 +40,7 @@ class ReportCreditNoteController {
             return ResponseEntity.badRequest().body(Message(message))
         }
         val reportInvoice =
-            reportCreditNoteService.getInvoiceByDatesAndStatus(startDate, endDate, status)
+            reportCreditNoteService.getCreditNoteByDatesAndStatus(startDate, endDate, status)
         return ResponseEntity<MutableList<ReportReciptDto>>(reportInvoice, HttpStatus.OK)
     }
 }

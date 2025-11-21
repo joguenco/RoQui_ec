@@ -1,5 +1,10 @@
 <template>
   <AppHeader />
+  <AppNotification
+    :type="notification.type"
+    :message="notification.message"
+    v-if="showNotification"
+  />
 
   <article class="panel is-info m-6">
     <p class="panel-heading">Menú</p>
@@ -26,10 +31,56 @@
 </template>
 <script>
 import AppHeader from '@/components/layout/AppHeader.vue'
+import AppNotification from '@/components/shared/AppNotification.vue'
+import certificateService from '@/services/certificate-service'
 
 export default {
   components: {
     AppHeader,
+    AppNotification,
+  },
+
+  data: () => ({
+    // For certificate expiration
+    daysToExpiry: null,
+    notification: {
+      message: '',
+      type: 'is-link',
+    },
+    showNotification: false,
+  }),
+
+  methods: {
+    getDaysToExpireCertificate(token) {
+      certificateService
+        .getDaysToExpire(token)
+        .then((response) => {
+          this.daysToExpiry = response.data.daysToExpiry
+          if (this.daysToExpiry !== null && this.daysToExpiry <= 30) {
+            if (this.daysToExpiry > 0) {
+              this.notification.message = `Su certificado digital expirará en ${this.daysToExpiry} días.`
+            } else if (this.daysToExpiry === 0) {
+              this.notification.message = `Su certificado digital expira hoy.`
+            } else {
+              this.notification.message = `Su certificado digital ha expirado hace ${Math.abs(this.daysToExpiry)} días.`
+            }
+            this.notification.type = 'is-danger'
+            this.showNotification = true
+          }
+        })
+        .catch(() => {
+          this.daysToExpire = null
+        })
+    },
+  },
+
+  beforeMount() {
+    if (localStorage.getItem('user')) {
+      const user = JSON.parse(localStorage.getItem('user'))
+      this.getDaysToExpireCertificate(user.accessToken)
+    } else {
+      this.$router.push('/')
+    }
   },
 }
 </script>

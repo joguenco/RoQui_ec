@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.certificate.controller
 
+import dev.joguenco.roqui.certificate.dto.DayDto
 import dev.joguenco.roqui.certificate.service.CertificateService
 import dev.joguenco.roqui.exception.FileImportException
 import dev.joguenco.roqui.shared.dto.Message
@@ -29,6 +30,16 @@ class CertificateController {
 
         val certificate = certificateService.getCertificateInformation()
         return ResponseEntity.ok(certificate)
+    }
+
+    @GetMapping("/certificate/days-to-expiry")
+    fun getDaysToExpiry(): ResponseEntity<Any> {
+        if (!certificateService.checkCertificateFile()) {
+            return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
+        }
+
+        val days = certificateService.getCertificateInformation().daysToExpiry
+        return ResponseEntity.ok(DayDto(daysToExpiry = days))
     }
 
     @PostMapping("/certificate/load")

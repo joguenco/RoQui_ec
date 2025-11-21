@@ -80,7 +80,7 @@ export default {
       if (this.showNotification) {
         setTimeout(() => {
           this.showNotification = false
-        }, 3000)
+        }, 3600)
       }
     },
   },

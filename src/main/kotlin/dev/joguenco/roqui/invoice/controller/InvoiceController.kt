@@ -58,7 +58,7 @@ class InvoiceController {
 
         try {
             val stateSend = StatusDto(buildInvoice.process(TypeDocument.FACTURA))
-            TimeUnit.SECONDS.sleep(3)
+            TimeUnit.MILLISECONDS.sleep(2700)
 
             val stateCheck = StatusDto(buildInvoice.check(informationService))
             if (stateCheck.status.isEmpty()) {
@@ -105,6 +105,7 @@ class InvoiceController {
             }
         }
 
+        TimeUnit.MILLISECONDS.sleep(2700)
         return checkAll(startDate, endDate)
     }
 
