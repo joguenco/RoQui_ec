@@ -32,7 +32,9 @@
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
-      <router-link class="nav-item" to="parameter/mail/http">Cliente de Correo HTTP</router-link>
+      <router-link class="nav-item" to="parameter/mail/http"
+        >Cliente de Correo HTTP (in develop)</router-link
+      >
     </a>
   </article>
 </template>

@@ -6,7 +6,6 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
-import dev.joguenco.roqui.email.EmailSmtp
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
@@ -61,15 +60,9 @@ class InvoiceController {
             val stateSend = StatusDto(buildInvoice.process(TypeDocument.FACTURA))
             TimeUnit.SECONDS.sleep(3)
 
-            val stateCheck = StatusDto(buildInvoice.check())
+            val stateCheck = StatusDto(buildInvoice.check(informationService))
             if (stateCheck.status.isEmpty()) {
                 return ResponseEntity.ok(stateSend)
-            }
-
-            if (stateCheck.status == "AUTORIZADO") {
-                val emailSmtp =
-                    EmailSmtp(document.code, document.number, parameterService, informationService)
-                emailSmtp.send()
             }
 
             return ResponseEntity.ok(stateCheck)
@@ -146,7 +139,7 @@ class InvoiceController {
             buildInvoice.setAccessKey(invoice.accessKey!!)
 
             try {
-                StatusDto(buildInvoice.check())
+                StatusDto(buildInvoice.check(informationService))
             } catch (e: Exception) {
                 println("Error checkAll ${e.message}")
                 return ResponseEntity.badRequest().body(Message(e.message!!))

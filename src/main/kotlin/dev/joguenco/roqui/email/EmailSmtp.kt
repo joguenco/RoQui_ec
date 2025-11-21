@@ -44,7 +44,7 @@ class EmailSmtp(
 
             var message = getHtmlMessage(parameterService.getEmailTemplate())
             message = message.replace("Nombre_Empresa", legalName)
-            message = message.replace("Tipo_Comprobante", getDocumentTypeName())
+            message = message.replace("Tipo_Comprobante", getDocumentTypeName("html"))
             message = message.replace("Numero_Comprobante", serieNumber)
 
             val cid = htmlEmail.embed(File(parameterService.getLogoPngPath()))
@@ -142,13 +142,33 @@ class EmailSmtp(
                     accessKey,
                 )
             }
+            "DV" -> {
+                val creditNote = informationService.getCreditNote(code, number)
+                val serieNumber =
+                    creditNote.establishment +
+                        "-" +
+                        creditNote.emissionPoint +
+                        "-" +
+                        creditNote.sequence
+                val accessKey = creditNote.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getCreditNote(code, number).identification!!,
+                    accessKey,
+                )
+            }
         }
         return Triple("", "", "")
     }
 
-    private fun getDocumentTypeName(): String {
+    /*
+    type: text or html
+     */
+    private fun getDocumentTypeName(type: String = "text"): String {
         return when (code) {
             "FV" -> "Factura"
+            "DV" -> if (type == "text") "Nota de Crédito" else "Nota de Cr&eacute;dito"
             else -> ""
         }
     }

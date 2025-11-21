@@ -67,6 +67,8 @@ dependencies {
     // Email
     implementation("org.apache.commons:commons-email:1.6.0")
     implementation("com.sun.mail:javax.mail:1.6.2")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
 
 kotlin { compilerOptions { freeCompilerArgs.addAll("-Xjsr305=strict") } }

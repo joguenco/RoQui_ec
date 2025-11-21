@@ -11,6 +11,8 @@ import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildCreditNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.PdfBuilder
+import dev.joguenco.roqui.email.EmailSmtp
+import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
@@ -18,6 +20,9 @@ import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
 import kotlin.NoSuchElementException
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import recepcion.ws.sri.gob.ec.Comprobante
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 
@@ -104,7 +109,7 @@ class ElectronicDocument(
         return statusResponse
     }
 
-    fun check(): String {
+    fun check(informationService: InformationService): String {
         val xml = SendXML(accessKey, baseDirectory, webService)
         val response = xml.check()
 
@@ -146,6 +151,10 @@ class ElectronicDocument(
                 file.copyTo(File(refusedFolder + "${File.separatorChar}$accessKey.xml"), true)
                 file.delete()
             }
+        }
+
+        if (status == "AUTORIZADO") {
+            sendEmail(informationService)
         }
 
         return status
@@ -249,5 +258,13 @@ class ElectronicDocument(
 
     fun concatMessage(message: autorizacion.ws.sri.gob.ec.Mensaje): String {
         return " ${message.tipo} ${message.identificador}: ${message.mensaje} - ${message.informacionAdicional}"
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun sendEmail(informationService: InformationService) {
+        GlobalScope.launch {
+            val emailSmtp = EmailSmtp(code, number, parameterService, informationService)
+            emailSmtp.send()
+        }
     }
 }

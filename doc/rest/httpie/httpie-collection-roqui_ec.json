@@ -185,7 +185,7 @@
       },
       {
         "name": "Parameter / Base Directory",
-        "url": "{{_.base_url}}/roqui/v1/parameter/base/directory",
+        "url": "{{base_url}}/roqui/v1/parameter/base/directory",
         "method": "GET",
         "headers": [
           {
@@ -200,7 +200,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ2NDgzMDg3LCJleHAiOjE3NDY0ODY2ODd9._7kb_HtmxLxP4Yh_IAFHM0jOabV90u4xKQmHHATf9VlRY8wtoeq1JLQKN6qtFa1Y"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -211,6 +211,86 @@
           },
           "text": {
             "value": "",
+            "format": "application/json"
+          },
+          "form": {
+            "isMultipart": false,
+            "fields": []
+          },
+          "graphql": {
+            "query": "",
+            "variables": ""
+          }
+        }
+      },
+      {
+        "name": "Email / Configuration SMTP",
+        "url": "{{base_url}}/roqui/v1/email/client/smtp",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "User-Agent",
+            "value": "insomnium/0.2.3-a",
+            "enabled": true
+          }
+        ],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": {
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
+          },
+          "target": "headers"
+        },
+        "body": {
+          "type": "none",
+          "file": {
+            "name": ""
+          },
+          "text": {
+            "value": "",
+            "format": "application/json"
+          },
+          "form": {
+            "isMultipart": false,
+            "fields": []
+          },
+          "graphql": {
+            "query": "",
+            "variables": ""
+          }
+        }
+      },
+      {
+        "name": "Email / Send Test",
+        "url": "{{base_url}}/roqui/v1/email/send/test",
+        "method": "POST",
+        "headers": [
+          {
+            "name": "User-Agent",
+            "value": "insomnium/0.2.3-a",
+            "enabled": true
+          }
+        ],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": {
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
+          },
+          "target": "headers"
+        },
+        "body": {
+          "type": "text",
+          "file": {
+            "name": ""
+          },
+          "text": {
+            "value": "{\n  \"address\": \"yo@yo\"\n}",
             "format": "application/json"
           },
           "form": {

@@ -18,11 +18,13 @@ class EmailClientSmtpService(private val parameterService: ParameterService) {
         val password = configuration.first { it.name == "Email Password Account" }.value!!
         val encryption = configuration.first { it.name == "Email Encryption" }.value!!
 
+        OwnEncryption.setKey(parameterService.keyProperty)
+
         return EmailServerSmtpDto(
             server,
             port.toInt(),
             account,
-            password,
+            OwnEncryption.decrypt(password),
             when (encryption) {
                 "None" -> EmailEncryption.NONE
                 "SSL/TLS" -> EmailEncryption.SSL_TLS

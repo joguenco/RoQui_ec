@@ -6,6 +6,7 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.credit.service.ReportCreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
@@ -34,6 +35,8 @@ class CreditNoteController {
 
     @Autowired lateinit var reportCreditNoteService: ReportCreditNoteService
 
+    @Autowired lateinit var informationService: InformationService
+
     @PostMapping("/credit/note/authorize")
     fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {
 
@@ -55,7 +58,7 @@ class CreditNoteController {
             val stateSend = StatusDto(buildCreditNote.process(TypeDocument.NOTA_CREDITO))
             TimeUnit.SECONDS.sleep(3)
 
-            val stateCheck = StatusDto(buildCreditNote.check())
+            val stateCheck = StatusDto(buildCreditNote.check(informationService))
             if (stateCheck.status.isEmpty()) {
                 return ResponseEntity.ok(stateSend)
             }
