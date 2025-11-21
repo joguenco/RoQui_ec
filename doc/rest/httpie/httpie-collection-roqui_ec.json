@@ -19,7 +19,7 @@
     "requests": [
       {
         "name": "Credit Note / Report",
-        "url": "{{_.base_url}}/roqui/v1/credit/note/report/dates/2025-05-15/2025-09-19/status/All",
+        "url": "{{base_url}}/roqui/v1/credit/note/report/dates/2025-05-15/2025-09-19/status/All",
         "method": "GET",
         "headers": [],
         "queryParams": [],
@@ -28,7 +28,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzU4MzI3MTE3LCJleHAiOjE3NTgzMzA3MTd9.a1waoGs9TNAERPPvXY-rtkMRCe-icG2jNJp4bvxS9OM9LE9nx-FDLHv2p_SzpU0J"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -53,7 +53,7 @@
       },
       {
         "name": "Files / PDF",
-        "url": "{{_.base_url}}/files/pdf/1305202501999999999999910012010000000011234567810",
+        "url": "{{base_url}}/files/pdf/1305202501999999999999910012010000000011234567810",
         "method": "GET",
         "headers": [],
         "queryParams": [],
@@ -82,7 +82,7 @@
       },
       {
         "name": "Files / XML",
-        "url": "{{_.base_url}}/files/xml/1305202501999999999999910012010000000011234567810",
+        "url": "{{base_url}}/files/xml/1305202501999999999999910012010000000011234567810",
         "method": "GET",
         "headers": [],
         "queryParams": [],
@@ -111,7 +111,7 @@
       },
       {
         "name": "Document / Document",
-        "url": "{{_.base_url}}/roqui/v1/document/code/FV/number/001201000000008",
+        "url": "{{base_url}}/roqui/v1/document/code/FV/number/001201000000008",
         "method": "GET",
         "headers": [],
         "queryParams": [],
@@ -120,7 +120,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ3MDY2MjQwLCJleHAiOjE3NDcwNjk4NDB9.eAZIQ1MzB3qm7tRv6t2EK_-geE4n3eFq3XYmyGZUPuNYbvC_VwZgcwFkd3RYLeLq"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -145,7 +145,7 @@
       },
       {
         "name": "Parameter / Set Base Directory",
-        "url": "{{_.base_url}}/roqui/v1/parameter/base/directory",
+        "url": "{{base_url}}/roqui/v1/parameter/base/directory",
         "method": "POST",
         "headers": [
           {
@@ -160,7 +160,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ2NDgzMDg3LCJleHAiOjE3NDY0ODY2ODd9._7kb_HtmxLxP4Yh_IAFHM0jOabV90u4xKQmHHATf9VlRY8wtoeq1JLQKN6qtFa1Y"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -267,13 +267,7 @@
         "name": "Email / Send Test",
         "url": "{{base_url}}/roqui/v1/email/send/test",
         "method": "POST",
-        "headers": [
-          {
-            "name": "User-Agent",
-            "value": "insomnium/0.2.3-a",
-            "enabled": true
-          }
-        ],
+        "headers": [],
         "queryParams": [],
         "pathParams": [],
         "auth": {
@@ -304,8 +298,42 @@
         }
       },
       {
+        "name": "Email / Send",
+        "url": "{{base_url}}/roqui/v1/email/send",
+        "method": "POST",
+        "headers": [],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": {
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
+          },
+          "target": "headers"
+        },
+        "body": {
+          "type": "text",
+          "file": {
+            "name": ""
+          },
+          "text": {
+            "value": "{\n  \"code\": \"DV\",\n  \"number\": \"001201000000013\"\n}",
+            "format": "application/json"
+          },
+          "form": {
+            "isMultipart": false,
+            "fields": []
+          },
+          "graphql": {
+            "query": "",
+            "variables": ""
+          }
+        }
+      },
+      {
         "name": "Certificate / Load",
-        "url": "{{_.base_url}}/roqui/v1/certificate/load",
+        "url": "{{base_url}}/roqui/v1/certificate/load",
         "method": "POST",
         "headers": [
           {
@@ -320,7 +348,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ2NDg0OTE5LCJleHAiOjE3NDY0ODg1MTl9.yx4JA2-f3mD-3Gb87fPr6iNemq5N-__LLvL4d7M3zy1S-rWm8M4G_8h7YFdu4DkR"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -344,7 +372,7 @@
               },
               {
                 "name": "password",
-                "value": "Horiz0ns",
+                "value": "admin",
                 "enabled": true,
                 "type": "text"
               }
@@ -359,6 +387,46 @@
       {
         "name": "Certificate / Information",
         "url": "{{base_url}}/roqui/v1/certificate",
+        "method": "GET",
+        "headers": [
+          {
+            "name": "User-Agent",
+            "value": "insomnium/0.2.3-a",
+            "enabled": true
+          }
+        ],
+        "queryParams": [],
+        "pathParams": [],
+        "auth": {
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
+          },
+          "target": "headers"
+        },
+        "body": {
+          "type": "none",
+          "file": {
+            "name": ""
+          },
+          "text": {
+            "value": "",
+            "format": "application/json"
+          },
+          "form": {
+            "isMultipart": false,
+            "fields": []
+          },
+          "graphql": {
+            "query": "",
+            "variables": ""
+          }
+        }
+      },
+      {
+        "name": "Certificate / Days to Expire",
+        "url": "{{base_url}}/roqui/v1/certificate/days-to-expire",
         "method": "GET",
         "headers": [
           {
@@ -502,7 +570,7 @@
       },
       {
         "name": "Taxpayer / Taxpayer",
-        "url": "{{_.base_url}}/roqui/v1/taxpayer",
+        "url": "{{base_url}}/roqui/v1/taxpayer",
         "method": "GET",
         "headers": [
           {
@@ -517,7 +585,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ2NDYxMzU4LCJleHAiOjE3NDY0NjQ5NTh9.Eoc1opz6vRf_E29hbn37EpPdOZBAaG3FaebfqIbvWpBqwIrkJmsFBY05iTgNOH-4"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -542,7 +610,7 @@
       },
       {
         "name": "Invoice / Report ",
-        "url": "{{_.base_url}}/roqui/v1/invoice/report/dates/2025-05-15/2025-09-19/status/All",
+        "url": "{{base_url}}/roqui/v1/invoice/report/dates/2025-05-15/2025-09-19/status/All",
         "method": "GET",
         "headers": [],
         "queryParams": [],
@@ -551,7 +619,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzU4MzI3MTE3LCJleHAiOjE3NTgzMzA3MTd9.a1waoGs9TNAERPPvXY-rtkMRCe-icG2jNJp4bvxS9OM9LE9nx-FDLHv2p_SzpU0J"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -576,7 +644,7 @@
       },
       {
         "name": "Invoice / Authorize All",
-        "url": "{{_.base_url}}/roqui/v1/invoice/authorize/dates/2025-05-15/2025-05-15",
+        "url": "{{base_url}}/roqui/v1/invoice/authorize/dates/2025-05-15/2025-05-15",
         "method": "POST",
         "headers": [],
         "queryParams": [],
@@ -585,7 +653,7 @@
           "type": "bearer",
           "credentials": {
             "username": "",
-            "password": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzQ3MzE5MTM2LCJleHAiOjE3NDczMjI3MzZ9.1dnf8KwPFTbWzLvWDVWPa670ILO2kTQrArojEfi6dO0Ln7h784LB3D1yYu19YaJX"
+            "password": "{{token}}"
           },
           "target": "headers"
         },
@@ -610,13 +678,18 @@
       },
       {
         "name": "Invoice / Authorize",
-        "url": "{{_.base_url}}/roqui/v1/invoice/authorize",
+        "url": "{{base_url}}/roqui/v1/invoice/authorize",
         "method": "POST",
         "headers": [],
         "queryParams": [],
         "pathParams": [],
         "auth": {
-          "type": "inherited"
+          "type": "bearer",
+          "credentials": {
+            "username": "",
+            "password": "{{token}}"
+          },
+          "target": "headers"
         },
         "body": {
           "type": "text",
