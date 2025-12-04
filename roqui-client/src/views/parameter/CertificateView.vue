@@ -80,6 +80,13 @@ export default {
     passwordFile: '',
   }),
 
+  beforeMount() {
+    let role = localStorage.getItem('role')
+    if (role !== 'Administrator' && role !== 'Manager') {
+      this.$router.push('/home')
+    }
+  },
+
   mounted() {
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))

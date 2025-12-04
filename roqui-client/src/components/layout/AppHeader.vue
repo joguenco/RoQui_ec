@@ -15,7 +15,11 @@
         <router-link to="/taxpayer" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Empresa</strong></router-link
         >
-        <router-link to="/parameter" class="navbar-item" active-class="is-active"
+        <router-link
+          to="/parameter"
+          class="navbar-item"
+          active-class="is-active"
+          v-if="showParameterOption"
           ><strong class="has-text-grey-dark">Parámetros</strong></router-link
         >
         <router-link to="/about" class="navbar-item" active-class="is-active"
@@ -28,3 +32,18 @@
     </div>
   </nav>
 </template>
+<script>
+export default {
+  data: () => ({
+    showParameterOption: true,
+  }),
+
+  beforeMount() {
+    let role = localStorage.getItem('role')
+    if (role !== 'Administrator' && role !== 'Manager') {
+      console.log('hide parameter menu')
+      this.showParameterOption = false
+    }
+  },
+}
+</script>

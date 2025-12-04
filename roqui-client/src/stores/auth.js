@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   // State
   const accessToken = ref(localStorage.getItem('accessToken') || null)
   const refreshToken = ref(localStorage.getItem('refreshToken') || null)
+  const role = ref(localStorage.getItem('role') || null)
   const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
 
   // Getters
@@ -23,6 +24,25 @@ export const useAuthStore = defineStore('auth', () => {
     }
     if (tokens.refreshToken) {
       localStorage.setItem('refreshToken', tokens.refreshToken)
+    }
+    // Decode and store role from access token (if present)
+    if (tokens.accessToken) {
+      const payload = decodeJwt(tokens.accessToken)
+      // Try common claim names for role
+      const resolvedRole = payload && (payload.role || payload.roles || payload.sub || null)
+      // Normalize when roles is an array
+      let finalRole = null
+      if (Array.isArray(resolvedRole)) {
+        finalRole = resolvedRole.length > 0 ? resolvedRole[0] : null
+      } else if (typeof resolvedRole === 'string') {
+        finalRole = resolvedRole
+      }
+      role.value = finalRole
+      if (finalRole) {
+        localStorage.setItem('role', finalRole)
+      } else {
+        localStorage.removeItem('role')
+      }
     }
   }
 
@@ -76,14 +96,32 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Decode a JWT and return its payload object, or null on failure
+  function decodeJwt(token) {
+    try {
+      const parts = token.split('.')
+      if (parts.length < 2) return null
+      const payload = parts[1]
+      // base64url -> base64
+      const base64 =
+        payload.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (payload.length % 4)) % 4)
+      const json = atob(base64)
+      return JSON.parse(json)
+    } catch {
+      return null
+    }
+  }
+
   function logout() {
     accessToken.value = null
     refreshToken.value = null
     user.value = null
+    role.value = null
 
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
+    localStorage.removeItem('role')
 
     router.push('/')
   }
@@ -101,9 +139,18 @@ export const useAuthStore = defineStore('auth', () => {
     const storedAccessToken = localStorage.getItem('accessToken')
     const storedRefreshToken = localStorage.getItem('refreshToken')
     const storedUser = localStorage.getItem('user')
+    const storedRole = localStorage.getItem('role')
 
     if (storedAccessToken) {
       accessToken.value = storedAccessToken
+      // ensure role is in sync with token
+      const payload = decodeJwt(storedAccessToken)
+      const resolvedRole = payload && (payload.role || payload.roles || payload.sub || null)
+      if (Array.isArray(resolvedRole)) {
+        role.value = resolvedRole.length > 0 ? resolvedRole[0] : null
+      } else {
+        role.value = resolvedRole
+      }
     }
     if (storedRefreshToken) {
       refreshToken.value = storedRefreshToken
@@ -115,12 +162,16 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null
       }
     }
+    if (storedRole && !role.value) {
+      role.value = storedRole
+    }
   }
 
   return {
     // State
     accessToken,
     refreshToken,
+    role,
     user,
     // Getters
     isAuthenticated,
