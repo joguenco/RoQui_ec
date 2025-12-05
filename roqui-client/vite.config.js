@@ -15,4 +15,14 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+ build: {
+    target: 'esnext',
+    cssCodeSplit: false,   // bundle all CSS
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true, // prevent chunk splitting
+      }
+    }
+  },
 })
