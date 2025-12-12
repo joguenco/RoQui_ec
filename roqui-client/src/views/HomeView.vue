@@ -27,12 +27,16 @@
         <strong class="has-text-grey-dark">Notas de Crédito</strong></router-link
       >
     </a>
+    <div class="panel-block">
+      <button class="button is-fullwidth is-static">Ambiente: {{ environment }}</button>
+    </div>
   </article>
 </template>
 <script>
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import certificateService from '@/services/certificate-service'
+import assetService from '@/services/asset-service'
 
 export default {
   components: {
@@ -43,6 +47,7 @@ export default {
   data: () => ({
     // For certificate expiration
     daysToExpiry: null,
+    environment: '',
     notification: {
       message: '',
       type: 'is-link',
@@ -80,6 +85,20 @@ export default {
       this.getDaysToExpireCertificate(user.accessToken)
     } else {
       this.$router.push('/')
+    }
+  },
+
+  mounted() {
+    if (localStorage.getItem('user')) {
+      const user = JSON.parse(localStorage.getItem('user'))
+      assetService
+        .getEnvironment(user.accessToken)
+        .then((response) => {
+          this.environment = response.data.value
+        })
+        .catch(() => {
+          this.environment = ''
+        })
     }
   },
 }

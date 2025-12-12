@@ -3,7 +3,7 @@ E-Invoicing for Ecuador developed in Kotlin with Spring Boot 3
 
 ## Dependencies
 - Java 21
-- Gradle 8.13
+- Gradle 8.14.3
 - Spring Boot 3.5
 - MariaDB 11.4
 

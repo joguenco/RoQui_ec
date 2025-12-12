@@ -13,7 +13,7 @@ plugins {
 
 group = "dev.joguenco"
 
-version = "0.9.5"
+version = "1.0.0"
 
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
