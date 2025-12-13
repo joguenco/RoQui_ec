@@ -52,9 +52,9 @@
           <td class="numero">{{ d.identification }}</td>
           <td>{{ d.legalName }}</td>
           <td>
-            <a class="button is-loading" v-show="d.isSending">{{ d.email }}</a>
+            <a class="button is-fullwidth is-loading" v-show="d.isSending">{{ d.email }}</a>
             <a
-              class="button is-text is-outlined"
+              class="button is-text is-outlined is-fullwidth"
               @click="sendEmail(d.code, d.number, index)"
               v-show="!d.isSending"
               >{{ d.email }}</a
