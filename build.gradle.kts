@@ -13,7 +13,7 @@ plugins {
 
 group = "dev.joguenco"
 
-version = "1.0.0"
+version = "1.0.1"
 
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
@@ -65,8 +65,8 @@ dependencies {
     // Utils
     implementation("joda-time:joda-time:2.14.0")
     // Email
-    implementation("org.apache.commons:commons-email:1.6.0")
-    implementation("com.sun.mail:javax.mail:1.6.2")
+    implementation("org.apache.commons:commons-email2-jakarta:2.0.0-M1")
+    implementation("com.sun.mail:jakarta.mail:2.0.2")
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }

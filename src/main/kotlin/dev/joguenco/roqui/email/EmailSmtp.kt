@@ -8,9 +8,8 @@ import dev.joguenco.roqui.util.FilesUtil
 import dev.joguenco.roqui.util.OwnEncryption
 import java.io.File
 import java.nio.charset.StandardCharsets
-import org.apache.commons.mail.DefaultAuthenticator
-import org.apache.commons.mail.EmailAttachment
-import org.apache.commons.mail.HtmlEmail
+import org.apache.commons.mail2.jakarta.EmailAttachment
+import org.apache.commons.mail2.jakarta.HtmlEmail
 
 class EmailSmtp(
     val code: String,
@@ -80,7 +79,7 @@ class EmailSmtp(
         htmlEmail.setFrom(account, sender)
 
         OwnEncryption.setKey(parameterService.keyProperty)
-        htmlEmail.setAuthenticator(DefaultAuthenticator(account, OwnEncryption.decrypt(password)))
+        htmlEmail.setAuthentication(account, OwnEncryption.decrypt(password))
     }
 
     private fun getHtmlMessage(templatePath: String): String {
