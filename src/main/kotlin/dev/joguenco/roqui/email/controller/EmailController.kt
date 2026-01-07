@@ -2,6 +2,7 @@ package dev.joguenco.roqui.email.controller
 
 import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.email.EmailSmtp
+import dev.joguenco.roqui.email.Validate
 import dev.joguenco.roqui.email.dto.EmailDto
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.service.ParameterService
@@ -31,6 +32,9 @@ class EmailController {
 
     @PostMapping("/email/send/test")
     fun postSendEmailTest(@RequestBody email: EmailDto): ResponseEntity<Any> {
+        if (!Validate.isEmailValid(email.address)) {
+            return ResponseEntity.badRequest().body("Invalid email address format.")
+        }
         val emailSmtp = EmailSmtp(parameterService, informationService)
         val (status, message) = emailSmtp.sendTest(email.address)
         print(message)

@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     war
-    id("org.springframework.boot") version "3.5.8"
+    id("org.springframework.boot") version "3.5.9"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
@@ -13,7 +13,7 @@ plugins {
 
 group = "dev.joguenco"
 
-version = "1.0.1"
+version = "1.0.5"
 
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 

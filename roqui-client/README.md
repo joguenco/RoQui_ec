@@ -3,7 +3,7 @@
 ## Dependencies
 - Vue 3.5
 - Bulma 1
-- Node 22
+- Node 24
 - Vite 7
 - pnpm 10
 

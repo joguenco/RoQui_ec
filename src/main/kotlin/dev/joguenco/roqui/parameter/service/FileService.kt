@@ -16,7 +16,8 @@ class FileService(private val parameterService: ParameterService) {
     fun uploadFile(file: MultipartFile): String {
         throwIfFileEmpty(file)
         try {
-            val path = renameCurrentFile()
+            val extension = file.originalFilename!!.substringAfterLast('.', "")
+            val path = renameCurrentFile(extension)
             val root = Paths.get(path)
 
             Files.copy(
@@ -25,7 +26,6 @@ class FileService(private val parameterService: ParameterService) {
                 StandardCopyOption.REPLACE_EXISTING,
             )
 
-            val extension = file.originalFilename!!.substringAfterLast('.', "")
             if (extension.lowercase() == "jpeg") {
                 updateFile(file.originalFilename!!, "Logo JPEG")
             } else if (extension.lowercase() == "png") {
@@ -50,8 +50,16 @@ class FileService(private val parameterService: ParameterService) {
         parameterService.update(parameter)
     }
 
-    fun renameCurrentFile(): String {
-        val logo = parameterService.getLogoJpegPath()
+    fun renameCurrentFile(extension: String): String {
+
+        val logo =
+            if (extension.lowercase() == "jpeg") {
+                parameterService.getLogoJpegPath()
+            } else if (extension.lowercase() == "png") {
+                parameterService.getLogoPngPath()
+            } else {
+                throw BadRequestException("Unsupported file type")
+            }
 
         val fileAndPath = File(logo)
         if (fileAndPath.exists()) {
