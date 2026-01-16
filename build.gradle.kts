@@ -8,7 +8,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
-    id("com.ncorti.ktfmt.gradle") version "0.22.0"
+    id("com.ncorti.ktfmt.gradle") version "0.25.0"
 }
 
 group = "dev.joguenco"

@@ -52,18 +52,20 @@ class FileService(private val parameterService: ParameterService) {
 
     fun renameCurrentFile(extension: String): String {
 
-        val logo =
+        val resource =
             if (extension.lowercase() == "jpeg") {
                 parameterService.getLogoJpegPath()
             } else if (extension.lowercase() == "png") {
                 parameterService.getLogoPngPath()
+            } else if (extension.lowercase() == "html") {
+                parameterService.getEmailTemplate()
             } else {
                 throw BadRequestException("Unsupported file type")
             }
 
-        val fileAndPath = File(logo)
+        val fileAndPath = File(resource)
         if (fileAndPath.exists()) {
-            val renameFile = File(logo + "." + DateTime.now())
+            val renameFile = File(resource + "." + DateTime.now())
             fileAndPath.renameTo(renameFile)
         }
 
