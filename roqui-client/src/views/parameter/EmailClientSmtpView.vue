@@ -139,7 +139,8 @@
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
-          <button class="button is-success" @click="sendEmail">Enviar</button>
+          <button class="button is-success is-loading" v-if="isSending">Enviar</button>
+          <button class="button is-success" @click="sendEmail" v-else>Enviar</button>
           <button class="button is-warning" @click="closeModal">Cancelar</button>
         </div>
       </footer>
@@ -170,6 +171,7 @@ export default {
     showNotification: false,
     isActiveEdit: false,
     isActiveSend: false,
+    isSending: false,
   }),
 
   beforeMount() {
@@ -308,6 +310,7 @@ export default {
         this.showNotification = true
         return
       }
+      this.isSending = true
       emailService
         .sendTest(this.user.accessToken, this.emailAddress)
         .then((res) => {
@@ -323,6 +326,9 @@ export default {
           this.notification.type = 'is-danger'
           this.notification.message = 'Error al enviar el correo de prueba.'
           this.showNotification = true
+        })
+        .finally(() => {
+          this.isSending = false
         })
     },
 
