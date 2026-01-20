@@ -29,7 +29,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    // Database MariaDB
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    // Database SQL Server
+    //runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
