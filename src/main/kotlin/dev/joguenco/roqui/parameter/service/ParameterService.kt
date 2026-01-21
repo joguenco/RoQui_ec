@@ -6,6 +6,10 @@ import dev.joguenco.roqui.util.OwnEncryption
 import java.io.File
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 
 @Service
 class ParameterService(private val parameterRepository: CustomParameterRepository) {
@@ -67,5 +71,35 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
 
     fun getEmailSmtpConfiguration(): MutableList<Parameter> {
         return parameterRepository.findEmailSmtpConfiguration()
+    }
+
+    fun getSubscription(): Date {
+        val value = parameterRepository.findValueByName("Subscription")
+        return try {
+            val suscripcionEncryptedData: String = value
+            toDate(suscripcionEncryptedData, keyProperty)
+        } catch (ex :Exception) {
+            errorDate()
+        }
+    }
+
+    fun toDate(suscripcionEncryptedData: String, key: String): Date {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        return try {
+            OwnEncryption.setKey(keyProperty)
+            val suscripcion = OwnEncryption.decrypt(suscripcionEncryptedData)
+            formatter.parse(suscripcion)
+        } catch (e: ParseException) {
+            errorDate()
+        } catch (e: Exception) {
+            errorDate()
+        }
+    }
+
+    fun errorDate(): Date {
+        val cal = Calendar.getInstance()
+        cal.time = Date()
+        cal.add(Calendar.DATE, -1)
+        return cal.time
     }
 }

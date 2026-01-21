@@ -25,6 +25,11 @@ const router = createRouter({
       component: () => import('@/views/ParameterView.vue'),
     },
     {
+      path: '/subscription',
+      name: 'subscription',
+      component: () => import('@/views/SubscriptionView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       component: AboutView,

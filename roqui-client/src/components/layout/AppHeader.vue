@@ -22,6 +22,9 @@
           v-if="showParameterOption"
           ><strong class="has-text-grey-dark">Parámetros</strong></router-link
         >
+        <router-link to="/subscription" class="navbar-item" active-class="is-active"
+          ><strong class="has-text-grey-dark">Suscripción</strong></router-link
+        >
         <router-link to="/about" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Acerca</strong></router-link
         >
