@@ -7,12 +7,13 @@ import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.util.Date
 import org.hibernate.annotations.Immutable
+import java.util.UUID
 
 @Entity
 @Immutable
 @Table(name = "v_ele_credit_notes")
 class CreditNote {
-    @Id val id: Long? = null
+    @Id val id: UUID? = null
 
     @Column(name = "code") val code: String? = null
 

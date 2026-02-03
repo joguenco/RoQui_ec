@@ -9,7 +9,7 @@
 
   <section class="section" v-show="!isLoading">
     <div class="container">
-      <h1 class="title">Facturas Electrónicas</h1>
+      <h1 class="title">Facturas</h1>
 
       <div class="field is-horizontal m-2">
         <div class="field p-3">
