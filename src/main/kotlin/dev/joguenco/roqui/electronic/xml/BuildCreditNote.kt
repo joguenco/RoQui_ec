@@ -103,7 +103,7 @@ class BuildCreditNote(
         infoTributaria.ptoEmi = tributaryInformation.creditNote.emissionPoint
         infoTributaria.secuencial = tributaryInformation.creditNote.sequence
         infoTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
-        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.other
+        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.regime
         infoTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
 
         return infoTributaria

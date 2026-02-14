@@ -22,5 +22,5 @@ class Taxpayer {
 
     @Column(name = "retention_agent") val retentionAgent: String? = null
 
-    @Column(name = "other") val other: String? = null
+    @Column(name = "regime") val regime: String? = null
 }

@@ -99,7 +99,7 @@ class BuildInvoice(
         infoTributaria.ptoEmi = tributaryInformation.invoice.emissionPoint
         infoTributaria.secuencial = tributaryInformation.invoice.sequence
         infoTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
-        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.other
+        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.regime
         infoTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
 
         return infoTributaria
