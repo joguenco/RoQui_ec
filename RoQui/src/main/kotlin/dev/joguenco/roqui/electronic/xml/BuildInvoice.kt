@@ -126,7 +126,7 @@ class BuildInvoice(
             tributaryInformation.invoice.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.importeTotal =
             tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-        infoFactura.propina = BigDecimal(0).setScale(2)
+        infoFactura.propina = tributaryInformation.invoice.tip
         infoFactura.totalDescuento = BigDecimal(0).setScale(2)
         infoFactura.moneda = "DOLAR"
 
