@@ -38,3 +38,9 @@ pnpm outdated
 ```
 pnpm list
 ```
+## Solve dependencies issues
+```
+rm -rf node_modules pnpm-lock.yaml
+pnpm store prune
+pnpm install
+```

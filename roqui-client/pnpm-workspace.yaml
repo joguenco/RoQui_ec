@@ -1,0 +1,13 @@
+allowBuilds:
+  '@parcel/watcher': set this to true or false
+  esbuild: set this to true or false
+minimumReleaseAgeExclude:
+  - vite@7.3.2
+  - axios@1.15.0
+  - axios@1.15.1
+  - axios@1.15.2
+  - axios@1.13.5
+  - axios@1.16.0
+  - esbuild@0.28.1
+  - eslint@10.5.0
+  - npm-run-all2@9.0.2
