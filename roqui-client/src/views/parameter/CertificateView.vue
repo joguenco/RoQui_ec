@@ -14,7 +14,7 @@
       <p><strong>Entidad Emisora: </strong>{{ certificate.issuerCertificate }}</p>
       <p><strong>Fecha de Emisión: </strong>{{ certificate.dateIssued }}</p>
       <p><strong>Fecha de Caducidad: </strong>{{ certificate.dateExpiry }}</p>
-      <p><strong>El certificado caducará en: </strong>{{ certificate.daysToExpiry }}</p>
+      <p><strong>El certificado caducará en: </strong>{{ certificate.daysToExpiry }} días</p>
       <div class="buttons mt-3">
         <button class="button is-primary" @click="showModal">Cargar Certificado</button>
       </div>

@@ -6,8 +6,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.util.Date
-import org.hibernate.annotations.Immutable
 import java.util.UUID
+import org.hibernate.annotations.Immutable
 
 @Entity
 @Immutable

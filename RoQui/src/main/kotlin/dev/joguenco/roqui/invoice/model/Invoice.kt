@@ -29,6 +29,8 @@ class Invoice {
 
     @Column(name = "date", columnDefinition = "DATE") val date: Date? = null
 
+    @Column(name = "discount") val discount: BigDecimal? = null
+
     @Column(name = "total_without_taxes") val totalWithoutTaxes: BigDecimal? = null
 
     @Column(name = "total") val total: BigDecimal? = null

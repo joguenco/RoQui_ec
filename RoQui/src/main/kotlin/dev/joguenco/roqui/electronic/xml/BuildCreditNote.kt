@@ -25,7 +25,7 @@ class BuildCreditNote(
 
     private val tributaryInformation = creditNoteService.getCreditNoteAndTaxpayer(code, number)
 
-    fun xml(): String {
+    fun xml(): Pair<String, String> {
         val notaCredito = NotaCredito()
 
         try {
@@ -63,10 +63,10 @@ class BuildCreditNote(
             marshaller.marshal(notaCredito, out)
             println(stringWriter)
 
-            return notaCredito.infoTributaria.claveAcceso
+            return Pair(pathGenerated, notaCredito.infoTributaria.claveAcceso)
         } catch (e: Exception) {
             println(e.message)
-            return ""
+            return Pair("", "")
         }
     }
 

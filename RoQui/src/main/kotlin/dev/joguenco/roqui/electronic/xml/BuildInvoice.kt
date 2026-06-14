@@ -21,7 +21,7 @@ class BuildInvoice(
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
 
-    fun xml(): String {
+    fun xml(): Pair<String, String> {
         val factura = Factura()
 
         try {
@@ -59,10 +59,10 @@ class BuildInvoice(
             marshaller.marshal(factura, out)
             println(stringWriter)
 
-            return factura.infoTributaria.claveAcceso
+            return Pair(pathGenerated, factura.infoTributaria.claveAcceso)
         } catch (e: Exception) {
             println(e.message)
-            return ""
+            return Pair("", "")
         }
     }
 
@@ -127,7 +127,8 @@ class BuildInvoice(
         infoFactura.importeTotal =
             tributaryInformation.invoice.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.propina = tributaryInformation.invoice.tip
-        infoFactura.totalDescuento = BigDecimal(0).setScale(2)
+        infoFactura.totalDescuento =
+            tributaryInformation.invoice.discount!!.setScale(2, BigDecimal.ROUND_HALF_UP)
         infoFactura.moneda = "DOLAR"
 
         infoFactura.totalConImpuestos = buildTotals()
@@ -184,7 +185,7 @@ class BuildInvoice(
             facturaDetalle.unidadMedida = detail.unit
             facturaDetalle.cantidad = detail.quantity!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.precioUnitario = detail.unitPrice!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-            facturaDetalle.descuento = BigDecimal(0).setScale(2)
+            facturaDetalle.descuento = detail.discount!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.precioTotalSinImpuesto =
                 detail.totalPriceWithoutTax!!.setScale(2, BigDecimal.ROUND_HALF_UP)
             facturaDetalle.impuestos = buildDetailTax(detail.principalCode!!, detail.line!!)

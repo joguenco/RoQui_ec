@@ -2,10 +2,10 @@ package dev.joguenco.roqui.subscription
 
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.subscription.dto.Subscription
-import org.joda.time.DateTime
-import org.joda.time.Days
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.joda.time.DateTime
+import org.joda.time.Days
 
 class SubscriptionManager(private val parameterService: ParameterService) {
 
@@ -23,12 +23,6 @@ class SubscriptionManager(private val parameterService: ParameterService) {
         remainingDays = Days.daysBetween(DateTime(Date()), DateTime(endDate)).days
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
 
-        return Subscription(
-            "",
-            "",
-            dateFormat.format(endDate),
-            "aaaa-mm-dd",
-            remainingDays
-        )
+        return Subscription("", "", dateFormat.format(endDate), "aaaa-mm-dd", remainingDays)
     }
 }

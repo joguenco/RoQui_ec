@@ -3,8 +3,8 @@
     <div class="content has-text-centered">
       <p>
         <strong>RoQui</strong> &lt;/&gt; with &hearts; by
-        <a href="https://resolvedor.dev" target="_blank">resolvedor.dev</a>. The source code is licensed
-        <a href="https://opensource.org/license/gpl-3-0" target="_blank">GPL-3.0</a>.
+        <a href="https://resolvedor.dev" target="_blank">resolvedor.dev</a>. The source code is
+        licensed <a href="https://opensource.org/license/gpl-3-0" target="_blank">GPL-3.0</a>.
       </p>
     </div>
   </footer>

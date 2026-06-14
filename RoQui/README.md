@@ -3,7 +3,7 @@ E-Invoicing for Ecuador developed in Kotlin with Spring Boot 3
 
 ## Dependencies
 - Java 21
-- Gradle 8.14.3
+- Gradle 8.14.5
 - Spring Boot 3.5
 - MariaDB 11.4
 
@@ -26,9 +26,6 @@ gradle bootRun
 ```
 gradle ktfmtFormat
 ```
-
-# RoQui Web Client
-[Frontend for RoQui_ec](roqui-client/README.md)
 
 # Email Server for Development
 ```

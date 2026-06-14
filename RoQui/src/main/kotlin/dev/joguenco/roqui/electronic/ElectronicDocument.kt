@@ -11,6 +11,7 @@ import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildCreditNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.PdfBuilder
+import dev.joguenco.roqui.electronic.xml.validateXmlAgainstXsd
 import dev.joguenco.roqui.email.EmailSmtp
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
@@ -72,17 +73,37 @@ class ElectronicDocument(
 
     fun process(type: TypeDocument): String {
         var statusResponse = Estado.NO_PROCESADO.descripcion
+        var generatedDirectory = ""
+        val classLoader = ElectronicDocument::class.java.classLoader
+        var xsdFile = ""
 
         if (type == TypeDocument.FACTURA) {
             val build = BuildInvoice(code, number, baseDirectory, invoiceService!!)
-            accessKey = build.xml()
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = classLoader.getResource("xsd${File.separatorChar}Factura_V2.1.0.xsd").path
         } else if (type == TypeDocument.NOTA_CREDITO) {
             val build = BuildCreditNote(code, number, baseDirectory, creditNoteService!!)
-            accessKey = build.xml()
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = classLoader.getResource("xsd${File.separatorChar}NotaCredito_V1.1.0.xsd").path
         }
 
         if (accessKey.isEmpty()) {
             return ""
+        }
+
+        val isValid =
+            validateXmlAgainstXsd(
+                File("$generatedDirectory${File.separatorChar}$accessKey.xml"),
+                File(xsdFile),
+            )
+
+        if (!isValid.first) {
+            statusResponse = saveResponse(getErrorResponse(isValid.second, accessKey))
+            return statusResponse
         }
 
         val pathLogo = parameterService.getLogoJpegPath()

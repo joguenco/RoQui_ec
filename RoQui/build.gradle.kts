@@ -8,7 +8,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
-    id("com.ncorti.ktfmt.gradle") version "0.25.0"
+    id("com.ncorti.ktfmt.gradle") version "0.26.0"
 }
 
 group = "dev.joguenco"
@@ -32,7 +32,7 @@ dependencies {
     // Database MariaDB
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     // Database SQL Server
-    //runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+    // runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -92,6 +92,21 @@ kapt {
 }
 
 ktfmt { kotlinLangStyle() }
+
+// ktfmt 0.62 requires Kotlin 2.x, but Spring dependency management forces 1.9.25.
+configurations
+    .matching { it.name == "ktfmt" }
+    .configureEach {
+        resolutionStrategy.eachDependency {
+            if (
+                requested.group == "org.jetbrains.kotlin" &&
+                    requested.name == "kotlin-compiler-embeddable"
+            ) {
+                useVersion("2.3.20")
+                because("ktfmt requires Kotlin 2.x compiler")
+            }
+        }
+    }
 
 tasks.withType<Test> { useJUnitPlatform() }
 

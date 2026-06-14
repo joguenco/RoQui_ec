@@ -198,7 +198,11 @@ export default {
         })
         .catch((error) => {
           if (error.response) {
-            alert('Error: ' + error.response.data)
+            if (error.response.status === 400) {
+              alert('Bad Request: ' + error.response.data.message)
+            } else {
+              alert('Error: ' + error.response.data)
+            }
           } else {
             console.error('Error message:', error.message)
           }

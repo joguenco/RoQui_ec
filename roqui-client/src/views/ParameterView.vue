@@ -1,7 +1,7 @@
 <template>
   <AppHeader />
 
-  <article class="panel is-info m-6">
+  <article class="panel is-link m-6">
     <p class="panel-heading">Parámetros</p>
 
     <a class="panel-block is-active">

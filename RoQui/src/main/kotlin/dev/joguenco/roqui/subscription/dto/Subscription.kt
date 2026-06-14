@@ -5,5 +5,5 @@ data class Subscription(
     val name: String,
     val endDate: String,
     val formatDate: String,
-    val remainingDays: Int
+    val remainingDays: Int,
 )

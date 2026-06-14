@@ -4,12 +4,12 @@ import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.repository.CustomParameterRepository
 import dev.joguenco.roqui.util.OwnEncryption
 import java.io.File
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Service
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 
 @Service
 class ParameterService(private val parameterRepository: CustomParameterRepository) {
@@ -78,7 +78,7 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
         return try {
             val suscripcionEncryptedData: String = value
             toDate(suscripcionEncryptedData, keyProperty)
-        } catch (ex :Exception) {
+        } catch (ex: Exception) {
             errorDate()
         }
     }
