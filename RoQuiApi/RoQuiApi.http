@@ -1,0 +1,6 @@
+@RoQuiApi_HostAddress = http://localhost:5276
+
+GET {{RoQuiApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

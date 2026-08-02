@@ -1,0 +1,57 @@
+## Core build outputs
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## .NET Core tool files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ASP.NET Core secrets and local development
+usersecrets.json
+appsettings.Development.json
+# Note: Keep appsettings.Development.json tracked if it contains non-sensitive team defaults
+
+## Data and database files
+*.edmx
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.db
+*.sqlite
+
+## Visual Studio cache and configurations
+.vs/
+[Cc]hangesets/
+/_ReSharper*/
+*.nuget.props
+*.nuget.targets
+
+## Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/code-workspace
+
+## JetBrains Rider / IntelliJ
+.idea/
+*.sln.iml
+
+## Frontend dependencies (for ASP.NET Core Web apps with JS frameworks)
+node_modules/
+/wwwroot/lib/
