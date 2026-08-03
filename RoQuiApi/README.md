@@ -2,6 +2,10 @@
 ```
 dotnet new webapi --use-controllers -o RoQuiApi
 ```
+## Format
+```
+dotnet format
+```
 ## Run
 ```
 dotnet run --launch-profile https
