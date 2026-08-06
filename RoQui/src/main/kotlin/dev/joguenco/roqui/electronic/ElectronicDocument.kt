@@ -75,6 +75,7 @@ class ElectronicDocument(
         var statusResponse = Estado.NO_PROCESADO.descripcion
         var generatedDirectory = ""
         val classLoader = ElectronicDocument::class.java.classLoader
+        val xsdFolder = classLoader.getResource("./xsd").path
         var xsdFile = ""
 
         if (type == TypeDocument.FACTURA) {
@@ -82,13 +83,13 @@ class ElectronicDocument(
             val result = build.xml()
             generatedDirectory = result.first
             accessKey = result.second
-            xsdFile = classLoader.getResource("xsd${File.separatorChar}Factura_V2.1.0.xsd").path
+            xsdFile = "${xsdFolder}${File.separatorChar}Factura_V2.1.0.xsd"
         } else if (type == TypeDocument.NOTA_CREDITO) {
             val build = BuildCreditNote(code, number, baseDirectory, creditNoteService!!)
             val result = build.xml()
             generatedDirectory = result.first
             accessKey = result.second
-            xsdFile = classLoader.getResource("xsd${File.separatorChar}NotaCredito_V1.1.0.xsd").path
+            xsdFile = "${xsdFolder}${File.separatorChar}NotaCredito_V1.1.0.xsd"
         }
 
         if (accessKey.isEmpty()) {
