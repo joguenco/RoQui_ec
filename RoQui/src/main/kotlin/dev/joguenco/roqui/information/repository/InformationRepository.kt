@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.information.repository
 
+import dev.joguenco.roqui.information.model.GeneralObservation
 import dev.joguenco.roqui.information.model.Information
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -39,4 +40,14 @@ class InformationRepository : CustomIInformationRepository {
     override fun findLegalNameOfTaxpayer(): String {
         return entityManager.createQuery("select legalName from Taxpayer").singleResult as String
     }
+
+    override fun findGeneralObservation(): MutableList<GeneralObservation> {
+        return entityManager
+            .createQuery("from GeneralObservation", GeneralObservation::class.java)
+            .resultList
+    }
+
+
+
+
 }

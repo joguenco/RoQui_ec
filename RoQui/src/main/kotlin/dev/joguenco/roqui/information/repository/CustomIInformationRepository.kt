@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.information.repository
 
+import dev.joguenco.roqui.information.model.GeneralObservation
 import dev.joguenco.roqui.information.model.Information
 
 interface CustomIInformationRepository {
@@ -8,4 +9,7 @@ interface CustomIInformationRepository {
     fun findEmailByIdentification(identification: String): String?
 
     fun findLegalNameOfTaxpayer(): String
+
+    fun findGeneralObservation(): MutableList<GeneralObservation>
+
 }

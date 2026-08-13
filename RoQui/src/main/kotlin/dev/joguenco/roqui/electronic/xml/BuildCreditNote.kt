@@ -71,13 +71,30 @@ class BuildCreditNote(
     }
 
     private fun buildAdditionalInformation(identification: String): NotaCredito.InfoAdicional? {
-        val infoAdicional = NotaCredito.InfoAdicional()
+        var infoAdicional = NotaCredito.InfoAdicional()
         val additionalInformation = creditNoteService.getCreditNoteInformation(identification)
 
         for (information in additionalInformation) {
             val campoAdicional = NotaCredito.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = information.name
             campoAdicional.value = information.value
+
+            infoAdicional.campoAdicional.add(campoAdicional)
+        }
+        infoAdicional = buildGeneralObservation(infoAdicional)
+        return infoAdicional
+    }
+
+
+    private fun buildGeneralObservation(
+        infoAdicional: NotaCredito.InfoAdicional
+    ): NotaCredito.InfoAdicional {
+        val generalObservation = creditNoteService.getGeneralObservation()
+
+        for (observation in generalObservation) {
+            val campoAdicional = NotaCredito.InfoAdicional.CampoAdicional()
+            campoAdicional.nombre = observation.name
+            campoAdicional.value = observation.value
 
             infoAdicional.campoAdicional.add(campoAdicional)
         }

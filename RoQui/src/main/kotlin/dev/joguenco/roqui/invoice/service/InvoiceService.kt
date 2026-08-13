@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.invoice.service
 
+import dev.joguenco.roqui.information.model.GeneralObservation
 import dev.joguenco.roqui.information.model.Information
 import dev.joguenco.roqui.information.repository.InformationRepository
 import dev.joguenco.roqui.invoice.dto.TaxTotal
@@ -10,6 +11,7 @@ import dev.joguenco.roqui.invoice.model.TaxDetail
 import dev.joguenco.roqui.invoice.repository.CustomInvoiceRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
 import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
+import ec.gob.sri.invoice.v210.Factura
 import java.math.BigDecimal
 import kotlin.collections.forEach
 import org.springframework.stereotype.Service
@@ -115,4 +117,10 @@ class InvoiceService(
     fun getInvoiceInformation(identification: String): MutableList<Information> {
         return informationRepository.findInformationByIdentification(identification)
     }
+
+    fun getGeneralObservation(): MutableList<GeneralObservation> {
+        return informationRepository.findGeneralObservation()
+    }
+
+
 }
