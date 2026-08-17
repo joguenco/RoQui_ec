@@ -11,5 +11,4 @@ interface CustomIInformationRepository {
     fun findLegalNameOfTaxpayer(): String
 
     fun findGeneralObservation(): MutableList<GeneralObservation>
-
 }

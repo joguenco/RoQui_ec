@@ -46,8 +46,4 @@ class InformationRepository : CustomIInformationRepository {
             .createQuery("from GeneralObservation", GeneralObservation::class.java)
             .resultList
     }
-
-
-
-
 }

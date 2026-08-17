@@ -32,7 +32,7 @@ class BuildCreditNote(
             notaCredito.id = "comprobante"
             notaCredito.version = "1.1.0"
             notaCredito.infoTributaria = buildInfoTributaria()
-            notaCredito.infoNotaCredito = buildInfoFactura()
+            notaCredito.infoNotaCredito = buildInfoNoteCredit()
             notaCredito.detalles = buildDetails()
             notaCredito.infoAdicional =
                 buildAdditionalInformation(tributaryInformation.creditNote.identification!!)
@@ -85,7 +85,6 @@ class BuildCreditNote(
         return infoAdicional
     }
 
-
     private fun buildGeneralObservation(
         infoAdicional: NotaCredito.InfoAdicional
     ): NotaCredito.InfoAdicional {
@@ -126,7 +125,7 @@ class BuildCreditNote(
         return infoTributaria
     }
 
-    private fun buildInfoFactura(): NotaCredito.InfoNotaCredito {
+    private fun buildInfoNoteCredit(): NotaCredito.InfoNotaCredito {
         val infoNotaCredito = NotaCredito.InfoNotaCredito()
 
         infoNotaCredito.fechaEmision =

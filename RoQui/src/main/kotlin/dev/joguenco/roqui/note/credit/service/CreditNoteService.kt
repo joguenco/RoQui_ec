@@ -111,7 +111,6 @@ class CreditNoteService(
         return informationRepository.findInformationByIdentification(identification)
     }
 
-
     fun getGeneralObservation(): MutableList<GeneralObservation> {
         return informationRepository.findGeneralObservation()
     }

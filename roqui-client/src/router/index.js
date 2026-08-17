@@ -74,6 +74,14 @@ const router = createRouter({
       name: 'credit-note',
       component: () => import('@/views/credit/note/CreditNoteView.vue'),
     },
+
+    // Ruta del módulo de Notas de Débito: al entrar a /debit/note carga (lazy)
+    // el componente DebitNoteView.vue
+    {
+      path: '/debit/note',
+      name: 'debit-note',
+      component: () => import('@/views/debit/note/DebitNoteView.vue'),
+    },
   ],
 })
 

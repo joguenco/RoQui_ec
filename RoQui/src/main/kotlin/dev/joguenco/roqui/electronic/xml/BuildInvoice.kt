@@ -83,7 +83,9 @@ class BuildInvoice(
         return infoAdicional
     }
 
-    private fun buildGeneralObservation(infoAdicional: Factura.InfoAdicional): Factura.InfoAdicional {
+    private fun buildGeneralObservation(
+        infoAdicional: Factura.InfoAdicional
+    ): Factura.InfoAdicional {
         val generalObservation = invoiceService.getGeneralObservation()
 
         for (observation in generalObservation) {

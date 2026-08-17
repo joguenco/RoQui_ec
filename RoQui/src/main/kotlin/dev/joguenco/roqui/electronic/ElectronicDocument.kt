@@ -9,6 +9,7 @@ import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildCreditNote
+import dev.joguenco.roqui.electronic.xml.BuildDebitNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.PdfBuilder
 import dev.joguenco.roqui.electronic.xml.validateXmlAgainstXsd
@@ -16,6 +17,7 @@ import dev.joguenco.roqui.email.EmailSmtp
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
+import dev.joguenco.roqui.note.debit.service.DebitNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
@@ -37,6 +39,7 @@ class ElectronicDocument(
 
     private var invoiceService: InvoiceService? = null
     private var creditNoteService: CreditNoteService? = null
+    private var debitNoteService: DebitNoteService? = null
 
     constructor(
         code: String,
@@ -60,6 +63,19 @@ class ElectronicDocument(
         this.creditNoteService = creditNoteService
     }
 
+    // constructor
+    constructor(
+        code: String,
+        number: String,
+        debitNoteService: DebitNoteService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.debitNoteService = debitNoteService
+    }
+
+    // FIN
     private var accessKey: String = ""
     private var baseDirectory = ""
 
@@ -90,6 +106,12 @@ class ElectronicDocument(
             generatedDirectory = result.first
             accessKey = result.second
             xsdFile = "${xsdFolder}${File.separatorChar}NotaCredito_V1.1.0.xsd"
+        } else if (type == TypeDocument.NOTA_DEBITO) {
+            val build = BuildDebitNote(code, number, baseDirectory, debitNoteService!!)
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = "${xsdFolder}${File.separatorChar}NotaDebito_V1.0.0.xsd"
         }
 
         if (accessKey.isEmpty()) {
