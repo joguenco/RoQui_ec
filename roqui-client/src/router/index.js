@@ -82,6 +82,22 @@ const router = createRouter({
       name: 'debit-note',
       component: () => import('@/views/debit/note/DebitNoteView.vue'),
     },
+
+    // Ruta del modulo de Liquidaciones de Compra: al entrar a /liquidation carga (lazy)
+    // el componente LiquidationView.vue
+    {
+      path: '/liquidation',
+      name: 'liquidation',
+      component: () => import('@/views/liquidation/LiquidationView.vue'),
+    },
+
+    // Ruta del modulo de Comprobantes de Retencion: al entrar a /withhold carga
+    // (lazy) el componente WithholdView.vue
+    {
+      path: '/withhold',
+      name: 'withhold',
+      component: () => import('@/views/withhold/WithholdView.vue'),
+    },
   ],
 })
 

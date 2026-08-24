@@ -47,6 +47,28 @@
       >
     </a>
 
+    <!-- Modulo de Liquidaciones de Compra (copiado del bloque de Notas de Debito) -->
+    <a class="panel-block">
+      <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+      </span>
+      <router-link to="/liquidation" class="navbar-item" active-class="is-active">
+        <img src="@/assets/invoice.svg" alt="liquidation" />
+        <strong class="has-text-grey-dark">Liquidaciones de Compra</strong></router-link
+      >
+    </a>
+
+    <!-- Modulo de Comprobantes de Retencion -->
+    <a class="panel-block">
+      <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+      </span>
+      <router-link to="/withhold" class="navbar-item" active-class="is-active">
+        <img src="@/assets/star.svg" alt="withhold" />
+        <strong class="has-text-grey-dark">Comprobantes de Retención</strong></router-link
+      >
+    </a>
+
     <!-- Indicador de ambiente actual (producción/pruebas) -->
     <div class="panel-block">
       <button class="button is-fullwidth is-static">Ambiente: {{ environment }}</button>
