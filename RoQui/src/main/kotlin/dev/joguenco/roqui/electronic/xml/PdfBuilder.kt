@@ -72,8 +72,10 @@ class PdfBuilder(
     private fun getTypeDocument(accessKey: String): TypeDocument {
         return when (accessKey.substring(8, 10)) {
             "01" -> TypeDocument.FACTURA
+            "03" -> TypeDocument.LIQUIDACION
             "04" -> TypeDocument.NOTA_CREDITO
             "05" -> TypeDocument.NOTA_DEBITO
+            "07" -> TypeDocument.RETENCION
             else -> throw IllegalArgumentException("Invalid type document code in accessKey")
         }
     }
