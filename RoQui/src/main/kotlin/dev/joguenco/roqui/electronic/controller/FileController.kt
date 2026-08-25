@@ -52,43 +52,24 @@ class FileController {
         val baseDirectory = parameterService.getBaseDirectory()
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
 
-        var xmlFolder =
-            FilesUtil.onlyGetDirectory(
-                baseDirectory + "${File.separatorChar}authorized",
-                dateAccessKey,
-            )
+        val folders = listOf("authorized", "refused", "signed", "generated")
 
-        var path = Paths.get("$xmlFolder${File.separatorChar}${accessKey}.xml")
-        val file = path.toFile()
-
-        if (!file.exists()) {
-            xmlFolder =
+        // bucle para cada carpeta de esta lista, si el archivo está ahí, devuélvelo
+        for (folder in folders) {
+            val xmlFolder =
                 FilesUtil.onlyGetDirectory(
-                    baseDirectory + "${File.separatorChar}refused",
+                    baseDirectory + "${File.separatorChar}$folder",
                     dateAccessKey,
                 )
 
-            path = Paths.get("$xmlFolder${File.separatorChar}${accessKey}.xml")
-            val file = path.toFile()
+            val path = Paths.get("$xmlFolder${File.separatorChar}${accessKey}.xml")
 
-            if (!file.exists()) {
-                xmlFolder =
-                    FilesUtil.onlyGetDirectory(
-                        baseDirectory + "${File.separatorChar}signed",
-                        dateAccessKey,
-                    )
-
-                path = Paths.get("$xmlFolder${File.separatorChar}${accessKey}.xml")
-                val file = path.toFile()
-
-                if (!file.exists()) {
-                    return ResponseEntity.notFound().build()
-                }
+            if (path.toFile().exists()) {
+                val xml = Files.readAllBytes(path)
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml)
             }
         }
 
-        val xml = Files.readAllBytes(path)
-
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml)
+        return ResponseEntity.notFound().build()
     }
 }

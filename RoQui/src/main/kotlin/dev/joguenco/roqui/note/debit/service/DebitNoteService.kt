@@ -1,41 +1,39 @@
-package dev.joguenco.roqui.invoice.service
+package dev.joguenco.roqui.note.debit.service
 
 import dev.joguenco.roqui.information.model.GeneralObservation
 import dev.joguenco.roqui.information.model.Information
 import dev.joguenco.roqui.information.repository.InformationRepository
 import dev.joguenco.roqui.invoice.dto.TaxTotal
-import dev.joguenco.roqui.invoice.dto.TributaryInformation
-import dev.joguenco.roqui.invoice.model.InvoiceDetail
 import dev.joguenco.roqui.invoice.model.Payment
-import dev.joguenco.roqui.invoice.model.TaxDetail
-import dev.joguenco.roqui.invoice.repository.CustomInvoiceRepository
+import dev.joguenco.roqui.note.debit.dto.TributaryInformation
+import dev.joguenco.roqui.note.debit.model.DebitNoteDetail
+import dev.joguenco.roqui.note.debit.repository.CustomDebitNoteRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
 import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
 import java.math.BigDecimal
-import kotlin.collections.forEach
+import kotlin.collections.getOrDefault
 import org.springframework.stereotype.Service
 
 @Service
-class InvoiceService(
-    private val invoiceRepository: CustomInvoiceRepository,
+class DebitNoteService(
+    private val debitNoteRepository: CustomDebitNoteRepository,
     private val taxPayerRepository: TaxpayerRepository,
     private val establishmentRepository: EstablishmentRepository,
     private val informationRepository: InformationRepository,
 ) {
-
     fun count(code: String, number: String): Long {
-        return invoiceRepository.countByCodeAndNumber(code, number)
+        return debitNoteRepository.countByCodeAndNumber(code, number)
     }
 
-    fun getInvoiceAndTaxpayer(code: String, number: String): TributaryInformation {
-        val invoice = invoiceRepository.findByCodeAndNumber(code, number)
+    fun getDebitNoteAndTaxpayer(code: String, number: String): TributaryInformation {
+        val debitNote = debitNoteRepository.findByCodeAndNumber(code, number)
         val taxpayer = taxPayerRepository.findById(1).get()
-        val establishment = establishmentRepository.findByCode(invoice.establishment!!)
+        val establishment = establishmentRepository.findByCode(debitNote.establishment!!)
         val principalEstablishmentAddress = establishmentRepository.findPrincipal().address
 
         val tributaryInformation =
             TributaryInformation(
-                invoice,
+                debitNote,
                 taxpayer,
                 establishment.address,
                 principalEstablishmentAddress,
@@ -45,21 +43,16 @@ class InvoiceService(
         return tributaryInformation
     }
 
-    fun getInvoiceDetail(code: String, number: String): MutableList<InvoiceDetail> {
-        return invoiceRepository.findDetailByCodeAndNumber(code, number)
+    fun getDebitNoteDetail(code: String, number: String): MutableList<DebitNoteDetail> {
+        return debitNoteRepository.findDetailByCodeAndNumber(code, number)
     }
 
-    fun getInvoiceDetailTax(
-        code: String,
-        number: String,
-        principalCode: String,
-        line: Long,
-    ): MutableList<TaxDetail> {
-        return invoiceRepository.findDetailTax(code, number, principalCode, line)
+    fun getDebitNotePayment(code: String, number: String): MutableList<Payment> {
+        return debitNoteRepository.findPaymentByCodeAndNumber(code, number)
     }
 
-    fun getInvoiceTax(code: String, number: String): MutableList<TaxTotal> {
-        val taxDetails = invoiceRepository.findTotalTaxByCodeAndNumber(code, number)
+    fun getDebitNoteTax(code: String, number: String): MutableList<TaxTotal> {
+        val taxDetails = debitNoteRepository.findTotalTaxByCodeAndNumber(code, number)
 
         val groupedTaxes = mutableMapOf<Pair<String, String>, TaxTotal>()
 
@@ -109,11 +102,7 @@ class InvoiceService(
         return taxTotals
     }
 
-    fun getInvoicePayment(code: String, number: String): MutableList<Payment> {
-        return invoiceRepository.findPaymentByCodeAndNumber(code, number)
-    }
-
-    fun getInvoiceInformation(identification: String): MutableList<Information> {
+    fun getDebitNoteInformation(identification: String): MutableList<Information> {
         return informationRepository.findInformationByIdentification(identification)
     }
 

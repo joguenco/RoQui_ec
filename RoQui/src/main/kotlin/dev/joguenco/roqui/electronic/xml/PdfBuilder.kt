@@ -1,7 +1,8 @@
 package dev.joguenco.roqui.electronic.xml
 
-import dev.joguenco.pdf.CreditNoteReport
-import dev.joguenco.pdf.InvoiceReport
+import dev.joguenco.pdf.invoice.InvoiceReport
+import dev.joguenco.pdf.note.credit.CreditNoteReport
+import dev.joguenco.pdf.note.debit.DebitNoteReport
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
@@ -56,6 +57,14 @@ class PdfBuilder(
                     pdfOutFolder,
                 )
                 .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.NOTA_DEBITO) {
+            return DebitNoteReport(
+                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
+                    reportFolder,
+                    pathLogo,
+                    pdfOutFolder,
+                )
+                .pdf(authorization, authorizationDate)
         }
         return false
     }
@@ -64,6 +73,7 @@ class PdfBuilder(
         return when (accessKey.substring(8, 10)) {
             "01" -> TypeDocument.FACTURA
             "04" -> TypeDocument.NOTA_CREDITO
+            "05" -> TypeDocument.NOTA_DEBITO
             else -> throw IllegalArgumentException("Invalid type document code in accessKey")
         }
     }

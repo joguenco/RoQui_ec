@@ -9,7 +9,6 @@ import org.hibernate.annotations.Immutable
 @Entity
 @Immutable
 @Table(name = "v_ele_general_observations")
-
 class GeneralObservation {
 
     @Id val id: Int? = null
@@ -17,6 +16,4 @@ class GeneralObservation {
     @Column(name = "name") val name: String? = null
 
     @Column(name = "value") val value: String? = null
-
-
 }

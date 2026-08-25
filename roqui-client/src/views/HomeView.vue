@@ -6,9 +6,11 @@
     v-if="showNotification"
   />
 
+  <!-- Menú principal: cada panel-block es un enlace a un módulo del sistema -->
   <article class="panel is-link m-6">
     <p class="panel-heading">Menú</p>
 
+    <!-- Módulo de Facturas -->
     <a class="panel-block is-active">
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
@@ -18,6 +20,12 @@
         <strong class="has-text-grey-dark">Facturas</strong></router-link
       >
     </a>
+
+    <!--
+      Módulo de Notas de Crédito.
+      Esta estructura (panel-block + router-link) es la plantilla que se
+      replicó para agregar el módulo de Notas de Débito de abajo.
+    -->
     <a class="panel-block">
       <span class="panel-icon">
         <i class="fas fa-book" aria-hidden="true"></i>
@@ -27,6 +35,19 @@
         <strong class="has-text-grey-dark">Notas de Crédito</strong></router-link
       >
     </a>
+
+    <!-- Módulo de Notas de Débito (copiado del bloque de Notas de Crédito) -->
+    <a class="panel-block">
+      <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+      </span>
+      <router-link to="/debit/note" class="navbar-item" active-class="is-active">
+        <img src="@/assets/receipt-refund.svg" alt="refund" />
+        <strong class="has-text-grey-dark">Notas de Débito</strong></router-link
+      >
+    </a>
+
+    <!-- Indicador de ambiente actual (producción/pruebas) -->
     <div class="panel-block">
       <button class="button is-fullwidth is-static">Ambiente: {{ environment }}</button>
     </div>
