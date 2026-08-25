@@ -11,16 +11,20 @@ import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildCreditNote
 import dev.joguenco.roqui.electronic.xml.BuildDebitNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
+import dev.joguenco.roqui.electronic.xml.BuildLiquidation
+import dev.joguenco.roqui.electronic.xml.BuildWithhold
 import dev.joguenco.roqui.electronic.xml.PdfBuilder
 import dev.joguenco.roqui.electronic.xml.validateXmlAgainstXsd
 import dev.joguenco.roqui.email.EmailSmtp
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
+import dev.joguenco.roqui.liquidation.service.LiquidationService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.debit.service.DebitNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
+import dev.joguenco.roqui.withhold.service.WithholdService
 import java.io.File
 import kotlin.NoSuchElementException
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -40,6 +44,8 @@ class ElectronicDocument(
     private var invoiceService: InvoiceService? = null
     private var creditNoteService: CreditNoteService? = null
     private var debitNoteService: DebitNoteService? = null
+    private var liquidationService: LiquidationService? = null
+    private var withholdService: WithholdService? = null
 
     constructor(
         code: String,
@@ -73,6 +79,28 @@ class ElectronicDocument(
         documentService: DocumentService,
     ) : this(code, number, webService, parameterService, documentService) {
         this.debitNoteService = debitNoteService
+    }
+
+    constructor(
+        code: String,
+        number: String,
+        liquidationService: LiquidationService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.liquidationService = liquidationService
+    }
+
+    constructor(
+        code: String,
+        number: String,
+        withholdService: WithholdService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.withholdService = withholdService
     }
 
     // FIN
@@ -112,6 +140,18 @@ class ElectronicDocument(
             generatedDirectory = result.first
             accessKey = result.second
             xsdFile = "${xsdFolder}${File.separatorChar}NotaDebito_V1.0.0.xsd"
+        } else if (type == TypeDocument.LIQUIDACION) {
+            val build = BuildLiquidation(code, number, baseDirectory, liquidationService!!)
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = "${xsdFolder}${File.separatorChar}LiquidacionCompra_V1.1.0.xsd"
+        } else if (type == TypeDocument.RETENCION) {
+            val build = BuildWithhold(code, number, baseDirectory, withholdService!!)
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = "${xsdFolder}${File.separatorChar}ComprobanteRetencion_V2.0.0.xsd"
         }
 
         if (accessKey.isEmpty()) {
