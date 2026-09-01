@@ -1,3 +1,11 @@
+# RoQui API
+
+## Requirements
+* C#
+* DotNet Core 10
+* Postgres 18 or above
+* Entity Framework Core
+
 ## Create Project
 ```
 dotnet new webapi --use-controllers -o RoQuiApi
