@@ -98,6 +98,14 @@ const router = createRouter({
       name: 'withhold',
       component: () => import('@/views/withhold/WithholdView.vue'),
     },
+
+    // Ruta del modulo de Guias de Remision: al entrar a /delivery-note carga
+    // (lazy) el componente DeliveryNoteView.vue
+    {
+      path: '/delivery-note',
+      name: 'delivery-note',
+      component: () => import('@/views/delivery/DeliveryNoteView.vue'),
+    },
   ],
 })
 
