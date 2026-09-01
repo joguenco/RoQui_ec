@@ -32,4 +32,6 @@ class WithholdDetail {
     @Column(name = "percentage") val percentage: BigDecimal? = null
 
     @Column(name = "withholded_value") val withholdedValue: BigDecimal? = null
+
+    @Column(name = "code_support") val codeSupport: String? = null
 }

@@ -25,6 +25,8 @@ class WithholdDocumentTax {
 
     @Column(name = "number") val number: String? = null
 
+    @Column(name = "code_support") val codeSupport: String? = null
+
     @Column(name = "tax_code") val taxCode: String? = null
 
     @Column(name = "percentage_code") val percentageCode: String? = null

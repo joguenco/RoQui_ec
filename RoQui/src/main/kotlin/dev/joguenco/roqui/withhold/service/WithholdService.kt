@@ -8,6 +8,7 @@ import dev.joguenco.roqui.taxpayer.repository.TaxpayerRepository
 import dev.joguenco.roqui.withhold.dto.TributaryInformation
 import dev.joguenco.roqui.withhold.model.WithholdDetail
 import dev.joguenco.roqui.withhold.model.WithholdDocumentTax
+import dev.joguenco.roqui.withhold.model.WithholdSupport
 import dev.joguenco.roqui.withhold.repository.CustomWithholdRepository
 import org.springframework.stereotype.Service
 
@@ -43,6 +44,11 @@ class WithholdService(
     /** Las retenciones aplicadas: una por cada linea del comprobante. */
     fun getWithholdDetail(code: String, number: String): MutableList<WithholdDetail> {
         return withholdRepository.findDetailByCodeAndNumber(code, number)
+    }
+
+    /** Un bloque docSustento por cada sustento que use la compra. */
+    fun getWithholdSupport(code: String, number: String): MutableList<WithholdSupport> {
+        return withholdRepository.findSupportByCodeAndNumber(code, number)
     }
 
     /**

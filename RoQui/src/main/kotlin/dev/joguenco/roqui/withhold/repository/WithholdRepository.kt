@@ -3,6 +3,7 @@ package dev.joguenco.roqui.withhold.repository
 import dev.joguenco.roqui.withhold.model.Withhold
 import dev.joguenco.roqui.withhold.model.WithholdDetail
 import dev.joguenco.roqui.withhold.model.WithholdDocumentTax
+import dev.joguenco.roqui.withhold.model.WithholdSupport
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -48,6 +49,20 @@ class WithholdRepository : CustomWithholdRepository {
             .setParameter("code", code)
             .setParameter("number", number)
             .resultList as MutableList<WithholdDetail>
+    }
+
+    override fun findSupportByCodeAndNumber(
+        code: String,
+        number: String,
+    ): MutableList<WithholdSupport> {
+        return entityManager
+            .createQuery(
+                "from WithholdSupport where code = :code and number = :number " +
+                    "order by codeSupport"
+            )
+            .setParameter("code", code)
+            .setParameter("number", number)
+            .resultList as MutableList<WithholdSupport>
     }
 
     override fun findDocumentTaxByCodeAndNumber(

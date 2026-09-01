@@ -1,8 +1,11 @@
 package dev.joguenco.roqui.electronic.xml
 
 import dev.joguenco.pdf.invoice.InvoiceReport
+import dev.joguenco.pdf.liquidation.LiquidationReport
 import dev.joguenco.pdf.note.credit.CreditNoteReport
 import dev.joguenco.pdf.note.debit.DebitNoteReport
+import dev.joguenco.pdf.note.delivery.DeliveryReport
+import dev.joguenco.pdf.withhold.WithholdReport
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
@@ -65,6 +68,30 @@ class PdfBuilder(
                     pdfOutFolder,
                 )
                 .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.LIQUIDACION) {
+            return LiquidationReport(
+                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
+                    reportFolder,
+                    pathLogo,
+                    pdfOutFolder,
+                )
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.RETENCION) {
+            return WithholdReport(
+                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
+                    reportFolder,
+                    pathLogo,
+                    pdfOutFolder,
+                )
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.GUIA) {
+            return DeliveryReport(
+                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
+                    reportFolder,
+                    pathLogo,
+                    pdfOutFolder,
+                )
+                .pdf(authorization, authorizationDate)
         }
         return false
     }
@@ -75,6 +102,7 @@ class PdfBuilder(
             "03" -> TypeDocument.LIQUIDACION
             "04" -> TypeDocument.NOTA_CREDITO
             "05" -> TypeDocument.NOTA_DEBITO
+            "06" -> TypeDocument.GUIA
             "07" -> TypeDocument.RETENCION
             else -> throw IllegalArgumentException("Invalid type document code in accessKey")
         }

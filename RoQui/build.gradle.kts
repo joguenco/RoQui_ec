@@ -53,7 +53,7 @@ dependencies {
     implementation("com.googlecode.xades4j:xades4j:1.7.0")
     implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
     // Printer
-    implementation("dev.joguenco.printer:RoQuiPrinter:1.2.0")
+    implementation("dev.joguenco.printer:RoQuiPrinter:2.0.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.1")
     implementation("net.sf.jasperreports:jasperreports:6.21.5")
