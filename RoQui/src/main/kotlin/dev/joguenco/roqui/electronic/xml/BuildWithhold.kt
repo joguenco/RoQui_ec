@@ -138,35 +138,53 @@ class BuildWithhold(
         return infoCompRetencion
     }
 
+    /**
+     * Un bloque docSustento por cada sustento tributario de la compra.
+     *
+     * El SRI admite varios: cada uno lleva un solo codSustento, sus propios totales y sus propias
+     * retenciones. Si la compra mezcla mercaderia y servicios salen dos bloques apuntando a la
+     * misma factura.
+     */
     private fun buildDocsSustento(): ComprobanteRetencion.DocsSustento {
         val docsSustento = ComprobanteRetencion.DocsSustento()
-        val withhold = tributaryInformation.withhold
 
-        val docSustento = DocSustento()
-        docSustento.codSustento = withhold.codeSupport
-        docSustento.codDocSustento = withhold.codeDocumentSupport
-        docSustento.numDocSustento = withhold.numberDocumentSupport?.replace("-", "")
-        docSustento.fechaEmisionDocSustento =
-            SimpleDateFormat("dd/MM/yyyy").format(withhold.dateDocumentSupport)
-        docSustento.numAutDocSustento = withhold.authorizationDocumentSupport
-        docSustento.pagoLocExt = PAGO_LOCAL
+        for (support in withholdService.getWithholdSupport(code, number)) {
+            val docSustento = DocSustento()
 
-        docSustento.totalSinImpuestos =
-            withhold.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
-        docSustento.importeTotal = withhold.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            docSustento.codSustento = support.codeSupport
+            docSustento.codDocSustento = support.codeDocumentSupport
+            docSustento.numDocSustento = support.numberDocumentSupport?.replace("-", "")
+            docSustento.fechaEmisionDocSustento =
+                SimpleDateFormat("dd/MM/yyyy").format(support.dateDocumentSupport)
+            docSustento.numAutDocSustento = support.authorizationDocumentSupport
+            docSustento.pagoLocExt = PAGO_LOCAL
 
-        docSustento.impuestosDocSustento = buildImpuestosDocSustento()
-        docSustento.retenciones = buildRetenciones()
-        docSustento.pagos = buildPagos(docSustento.importeTotal)
+            docSustento.totalSinImpuestos =
+                support.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            docSustento.importeTotal = support.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
 
-        docsSustento.docSustento.add(docSustento)
+            docSustento.impuestosDocSustento = buildImpuestosDocSustento(support.codeSupport)
+            docSustento.retenciones = buildRetenciones(support.codeSupport)
+            docSustento.pagos = buildPagos(docSustento.importeTotal)
+
+            docsSustento.docSustento.add(docSustento)
+        }
 
         return docsSustento
     }
 
-    private fun buildImpuestosDocSustento(): ImpuestosDocSustento {
+    /**
+     * Los impuestos que ya traia la compra, solo los de este sustento.
+     *
+     * Si no se filtrara, con dos bloques docSustento el IVA saldria contado dos veces y los totales
+     * no cuadrarian contra la factura.
+     */
+    private fun buildImpuestosDocSustento(codeSupport: String?): ImpuestosDocSustento {
         val impuestos = ImpuestosDocSustento()
-        val documentTaxes = withholdService.getWithholdDocumentTax(code, number)
+        val documentTaxes =
+            withholdService.getWithholdDocumentTax(code, number).filter {
+                it.codeSupport == codeSupport || it.codeSupport == null
+            }
 
         for (tax in documentTaxes) {
             val impuesto = ImpuestoDocSustento()
@@ -182,10 +200,18 @@ class BuildWithhold(
         return impuestos
     }
 
-    /** Las retenciones aplicadas: lo que se le retuvo al proveedor. */
-    private fun buildRetenciones(): Retenciones {
+    /**
+     * Las retenciones de un sustento: lo que se le retuvo al proveedor por esa parte de la compra.
+     *
+     * Las lineas sin sustento entran en el primer bloque, para no perderlas: son retenciones hechas
+     * antes de que DonPos pidiera el dato.
+     */
+    private fun buildRetenciones(codeSupport: String?): Retenciones {
         val retenciones = Retenciones()
-        val details = withholdService.getWithholdDetail(code, number)
+        val details =
+            withholdService.getWithholdDetail(code, number).filter {
+                it.codeSupport == codeSupport || it.codeSupport == null
+            }
 
         for (detail in details) {
             val retencion = Retencion()

@@ -10,6 +10,7 @@ import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.electronic.sign.SignerXml
 import dev.joguenco.roqui.electronic.xml.BuildCreditNote
 import dev.joguenco.roqui.electronic.xml.BuildDebitNote
+import dev.joguenco.roqui.electronic.xml.BuildDeliveryNote
 import dev.joguenco.roqui.electronic.xml.BuildInvoice
 import dev.joguenco.roqui.electronic.xml.BuildLiquidation
 import dev.joguenco.roqui.electronic.xml.BuildWithhold
@@ -21,6 +22,7 @@ import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.liquidation.service.LiquidationService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.debit.service.DebitNoteService
+import dev.joguenco.roqui.note.delivery.service.DeliveryNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
@@ -46,6 +48,7 @@ class ElectronicDocument(
     private var debitNoteService: DebitNoteService? = null
     private var liquidationService: LiquidationService? = null
     private var withholdService: WithholdService? = null
+    private var deliveryNoteService: DeliveryNoteService? = null
 
     constructor(
         code: String,
@@ -103,6 +106,17 @@ class ElectronicDocument(
         this.withholdService = withholdService
     }
 
+    constructor(
+        code: String,
+        number: String,
+        deliveryNoteService: DeliveryNoteService,
+        webService: WebService,
+        parameterService: ParameterService,
+        documentService: DocumentService,
+    ) : this(code, number, webService, parameterService, documentService) {
+        this.deliveryNoteService = deliveryNoteService
+    }
+
     // FIN
     private var accessKey: String = ""
     private var baseDirectory = ""
@@ -152,6 +166,12 @@ class ElectronicDocument(
             generatedDirectory = result.first
             accessKey = result.second
             xsdFile = "${xsdFolder}${File.separatorChar}ComprobanteRetencion_V2.0.0.xsd"
+        } else if (type == TypeDocument.GUIA) {
+            val build = BuildDeliveryNote(code, number, baseDirectory, deliveryNoteService!!)
+            val result = build.xml()
+            generatedDirectory = result.first
+            accessKey = result.second
+            xsdFile = "${xsdFolder}${File.separatorChar}GuiaRemision_V1.1.0.xsd"
         }
 
         if (accessKey.isEmpty()) {
