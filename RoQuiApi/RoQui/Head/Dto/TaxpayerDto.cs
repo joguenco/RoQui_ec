@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RoQuiApi.RoQui.Head;
+namespace RoQuiApi.RoQui.Head.Dto;
 
 public class TaxpayerDto
 {
@@ -18,4 +18,6 @@ public class TaxpayerDto
     public string? SpecialTaxpayer { get; set; }
     public string? RetentionAgent { get; set; }
     public string? Rimpe { get; set; }
+
+    public required virtual ICollection<EstablishmentDto> Establishments { get; set; }
 }

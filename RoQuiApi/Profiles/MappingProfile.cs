@@ -1,5 +1,5 @@
 using AutoMapper;
-using RoQuiApi.RoQui.Head;
+using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 
 namespace RoQuiApi.Profiles;
@@ -10,5 +10,7 @@ public class MappingProfile : Profile
     {
         CreateMap<Taxpayer, TaxpayerDto>();
         CreateMap<TaxpayerDto, Taxpayer>();
+        CreateMap<Establishment, EstablishmentDto>();
+        CreateMap<EstablishmentDto, Establishment>();
     }
 }

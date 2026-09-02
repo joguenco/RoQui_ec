@@ -2,6 +2,7 @@ namespace RoQuiApi.RoQui.Head;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Shared;
@@ -28,7 +29,7 @@ public class TaxpayerController : ControllerBase
         {
             var taxpayerModel = mapper.Map<Taxpayer>(taxpayerBody);
             taxpayerRepo.CreateTaxpayer(taxpayerModel);
-            var status = taxpayerRepo.SaveChanges();
+            taxpayerRepo.SaveChanges();
 
             return Ok(new MessageDto { Title = "Taxpayer created successfully" });
         }
@@ -62,6 +63,9 @@ public class TaxpayerController : ControllerBase
             }
             else
             {
+                taxpayerRepo.DeleteEstablishments(existingTaxpayer.Establishments);
+                var establishments = mapper.Map<ICollection<Establishment>>(taxpayerBody.Establishments);
+                existingTaxpayer.Establishments = establishments;
                 existingTaxpayer.LegalName = taxpayerBody.LegalName;
                 existingTaxpayer.ForcedAccounting = taxpayerBody.ForcedAccounting;
                 existingTaxpayer.SpecialTaxpayer = taxpayerBody.SpecialTaxpayer;

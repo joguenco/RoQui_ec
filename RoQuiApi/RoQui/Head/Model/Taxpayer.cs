@@ -26,5 +26,5 @@ public class Taxpayer
     [Column("rimpe", TypeName = "varchar")]
     public string? Rimpe { get; set; }
 
-    public virtual required ICollection<Establishmet> Establishments { get; set; }
+    public virtual required ICollection<Establishment> Establishments { get; set; }
 }

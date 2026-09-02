@@ -12,7 +12,7 @@ namespace RoQuiApi.Data
         }
 
         public DbSet<Taxpayer> Taxpayers { get; set; }
-        public DbSet<Establishmet> Establishments { get; set; }
+        public DbSet<Establishment> Establishments { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
 

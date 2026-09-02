@@ -22,11 +22,12 @@ namespace RoQuiApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Establishmet", b =>
+            modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Establishment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
@@ -36,7 +37,6 @@ namespace RoQuiApi.Migrations
                         .HasColumnName("address");
 
                     b.Property<string>("BusinessName")
-                        .IsRequired()
                         .HasColumnType("varchar")
                         .HasColumnName("business_name");
 
@@ -45,10 +45,9 @@ namespace RoQuiApi.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("code");
 
-                    b.Property<string>("Principal")
-                        .IsRequired()
-                        .HasColumnType("varchar")
-                        .HasColumnName("principal");
+                    b.Property<bool>("IsPrincipal")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_principal");
 
                     b.Property<int>("TaxpayerId")
                         .HasColumnType("integer")
@@ -230,7 +229,7 @@ namespace RoQuiApi.Migrations
                     b.ToTable("invoice_details");
                 });
 
-            modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Establishmet", b =>
+            modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Establishment", b =>
                 {
                     b.HasOne("RoQuiApi.RoQui.Head.Model.Taxpayer", "Taxpayer")
                         .WithMany("Establishments")
