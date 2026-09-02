@@ -67,20 +67,24 @@ class BuildInvoice(
     }
 
     private fun buildAdditionalInformation(identification: String): Factura.InfoAdicional? {
-        var infoAdicional = Factura.InfoAdicional()
+        var infoAdditional = Factura.InfoAdicional()
         val additionalInformation = invoiceService.getInvoiceInformation(identification)
 
         for (information in additionalInformation) {
-            val campoAdicional = Factura.InfoAdicional.CampoAdicional()
-            campoAdicional.nombre = information.name
-            campoAdicional.value = information.value
+            val fieldAdditional = Factura.InfoAdicional.CampoAdicional()
+            fieldAdditional.nombre = information.name
+            fieldAdditional.value = information.value
 
-            infoAdicional.campoAdicional.add(campoAdicional)
+            infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdicional = buildGeneralObservation(infoAdicional)
+        infoAdditional = buildGeneralObservation(infoAdditional)
 
-        return infoAdicional
+        if (infoAdditional.campoAdicional.isEmpty()) {
+            return null
+        }
+
+        return infoAdditional
     }
 
     private fun buildGeneralObservation(

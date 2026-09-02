@@ -4,7 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.math.BigDecimal
 import java.util.Date
 import java.util.UUID
 import org.hibernate.annotations.Immutable
@@ -37,24 +36,7 @@ class Withhold {
 
     @Column(name = "legal_name") val legalName: String? = null
 
-    @Column(name = "address") val address: String? = null
-
-    // Datos del documento de sustento (la compra sobre la que se retiene)
-    @Column(name = "code_support") val codeSupport: String? = null
-
-    @Column(name = "code_document_support") val codeDocumentSupport: String? = null
-
-    @Column(name = "number_document_support") val numberDocumentSupport: String? = null
-
-    @Column(name = "date_document_support", columnDefinition = "DATE")
-    val dateDocumentSupport: Date? = null
-
-    @Column(name = "authorization_document_support")
-    val authorizationDocumentSupport: String? = null
-
-    @Column(name = "total_without_taxes") val totalWithoutTaxes: BigDecimal? = null
-
-    @Column(name = "total") val total: BigDecimal? = null
+    @Column(name = "related") val related: String? = null
 
     @Column(name = "establishment_address") val establishmentAddress: String? = null
 

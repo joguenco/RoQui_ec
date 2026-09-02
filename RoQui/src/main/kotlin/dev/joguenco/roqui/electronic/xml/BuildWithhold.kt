@@ -29,14 +29,9 @@ class BuildWithhold(
 ) {
 
     private companion object {
-        /** 07 = comprobante de retencion */
-        const val COD_DOC = "07"
 
         /** Pago local. DonPos no registra pagos al exterior en compras. */
         const val PAGO_LOCAL = "01"
-
-        /** El sujeto retenido no es parte relacionada. */
-        const val PARTE_RELACIONADA = "NO"
 
         const val FORMA_PAGO = "01"
     }
@@ -52,8 +47,9 @@ class BuildWithhold(
             comprobanteRetencion.infoTributaria = buildInfoTributaria()
             comprobanteRetencion.infoCompRetencion = buildInfoCompRetencion()
             comprobanteRetencion.docsSustento = buildDocsSustento()
-            comprobanteRetencion.infoAdicional =
-                buildAdditionalInformation(tributaryInformation.withhold.identification!!)
+            buildAdditionalInformation(tributaryInformation.withhold.identification!!)?.let {
+                comprobanteRetencion.infoAdicional = it
+            }
 
             val jaxbContext = JAXBContext.newInstance(ComprobanteRetencion::class.java)
             val marshaller = jaxbContext.createMarshaller()
@@ -101,7 +97,7 @@ class BuildWithhold(
             infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
         }
 
-        infoTributaria.codDoc = COD_DOC
+        infoTributaria.codDoc = tributaryInformation.withhold.codeDocument
         infoTributaria.estab = tributaryInformation.withhold.establishment
         infoTributaria.ptoEmi = tributaryInformation.withhold.emissionPoint
         infoTributaria.secuencial = tributaryInformation.withhold.sequence
@@ -132,7 +128,7 @@ class BuildWithhold(
         infoCompRetencion.razonSocialSujetoRetenido = tributaryInformation.withhold.legalName
         infoCompRetencion.identificacionSujetoRetenido =
             tributaryInformation.withhold.identification
-        infoCompRetencion.parteRel = PARTE_RELACIONADA
+        infoCompRetencion.parteRel = tributaryInformation.withhold.related
         infoCompRetencion.periodoFiscal = tributaryInformation.withhold.fiscalPeriod
 
         return infoCompRetencion
@@ -242,20 +238,24 @@ class BuildWithhold(
     private fun buildAdditionalInformation(
         identification: String
     ): ComprobanteRetencion.InfoAdicional? {
-        var infoAdicional = ComprobanteRetencion.InfoAdicional()
+        var infoAdditional = ComprobanteRetencion.InfoAdicional()
         val additionalInformation = withholdService.getWithholdInformation(identification)
 
         for (information in additionalInformation) {
-            val campoAdicional = ComprobanteRetencion.InfoAdicional.CampoAdicional()
-            campoAdicional.nombre = information.name
-            campoAdicional.value = information.value
+            val fieldAdditional = ComprobanteRetencion.InfoAdicional.CampoAdicional()
+            fieldAdditional.nombre = information.name
+            fieldAdditional.value = information.value
 
-            infoAdicional.campoAdicional.add(campoAdicional)
+            infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdicional = buildGeneralObservation(infoAdicional)
+        infoAdditional = buildGeneralObservation(infoAdditional)
 
-        return infoAdicional
+        if (infoAdditional.campoAdicional.isEmpty()) {
+            return null
+        }
+
+        return infoAdditional
     }
 
     private fun buildGeneralObservation(

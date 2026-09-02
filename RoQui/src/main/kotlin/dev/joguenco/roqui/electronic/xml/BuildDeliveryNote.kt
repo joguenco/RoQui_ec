@@ -189,16 +189,16 @@ class BuildDeliveryNote(
      * un campoAdicional adentro, asi que un bloque vacio hace fallar la validacion.
      */
     private fun buildAdditionalInformation(): GuiaRemision.InfoAdicional? {
-        val infoAdicional = GuiaRemision.InfoAdicional()
+        val infoAdditional = GuiaRemision.InfoAdicional()
 
         for (observation in deliveryNoteService.getGeneralObservation()) {
-            val campoAdicional = GuiaRemision.InfoAdicional.CampoAdicional()
-            campoAdicional.nombre = observation.name
-            campoAdicional.value = observation.value
+            val fieldAdditional = GuiaRemision.InfoAdicional.CampoAdicional()
+            fieldAdditional.nombre = observation.name
+            fieldAdditional.value = observation.value
 
-            infoAdicional.campoAdicional.add(campoAdicional)
+            infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        return if (infoAdicional.campoAdicional.isEmpty()) null else infoAdicional
+        return if (infoAdditional.campoAdicional.isEmpty()) null else infoAdditional
     }
 }

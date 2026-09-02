@@ -198,20 +198,24 @@ class BuildDebitNote(
     }
 
     private fun buildAdditionalInformation(identification: String): NotaDebito.InfoAdicional? {
-        var infoAdicional = NotaDebito.InfoAdicional()
+        var infoAdditional = NotaDebito.InfoAdicional()
         val additionalInformation = debitNoteService.getDebitNoteInformation(identification)
 
         for (information in additionalInformation) {
-            val campoAdicional = NotaDebito.InfoAdicional.CampoAdicional()
-            campoAdicional.nombre = information.name
-            campoAdicional.value = information.value
+            val fieldAdditional = NotaDebito.InfoAdicional.CampoAdicional()
+            fieldAdditional.nombre = information.name
+            fieldAdditional.value = information.value
 
-            infoAdicional.campoAdicional.add(campoAdicional)
+            infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdicional = buildGeneralObservation(infoAdicional)
+        infoAdditional = buildGeneralObservation(infoAdditional)
 
-        return infoAdicional
+        if (infoAdditional.campoAdicional.isEmpty()) {
+            return null
+        }
+
+        return infoAdditional
     }
 
     private fun buildGeneralObservation(
