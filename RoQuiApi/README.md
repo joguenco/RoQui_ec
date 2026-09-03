@@ -65,6 +65,10 @@ dotnet ef migrations remove
 ```
 dotnet run --launch-profile https
 ```
+or
+```
+dotnet run --urls "http://*:5000"
+```
 ## Hot Reload
 ```
 dotnet watch --launch-profile https

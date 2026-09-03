@@ -25,7 +25,7 @@ public class TaxpayerController : ControllerBase
     }
 
     [HttpPost("rest/v1/taxpayer", Name = "CreateTaxpayer")]
-    public ActionResult CreateTaxpayer(TaxpayerDto taxpayerBody)
+    public ActionResult<MessageDto> CreateTaxpayer(TaxpayerDto taxpayerBody)
     {
         if (_taxpayerRepo.CountTaxpayers() == 0)
         {
