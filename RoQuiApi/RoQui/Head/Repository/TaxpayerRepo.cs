@@ -10,7 +10,7 @@ public class TaxpayerRepo : ITaxpayerRepo
 
     public TaxpayerRepo(AppDbContext context)
     {
-        this._context = context;
+        _context = context;
     }
 
     public int CountTaxpayers()

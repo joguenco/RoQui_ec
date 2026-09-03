@@ -20,8 +20,8 @@ public class TaxpayerController : ControllerBase
 
     public TaxpayerController(ITaxpayerRepo taxpayerRepo, IMapper mapper)
     {
-        this._taxpayerRepo = taxpayerRepo;
-        this._mapper = mapper;
+        _taxpayerRepo = taxpayerRepo;
+        _mapper = mapper;
     }
 
     [HttpPost("rest/v1/taxpayer", Name = "CreateTaxpayer")]

@@ -35,8 +35,8 @@ public class Invoice
     [Column("access_key", TypeName = "varchar")]
     public required string AccessKey { get; set; }
 
-    [Column("created_at", TypeName = "timestamp")]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [Column("created_at", TypeName = "timestamp with time zone")]
+    public DateTime CreatedAt { get; set; }
 
     public virtual required ICollection<InvoiceDetail> InvoiceDetails { get; set; }
 }

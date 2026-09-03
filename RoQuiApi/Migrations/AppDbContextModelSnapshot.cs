@@ -126,7 +126,7 @@ namespace RoQuiApi.Migrations
                         .HasColumnName("code");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<DateTime>("Date")
@@ -158,6 +158,12 @@ namespace RoQuiApi.Migrations
                         .HasColumnName("number");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccessKey")
+                        .IsUnique();
+
+                    b.HasIndex("Code", "Number")
+                        .IsUnique();
 
                     b.ToTable("invoices");
                 });
@@ -229,6 +235,48 @@ namespace RoQuiApi.Migrations
                     b.ToTable("invoice_details");
                 });
 
+            modelBuilder.Entity("RoQuiApi.RoQui.Invoice.Model.InvoiceDetailTax", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Base")
+                        .HasColumnType("decimal")
+                        .HasColumnName("base");
+
+                    b.Property<int>("InvoiceDetailId")
+                        .HasColumnType("integer")
+                        .HasColumnName("invoice_detail_id");
+
+                    b.Property<string>("TaxCode")
+                        .IsRequired()
+                        .HasColumnType("varchar")
+                        .HasColumnName("tax_code");
+
+                    b.Property<string>("TaxCodePercentage")
+                        .IsRequired()
+                        .HasColumnType("varchar")
+                        .HasColumnName("tax_code_percentage");
+
+                    b.Property<decimal>("TaxValue")
+                        .HasColumnType("decimal")
+                        .HasColumnName("tax_value");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceDetailId");
+
+                    b.ToTable("invoice_details_taxes");
+                });
+
             modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Establishment", b =>
                 {
                     b.HasOne("RoQuiApi.RoQui.Head.Model.Taxpayer", "Taxpayer")
@@ -251,6 +299,17 @@ namespace RoQuiApi.Migrations
                     b.Navigation("Invoice");
                 });
 
+            modelBuilder.Entity("RoQuiApi.RoQui.Invoice.Model.InvoiceDetailTax", b =>
+                {
+                    b.HasOne("RoQuiApi.RoQui.Invoice.Model.InvoiceDetail", "InvoiceDetail")
+                        .WithMany("InvoiceDetailTaxes")
+                        .HasForeignKey("InvoiceDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InvoiceDetail");
+                });
+
             modelBuilder.Entity("RoQuiApi.RoQui.Head.Model.Taxpayer", b =>
                 {
                     b.Navigation("Establishments");
@@ -259,6 +318,11 @@ namespace RoQuiApi.Migrations
             modelBuilder.Entity("RoQuiApi.RoQui.Invoice.Model.Invoice", b =>
                 {
                     b.Navigation("InvoiceDetails");
+                });
+
+            modelBuilder.Entity("RoQuiApi.RoQui.Invoice.Model.InvoiceDetail", b =>
+                {
+                    b.Navigation("InvoiceDetailTaxes");
                 });
 #pragma warning restore 612, 618
         }

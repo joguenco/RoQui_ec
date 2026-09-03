@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RoQuiApi.Data;
 using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Head.Repository;
+using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Version.Repository;
 using Scalar.AspNetCore;
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(
 
 builder.Services.AddScoped<IVersionRepo, VersionRepo>();
 builder.Services.AddScoped<ITaxpayerRepo, TaxpayerRepo>();
+builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 
 // Added Auto Mapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));

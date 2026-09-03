@@ -46,6 +46,10 @@ create database roqui;
 ```
 dotnet format
 ```
+## Install EF
+```
+dotnet tool install --global dotnet-ef
+```
 ## Migrate to database
 ```
 dotnet ef migrations add init
@@ -67,8 +71,9 @@ dotnet run --launch-profile https
 ```
 or
 ```
-dotnet run --urls "http://*:5000"
+dotnet run --urls "http://*:5276"
 ```
+and go to http://localhost:5276/scalar
 ## Hot Reload
 ```
 dotnet watch --launch-profile https

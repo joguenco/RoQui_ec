@@ -45,4 +45,6 @@ public class InvoiceDetail
     public int InvoiceId { get; set; }
 
     public required Invoice Invoice { get; set; }
+
+    public virtual required ICollection<InvoiceDetailTax> InvoiceDetailTaxes { get; set; }
 }
