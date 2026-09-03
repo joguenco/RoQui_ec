@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace RoQuiApi.RoQui.Head.Model;
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("establishments")]
 public class Establishment

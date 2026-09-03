@@ -1,20 +1,20 @@
 namespace RoQuiApi.RoQui.Version.Repository;
 
 using Microsoft.EntityFrameworkCore;
-using RoQuiApi.Data;
+using Data;
 
 public class VersionRepo : IVersionRepo
 {
-    private readonly AppDbContext context;
+    private readonly AppDbContext _context;
 
     public VersionRepo(AppDbContext context)
     {
-        this.context = context;
+        this._context = context;
     }
 
     public string GetVersion()
     {
-        string databaseVersion = context.Database
+        string databaseVersion = _context.Database
         .SqlQueryRaw<string>("SELECT version() as \"Value\"").Single();
 
         return databaseVersion;

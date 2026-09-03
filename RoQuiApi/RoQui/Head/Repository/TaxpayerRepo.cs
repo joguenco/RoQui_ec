@@ -1,32 +1,32 @@
 ﻿namespace RoQuiApi.RoQui.Head.Repository;
 
 using Microsoft.EntityFrameworkCore;
-using RoQuiApi.Data;
-using RoQuiApi.RoQui.Head.Model;
+using Data;
+using Model;
 
 public class TaxpayerRepo : ITaxpayerRepo
 {
-    private readonly AppDbContext context;
+    private readonly AppDbContext _context;
 
     public TaxpayerRepo(AppDbContext context)
     {
-        this.context = context;
+        this._context = context;
     }
 
     public int CountTaxpayers()
     {
-        return context.Taxpayers.Count();
+        return _context.Taxpayers.Count();
     }
 
     public void CreateTaxpayer(Taxpayer taxpayer)
     {
         ArgumentNullException.ThrowIfNull(taxpayer);
-        context.Taxpayers.Add(taxpayer);
+        _context.Taxpayers.Add(taxpayer);
     }
 
     public Taxpayer? GetTaxpayerByIdentification(string identification)
     {
-        return context.Taxpayers
+        return _context.Taxpayers
             .Include(t => t.Establishments)
             .FirstOrDefault(t => t.Identification == identification);
     }
@@ -34,11 +34,11 @@ public class TaxpayerRepo : ITaxpayerRepo
     public void DeleteEstablishments(ICollection<Establishment> establishments)
     {
         ArgumentNullException.ThrowIfNull(establishments);
-        context.Establishments.RemoveRange(establishments);
+        _context.Establishments.RemoveRange(establishments);
     }
 
     public bool SaveChanges()
     {
-        return context.SaveChanges() >= 0;
+        return _context.SaveChanges() >= 0;
     }
 }

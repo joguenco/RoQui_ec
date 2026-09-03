@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace RoQuiApi.RoQui.Head.Dto;
+
+using System.ComponentModel.DataAnnotations;
 
 public class TaxpayerDto
 {
@@ -19,5 +19,5 @@ public class TaxpayerDto
     public string? RetentionAgent { get; set; }
     public string? Rimpe { get; set; }
 
-    public required virtual ICollection<EstablishmentDto> Establishments { get; set; }
+    public virtual required ICollection<EstablishmentDto> Establishments { get; set; }
 }

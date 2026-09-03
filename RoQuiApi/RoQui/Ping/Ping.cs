@@ -1,4 +1,4 @@
-namespace RoQui.Ping;
+namespace RoQuiApi.RoQui.Ping;
 
 public class Ping
 {

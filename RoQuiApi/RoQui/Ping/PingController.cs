@@ -1,4 +1,4 @@
-namespace RoQui.Ping;
+namespace RoQuiApi.RoQui.Ping;
 
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace RoQuiApi.RoQui.Head.Dto;
 
+using System.ComponentModel.DataAnnotations;
 
 public class EstablishmentDto
 {

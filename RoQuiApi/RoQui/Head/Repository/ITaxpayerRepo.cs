@@ -8,7 +8,7 @@ public interface ITaxpayerRepo
 
     void DeleteEstablishments(ICollection<Establishment> establishments);
 
-    void CreateTaxpayer(Model.Taxpayer taxpayer);
+    void CreateTaxpayer(Taxpayer taxpayer);
 
     int CountTaxpayers();
 
