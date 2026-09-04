@@ -49,9 +49,5 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Invoice>()
             .HasIndex(i => i.AccessKey)
             .IsUnique();
-
-        modelBuilder.Entity<Invoice>()
-            .HasIndex(i => i.Number)
-            .IsUnique();
     }
 }

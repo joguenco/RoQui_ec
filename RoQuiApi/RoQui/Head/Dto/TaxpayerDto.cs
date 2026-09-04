@@ -19,5 +19,6 @@ public class TaxpayerDto
     public string? RetentionAgent { get; set; }
     public string? Rimpe { get; set; }
 
+    [Required]
     public virtual required ICollection<EstablishmentDto> Establishments { get; set; }
 }
