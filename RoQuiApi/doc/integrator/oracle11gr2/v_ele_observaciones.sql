@@ -22,16 +22,7 @@ CREATE OR REPLACE FORCE VIEW v_ele_observaciones (
             AND cod_documento = 'FAC'
             AND detalle IS NOT NULL
             AND detalle <> 'CONTADO'
-        UNION ALL
-        SELECT
-            codigo,
-            to_char(numero, 'fm000000000000000') AS numero,
-            propiedad                            AS nombre,
-            valor
-        FROM
-            v_fac_transportes
-        WHERE
-            numero >= 1002000000000
+        
         UNION ALL
         SELECT
             codigo,
