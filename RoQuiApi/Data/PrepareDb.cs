@@ -18,7 +18,7 @@ public static class PrepareDb
 
     private static void ObjectDbCreator(AppDbContext context)
     {
-        InjectObjectDb(context.Database, "database.sql");
+        InjectObjectDb(context.Database, "PostgreSQL-db.sql");
     }
 
     private static void InjectObjectDb(DatabaseFacade db, string sqlFileName)
@@ -32,6 +32,6 @@ public static class PrepareDb
 
     private static void SeedData(AppDbContext context)
     {
-        
+
     }
 }

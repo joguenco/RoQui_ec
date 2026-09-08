@@ -143,14 +143,20 @@ CREATE TABLE IF NOT EXISTS v_ele_delivery_notes_receiver_detail (
     principal_code character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_establishments (
-    id bigint NOT NULL,
-    address character varying(255),
-    business_name character varying(255),
-    code character varying(255),
-    identification character varying(255),
-    principal character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_establishments;
+CREATE VIEW v_ele_establishments AS
+    SELECT 
+        e.id::bigint as id,
+        t.identification,
+        e.code, 
+        e.business_name, 
+        e.address,
+        CASE 
+	        WHEN e.is_principal = true THEN 'Principal'
+	        ELSE 'BranchOffice'
+    	END AS principal        
+    FROM establishments e join taxpayers t
+	on t.id = e.taxpayer_id;
 
 CREATE TABLE IF NOT EXISTS v_ele_general_observations (
     id integer NOT NULL,

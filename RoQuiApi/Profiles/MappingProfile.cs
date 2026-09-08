@@ -16,9 +16,9 @@ public class MappingProfile : Profile
         CreateMap<EstablishmentDto, Establishment>();
         CreateMap<Document, InvoiceDto>();
         CreateMap<InvoiceDto, Document>();
-        CreateMap<InvoiceDetail, InvoiceDetailDto>();
-        CreateMap<InvoiceDetailDto, InvoiceDetail>();
-        CreateMap<InvoiceDetailTax, TaxDto>();
-        CreateMap<TaxDto, InvoiceDetailTax>();
+        CreateMap<DocumentDetail, InvoiceDetailDto>();
+        CreateMap<InvoiceDetailDto, DocumentDetail>();
+        CreateMap<DocumentDetailTax, TaxDto>();
+        CreateMap<TaxDto, DocumentDetailTax>();
     }
 }

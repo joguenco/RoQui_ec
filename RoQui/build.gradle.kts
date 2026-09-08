@@ -30,7 +30,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     // Database MariaDB
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    // runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     // Database PostgreSQL
     runtimeOnly("org.postgresql:postgresql")
     // Database SQL Server

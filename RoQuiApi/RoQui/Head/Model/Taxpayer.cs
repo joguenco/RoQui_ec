@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Taxpayer
 {
     [Column("id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
 
     [Column("identification", TypeName = "varchar")]

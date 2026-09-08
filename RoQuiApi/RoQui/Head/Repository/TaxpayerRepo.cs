@@ -21,6 +21,7 @@ public class TaxpayerRepo : ITaxpayerRepo
     public void CreateTaxpayer(Taxpayer taxpayer)
     {
         ArgumentNullException.ThrowIfNull(taxpayer);
+        taxpayer.Id = 1;
         _context.Taxpayers.Add(taxpayer);
     }
 
