@@ -12,7 +12,7 @@ public class InvoiceRepo : IInvoiceRepo
         _context = context;
     }
 
-    public void CreateInvoice(Invoice invoice)
+    public void CreateInvoice(Document invoice)
     {
         ArgumentNullException.ThrowIfNull(invoice);
         _context.Invoices.Add(invoice);

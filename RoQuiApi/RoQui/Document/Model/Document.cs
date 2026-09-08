@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RoQuiApi.RoQui.Invoice.Model;
 
-[Table("invoices")]
-public class Invoice
+[Table("documents")]
+public class Document
 {
     [Column("id")]
     public int Id { get; set; }
@@ -35,8 +35,8 @@ public class Invoice
     [Column("access_key", TypeName = "varchar")]
     public required string AccessKey { get; set; }
 
-    [Column("created_at", TypeName = "timestamp with time zone")]
+    [Column("created_at", TypeName = "timestamp without time zone")]
     public DateTime CreatedAt { get; set; }
 
-    public virtual required ICollection<InvoiceDetail> InvoiceDetails { get; set; }
+    public virtual required ICollection<DocumentDetail> DocumentDetails { get; set; }
 }

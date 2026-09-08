@@ -4,6 +4,6 @@ using RoQuiApi.RoQui.Invoice.Model;
 
 public interface IInvoiceRepo
 {
-    void CreateInvoice(Invoice invoice);
+    void CreateInvoice(Document invoice);
     bool SaveChanges();
 }

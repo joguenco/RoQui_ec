@@ -31,6 +31,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     // Database MariaDB
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    // Database PostgreSQL
+    runtimeOnly("org.postgresql:postgresql")
     // Database SQL Server
     // runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
