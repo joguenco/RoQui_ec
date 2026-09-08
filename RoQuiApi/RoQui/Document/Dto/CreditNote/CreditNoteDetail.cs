@@ -2,7 +2,7 @@ namespace RoQuiApi.RoQui.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
 
-public class InvoiceDetailDto
+public class CreditNoteDetailDto
 {
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "Line must be greater than zero.")]
@@ -19,8 +19,6 @@ public class InvoiceDetailDto
     [Required]
     [Range(0, double.MaxValue, ErrorMessage = "Quantity cannot be negative.")]
     public required decimal Quantity { get; set; }
-
-    public string? Unit { get; set; }
 
     [Required]
     [Range(0, double.MaxValue, ErrorMessage = "UnitPrice cannot be negative.")]
@@ -48,5 +46,5 @@ public class InvoiceDetailDto
 
     [Required]
     [MinLength(1, ErrorMessage = "The detail must contain at least one tax.")]
-    public virtual required ICollection<TaxDto> InvoiceDetailTaxes { get; set; }
+    public virtual required ICollection<TaxDto> CreditNoteDetailTaxes { get; set; }
 }
