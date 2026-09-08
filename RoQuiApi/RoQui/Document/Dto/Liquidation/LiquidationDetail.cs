@@ -2,7 +2,7 @@ namespace RoQuiApi.RoQui.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
 
-public class InvoiceDetailDto
+public class LiquidationDetailDto
 {
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "Line must be greater than zero.")]
@@ -48,5 +48,5 @@ public class InvoiceDetailDto
 
     [Required]
     [MinLength(1, ErrorMessage = "The detail must contain at least one tax.")]
-    public virtual required ICollection<TaxDto> InvoiceDetailTaxes { get; set; }
+    public virtual required ICollection<TaxDto> LiquidationDetailTaxes { get; set; }
 }
