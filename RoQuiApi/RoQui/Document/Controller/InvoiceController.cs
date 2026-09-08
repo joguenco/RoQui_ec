@@ -23,7 +23,7 @@ public class InvoiceController : ControllerBase
     [HttpPost("rest/v1/invoice", Name = "CreateInvoice")]
     public ActionResult<MessageDto> CreateInvoice(InvoiceDto invoiceBody)
     {
-        var invoiceModel = _mapper.Map<Invoice>(invoiceBody);
+        var invoiceModel = _mapper.Map<Document>(invoiceBody);
         _invoiceRepo.CreateInvoice(invoiceModel);
         _invoiceRepo.SaveChanges();
 

@@ -3,6 +3,7 @@ package dev.joguenco.roqui.util
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.xml.datatype.XMLGregorianCalendar
@@ -37,6 +38,22 @@ class DateUtil {
 
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
             return simpleDateFormat.parse(dateString)
+        }
+
+        fun extractOffsetDateTime(date: XMLGregorianCalendar): OffsetDateTime {
+            val dateString =
+                date.year.toString() +
+                        "-" +
+                        date.month.toString() +
+                        "-" +
+                        date.day.toString() +
+                        " " +
+                        date.hour.toString() +
+                        ":" +
+                        date.minute.toString()
+
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            return OffsetDateTime.ofInstant(simpleDateFormat.parse(dateString).toInstant(), TimeZone.getDefault().toZoneId())
         }
 
         fun getDatetime(): String {

@@ -15,9 +15,9 @@ public class AppDbContext : DbContext
 
     public DbSet<Taxpayer> Taxpayers { get; set; }
     public DbSet<Establishment> Establishments { get; set; }
-    public DbSet<Invoice> Invoices { get; set; }
-    public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
-    public DbSet<InvoiceDetailTax> InvoiceDetailTaxes { get; set; }
+    public DbSet<Document> Invoices { get; set; }
+    public DbSet<DocumentDetail> InvoiceDetails { get; set; }
+    public DbSet<DocumentDetailTax> InvoiceDetailTaxes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,24 +29,24 @@ public class AppDbContext : DbContext
             .HasForeignKey(e => e.TaxpayerId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Invoice>()
-            .HasMany(i => i.InvoiceDetails)
-            .WithOne(d => d.Invoice)
-            .HasForeignKey(d => d.InvoiceId)
+        modelBuilder.Entity<Document>()
+            .HasMany(i => i.DocumentDetails)
+            .WithOne(d => d.Document)
+            .HasForeignKey(d => d.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<InvoiceDetail>()
+        modelBuilder.Entity<DocumentDetail>()
             .HasMany(d => d.InvoiceDetailTaxes)
-            .WithOne(t => t.InvoiceDetail)
-            .HasForeignKey(t => t.InvoiceDetailId)
+            .WithOne(t => t.DocumentDetail)
+            .HasForeignKey(t => t.DocumentDetailId)
             .OnDelete(DeleteBehavior.Cascade);
 
         //Unique constraints
-        modelBuilder.Entity<Invoice>()
+        modelBuilder.Entity<Document>()
             .HasIndex(i => new { i.Code, i.Number })
             .IsUnique();
 
-        modelBuilder.Entity<Invoice>()
+        modelBuilder.Entity<Document>()
             .HasIndex(i => i.AccessKey)
             .IsUnique();
     }

@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RoQuiApi.RoQui.Invoice.Model;
 
-[Table("invoice_details")]
-public class InvoiceDetail
+[Table("documents_detail")]
+public class DocumentDetail
 {
     [Column("id")]
     public int Id { get; set; }
@@ -41,10 +41,10 @@ public class InvoiceDetail
     [Column("total_price_without_tax", TypeName = "decimal")]
     public required decimal TotalPriceWithoutTax { get; set; }
 
-    [Column("invoice_id")]
-    public int InvoiceId { get; set; }
+    [Column("document_id")]
+    public int DocumentId { get; set; }
 
-    public required Invoice Invoice { get; set; }
+    public required Document Document { get; set; }
 
-    public virtual required ICollection<InvoiceDetailTax> InvoiceDetailTaxes { get; set; }
+    public virtual required ICollection<DocumentDetailTax> InvoiceDetailTaxes { get; set; }
 }

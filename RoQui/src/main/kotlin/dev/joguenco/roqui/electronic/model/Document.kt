@@ -25,7 +25,7 @@ class Document {
 
     @Column(name = "number", nullable = false) var number: String? = null
 
-    @Column(name = "authorization") var authorization: String? = null
+    @Column(name = "authorization_code") var authorization: String? = null
 
     @Column(name = "authorization_date")
     @Temporal(TemporalType.TIMESTAMP)

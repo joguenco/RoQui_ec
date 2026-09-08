@@ -37,6 +37,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    PrepareDb.Prepare(app);
 }
 
 app.UseHttpsRedirection();
