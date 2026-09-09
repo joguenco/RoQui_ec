@@ -42,8 +42,12 @@ public class CreditNoteDetailDto
     public required decimal Discount { get; set; }
 
     [Required]
-    [Range(0, double.MaxValue, ErrorMessage = "TotalPriceWithoutTax cannot be negative.")]
-    public required decimal TotalPriceWithoutTax { get; set; }
+    [Range(0, double.MaxValue, ErrorMessage = "TotalWithoutTax cannot be negative.")]
+    public required decimal TotalWithoutTax { get; set; }
+
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Total cannot be negative.")]
+    public required decimal Total { get; set; }
 
     [Required]
     [MinLength(1, ErrorMessage = "The detail must contain at least one tax.")]

@@ -13,7 +13,8 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_ele_report_invoices")
 class ReportInvoice {
 
-    @Id val id: UUID? = null
+//    @Id val id: UUID? = null
+    @Id val id: Long? = null
 
     @Column(name = "code") val code: String? = null
 

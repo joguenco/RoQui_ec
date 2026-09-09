@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS v_ele_information (
 DROP VIEW IF EXISTS v_ele_invoices;
 CREATE VIEW v_ele_invoices AS
     select
-        i.id,
+        i.id::bigint id,
         i.code,
         i.number,
         '01' as code_document,
@@ -185,7 +185,7 @@ CREATE VIEW v_ele_invoices AS
         sum(d.total_without_tax) as total_without_taxes,
         sum(d.discount) discount,
         sum(d.total) total,
-        0 tip,
+        0::numeric tip,
         i.identification_type,
         i.identification,
         i.legal_name,
@@ -219,22 +219,25 @@ CREATE VIEW v_ele_invoices AS
         i.delivery_note,
         i.access_key;
 
-CREATE TABLE IF NOT EXISTS v_ele_invoices_detail (
-    discount numeric(38,2),
-    quantity numeric(38,2),
-    tax_iva numeric(38,2),
-    total_price_without_tax numeric(38,2),
-    unit_price numeric(38,2),
-    value_iva numeric(38,2),
-    line bigint,
-    id uuid NOT NULL,
-    code character varying(255),
-    name character varying(255),
-    number character varying(255),
-    principal_code character varying(255),
-    tax_code character varying(255),
-    unit character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_invoices_detail;
+CREATE VIEW v_ele_invoices_detail AS
+    SELECT
+        d.id::bigint id,
+        d.code,
+        d.number,
+        dd.product_code                AS principal_code,
+        dd.line::bigint                AS line,
+        dd.product_name                AS name,
+        dd.quantity,
+        dd.unit,
+        dd.unit_price,
+        dd.tax_code,
+        dd.tax_iva,
+        dd.value_iva,
+        dd.discount,
+        dd.total_without_tax           AS total_price_without_tax
+    FROM documents_detail dd
+    JOIN documents d ON d.id = dd.document_id;        
 
 CREATE TABLE IF NOT EXISTS v_ele_liquidations (
     discount numeric(38,2),
@@ -300,7 +303,7 @@ CREATE TABLE IF NOT EXISTS v_ele_payments (
 CREATE TABLE IF NOT EXISTS v_ele_report_credit_notes (
     total numeric(38,2),
     date date,
-    id uuid NOT NULL,
+    id bigint NOT NULL,
     access_key character varying(255),
     code character varying(255),
     email character varying(255),
@@ -313,7 +316,7 @@ CREATE TABLE IF NOT EXISTS v_ele_report_credit_notes (
 CREATE TABLE IF NOT EXISTS v_ele_report_debit_notes (
     total numeric(38,2),
     date date,
-    id uuid NOT NULL,
+    id bigint NOT NULL,
     access_key character varying(255),
     code character varying(255),
     email character varying(255),
@@ -326,7 +329,7 @@ CREATE TABLE IF NOT EXISTS v_ele_report_debit_notes (
 CREATE TABLE IF NOT EXISTS v_ele_report_delivery_notes (
     total numeric(38,2),
     date date,
-    id uuid NOT NULL,
+    id bigint NOT NULL,
     access_key character varying(255),
     code character varying(255),
     email character varying(255),
@@ -336,23 +339,39 @@ CREATE TABLE IF NOT EXISTS v_ele_report_delivery_notes (
     status character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_report_invoices (
-    total numeric(38,2),
-    date date,
-    id uuid NOT NULL,
-    access_key character varying(255),
-    code character varying(255),
-    email character varying(255),
-    identification character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    status character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_report_invoices;
+CREATE VIEW v_ele_report_invoices AS
+SELECT 
+    j.id::bigint AS id,
+    j.code AS code,
+    j.number AS number,
+    j.access_key AS access_key,
+    j.date AS date,
+    j.total AS total,
+    j.identification AS identification,
+    j.legal_name AS legal_name,
+    (SELECT i.value
+     FROM v_ele_information i
+     WHERE i.name = 'Email'
+       AND i.identification = j.identification
+     LIMIT 1) AS email,
+    COALESCE(
+        (SELECT e.status 
+         FROM ele_documents e 
+         WHERE e.code = j.code 
+           AND e.number = j.number
+        ), 
+        'NO ENVIADO'
+    ) AS status
+FROM 
+    v_ele_invoices j
+ORDER BY 
+    j.number DESC;
 
 CREATE TABLE IF NOT EXISTS v_ele_report_liquidations (
     total numeric(38,2),
     date date,
-    id uuid NOT NULL,
+    id bigint NOT NULL,
     access_key character varying(255),
     code character varying(255),
     email character varying(255),
@@ -365,7 +384,7 @@ CREATE TABLE IF NOT EXISTS v_ele_report_liquidations (
 CREATE TABLE IF NOT EXISTS v_ele_report_withholds (
     total numeric(38,2),
     date date,
-    id uuid NOT NULL,
+    id bigint NOT NULL,
     access_key character varying(255),
     code character varying(255),
     email character varying(255),
@@ -460,12 +479,16 @@ CREATE TABLE IF NOT EXISTS v_users (
     status boolean,
     password character varying(255),
     role character varying(255),
-    username character varying(255)
+    username character varying(255),
+    CONSTRAINT v_users_pkey PRIMARY KEY (id)
 );
 
 CREATE OR REPLACE VIEW v_version AS 
     select 1 as id,
     version() as version_database;
+
+INSERT INTO v_users (id,username,password,role,status) 
+VALUES (1,'Administrator','sha1:86F7E437FAA5A7FCE15D1DDCB9EAEAEA377667B8','Administrator',true) ON CONFLICT (ID) DO NOTHING;
 
 Insert into ele_parameters (ID,name,value,observation,type) 
 values (1,'Base Directory','/app/RoQui','Base directory for files','SRI') ON CONFLICT (ID) DO NOTHING;
