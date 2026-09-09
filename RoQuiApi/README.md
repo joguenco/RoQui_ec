@@ -60,6 +60,9 @@ dotnet ef database update
 ## Undo migration and remove
 Add in Migrations/..._init.cs, in Down method
 ```
+migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_report_invoices;");
+migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_invoices_detail;");
+migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_invoices;");
 migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_taxpayer;");
 migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_establishments;");
 ```            
