@@ -36,7 +36,9 @@ public class Document
     public required string AccessKey { get; set; }
 
     [Column("created_at", TypeName = "timestamp without time zone")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public virtual required ICollection<DocumentDetail> DocumentDetails { get; set; }
+
+    public virtual required ICollection<DocumentPayment> Payments { get; set; }
 }

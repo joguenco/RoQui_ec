@@ -171,27 +171,53 @@ CREATE TABLE IF NOT EXISTS v_ele_information (
     value character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_invoices (
-    discount numeric(38,2),
-    tip numeric(38,2),
-    total numeric(38,2),
-    total_without_taxes numeric(38,2),
-    date date,
-    id uuid NOT NULL,
-    access_key character varying(255),
-    address character varying(255),
-    code character varying(255),
-    code_document character varying(255),
-    delivery_note character varying(255),
-    emission_point character varying(255),
-    establishment character varying(255),
-    establishment_address character varying(255),
-    identification character varying(255),
-    identification_type character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    sequence character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_invoices;
+CREATE VIEW v_ele_invoices AS
+    select
+        i.id,
+        i.code,
+        i.number,
+        '01' as code_document,
+        substr(i.number, 1, 3) as establishment,
+        substr(i.number, 4, 3) as emission_point,
+        substr(i.number, 7, 15) as sequence,
+        i.date,
+        sum(d.total_without_tax) as total_without_taxes,
+        sum(d.discount) discount,
+        sum(d.total) total,
+        0 tip,
+        i.identification_type,
+        i.identification,
+        i.legal_name,
+        i.address,
+        i.delivery_note,
+        (
+        select
+            e.address
+        from
+            establishments e
+        where
+            e.code = substr(i.number, 1, 3)) establishment_address,
+        i.access_key
+    from
+        documents i
+    join documents_detail d
+    on
+        i.id = d.document_id
+    group by
+        i.id,
+        i.code,
+        i.number,
+        substr(i.number, 1, 3),
+        substr(i.number, 4, 3),
+        substr(i.number, 7, 15),
+        i.date,
+        i.identification_type,
+        i.identification,
+        i.legal_name,
+        i.address,
+        i.delivery_note,
+        i.access_key;
 
 CREATE TABLE IF NOT EXISTS v_ele_invoices_detail (
     discount numeric(38,2),

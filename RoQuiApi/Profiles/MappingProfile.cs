@@ -1,7 +1,9 @@
 using AutoMapper;
+using RoQuiApi.RoQui.Document.Dto;
+using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
-using RoQuiApi.RoQui.Invoice.Dto;
+
 using RoQuiApi.RoQui.Invoice.Model;
 
 namespace RoQuiApi.Profiles;
@@ -20,5 +22,7 @@ public class MappingProfile : Profile
         CreateMap<InvoiceDetailDto, DocumentDetail>();
         CreateMap<DocumentDetailTax, TaxDto>();
         CreateMap<TaxDto, DocumentDetailTax>();
+        CreateMap<DocumentPayment, PaymentDto>();
+        CreateMap<PaymentDto, DocumentPayment>();
     }
 }

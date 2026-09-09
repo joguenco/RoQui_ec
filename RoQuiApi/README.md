@@ -58,6 +58,11 @@ dotnet ef migrations add init
 dotnet ef database update
 ```
 ## Undo migration and remove
+Add in Migrations/..._init.cs, in Down method
+```
+migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_taxpayer;");
+migrationBuilder.Sql("DROP VIEW IF EXISTS v_ele_establishments;");
+```            
 ```
 dotnet ef database update 0
 ```

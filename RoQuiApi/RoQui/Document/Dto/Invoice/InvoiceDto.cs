@@ -1,6 +1,7 @@
-namespace RoQuiApi.RoQui.Invoice.Dto;
+namespace RoQuiApi.RoQui.Document.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Document.Dto;
 
 public class InvoiceDto
 {
@@ -27,4 +28,8 @@ public class InvoiceDto
     [Required]
     [MinLength(1, ErrorMessage = "The invoice must contain at least one detail.")]
     public virtual required ICollection<InvoiceDetailDto> InvoiceDetails { get; set; }
+
+    [Required]
+    [MinLength(1, ErrorMessage = "The invoice must contain at least one payment.")]
+    public virtual required ICollection<PaymentDto> Payments { get; set; }
 }

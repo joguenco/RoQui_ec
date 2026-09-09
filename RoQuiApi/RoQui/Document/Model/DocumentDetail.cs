@@ -38,8 +38,11 @@ public class DocumentDetail
     [Column("discount", TypeName = "decimal")]
     public required decimal Discount { get; set; }
 
-    [Column("total_price_without_tax", TypeName = "decimal")]
-    public required decimal TotalPriceWithoutTax { get; set; }
+    [Column("total_without_tax", TypeName = "decimal")]
+    public required decimal TotalWithoutTax { get; set; }
+
+    [Column("total", TypeName = "decimal")]
+    public required decimal Total { get; set; }
 
     [Column("document_id")]
     public int DocumentId { get; set; }

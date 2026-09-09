@@ -15,7 +15,18 @@ public class InvoiceRepo : IInvoiceRepo
     public void CreateInvoice(Document invoice)
     {
         ArgumentNullException.ThrowIfNull(invoice);
-        _context.Invoices.Add(invoice);
+        _context.Documents.Add(invoice);
+    }
+
+    public void DeleteDocument(Document document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        _context.Documents.Remove(document);
+    }
+
+    public Document? GetDocumentByCodeAndNumber(string code, string number)
+    {
+        return _context.Documents.FirstOrDefault(d => d.Code == code && d.Number == number);
     }
 
     public bool SaveChanges()

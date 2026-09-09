@@ -1,6 +1,7 @@
 namespace RoQuiApi.RoQui.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Document.Dto;
 
 public class CreditNoteDetailDto
 {

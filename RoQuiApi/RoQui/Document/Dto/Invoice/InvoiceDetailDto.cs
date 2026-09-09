@@ -1,6 +1,7 @@
-namespace RoQuiApi.RoQui.Invoice.Dto;
+namespace RoQuiApi.RoQui.Document.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Document.Dto;
 
 public class InvoiceDetailDto
 {
@@ -44,7 +45,11 @@ public class InvoiceDetailDto
 
     [Required]
     [Range(0, double.MaxValue, ErrorMessage = "TotalPriceWithoutTax cannot be negative.")]
-    public required decimal TotalPriceWithoutTax { get; set; }
+    public required decimal TotalWithoutTax { get; set; }
+
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "TotalPriceWithoutTax cannot be negative.")]
+    public required decimal Total { get; set; }
 
     [Required]
     [MinLength(1, ErrorMessage = "The detail must contain at least one tax.")]
