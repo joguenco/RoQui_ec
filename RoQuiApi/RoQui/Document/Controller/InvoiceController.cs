@@ -1,6 +1,5 @@
 namespace RoQuiApi.RoQui.Invoice.Controller;
 
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Invoice.Repository;
 using AutoMapper;
@@ -8,12 +7,12 @@ using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
+using RoQuiApi.RoQui.Electronic.Client;
 
 [ApiController]
 [Route("[controller]")]
 public class InvoiceController : ControllerBase
-{
-    private static readonly HttpClient HttpClient = new();
+{    
 
     private readonly IInvoiceRepo _invoiceRepo;
 
@@ -43,27 +42,16 @@ public class InvoiceController : ControllerBase
         _invoiceRepo.SaveChanges();
 
         var url = _electronicRepo.GetParameterByName("RoQui HTTP Server");
-        if (!string.IsNullOrWhiteSpace(url?.Value))
+        var apiKey = _electronicRepo.GetParameterByName("RoQui HTTP X-API-KEY");
+        if (!string.IsNullOrWhiteSpace(url?.Value) && !string.IsNullOrWhiteSpace(apiKey?.Value))
         {
-            var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v1/invoice/authorize";
-            _ = AuthorizeInvoice(authorizeUrl, invoiceBody.Code, invoiceBody.Number);
+            // var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v1/invoice/authorize";
+            var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v2/version";
+            // _ = Client.AuthorizeInvoice(authorizeUrl, apiKey.Value, invoiceBody.Code, invoiceBody.Number);
+            var version = Client.Version(authorizeUrl, apiKey.Value);
+            Console.WriteLine($"Version check: {version.Result?.Application?.Name}");
         }
 
         return Ok(new MessageDto { Title = "Invoice created successfully" });
-    }
-
-    private static async Task AuthorizeInvoice(string authorizeUrl, string code, string number)
-    {
-        try
-        {
-            await Task.Delay(6000);
-            using var content = JsonContent.Create(new { code, number });
-            var response = await HttpClient.PostAsync(authorizeUrl, content);
-            Console.WriteLine($"Authorize invoice {code}-{number}: {(int)response.StatusCode}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error authorizing invoice {code}-{number}: {ex.Message}");
-        }
     }
 }
