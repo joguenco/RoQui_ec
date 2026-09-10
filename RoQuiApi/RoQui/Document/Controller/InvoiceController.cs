@@ -39,18 +39,9 @@ public class InvoiceController : ControllerBase
         var invoiceDetailsModel = _mapper.Map<List<DocumentDetail>>(invoiceBody.InvoiceDetails);
         invoiceModel.DocumentDetails = invoiceDetailsModel;
         _invoiceRepo.CreateInvoice(invoiceModel);
-        _invoiceRepo.SaveChanges();
-
-        var url = _electronicRepo.GetParameterByName("RoQui HTTP Server");
-        var apiKey = _electronicRepo.GetParameterByName("RoQui HTTP X-API-KEY");
-        if (!string.IsNullOrWhiteSpace(url?.Value) && !string.IsNullOrWhiteSpace(apiKey?.Value))
-        {
-            // var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v1/invoice/authorize";
-            var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v2/version";
-            // _ = Client.AuthorizeInvoice(authorizeUrl, apiKey.Value, invoiceBody.Code, invoiceBody.Number);
-            var version = Client.Version(authorizeUrl, apiKey.Value);
-            Console.WriteLine($"Version check: {version.Result?.Application?.Name}");
-        }
+        _invoiceRepo.SaveChanges();        
+        
+        _ = Client.Authorize("/roqui/v2/invoice/authorize", invoiceBody.Code, invoiceBody.Number, _electronicRepo);        
 
         return Ok(new MessageDto { Title = "Invoice created successfully" });
     }

@@ -27,6 +27,7 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
                         "/error",
                         "/ping",
                         "/roqui/v2/version",
+                        "/roqui/v2/invoice/authorize",
                         "/files/pdf/*",
                         "/files/xml/*",
                     )
