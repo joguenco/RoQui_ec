@@ -31,6 +31,10 @@ CREATE OR REPLACE PACKAGE            pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2;
 
+    FUNCTION fun_withhold (
+        p_number IN VARCHAR2
+    ) RETURN VARCHAR2;
+
 END pkg_roqui;
 
 /
@@ -214,8 +218,8 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        -- Pendiente: falta la columna clave_acceso en la vista de Oracle
-        v_access_key := fun_clave_acceso(replace(rec_header.fecha, '-'), 'FAC', rec_header.numero);
+        -- El formato va explicito para no depender del NLS_DATE_FORMAT de la sesion
+        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), 'FAC', rec_header.numero);
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
@@ -356,7 +360,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(replace(rec_header.fecha, '-'), rec_header.codigo, rec_header.numero);
+        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
@@ -473,8 +477,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        -- Pendiente: falta la columna clave_acceso en la vista de Oracle
-        v_access_key := NULL;
+        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
@@ -595,8 +598,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        -- Pendiente: falta la columna clave_acceso en la vista de Oracle
-        v_access_key := NULL;
+        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
@@ -665,6 +667,150 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
                    || p_number
                    || ' was not found in v_ele_liquidaciones';
     END fun_liquidation;
+
+    FUNCTION fun_withhold (
+        p_number IN VARCHAR2
+    ) RETURN VARCHAR2 AS
+
+        l_response   CLOB;
+        l_body       CLOB;
+        rec_header   v_ele_retenciones%ROWTYPE;
+        v_access_key VARCHAR2(100);
+        v_line       NUMBER;
+
+        CURSOR cur_support IS
+        SELECT
+            sustento,
+            tipo_documento,
+            documento,
+            fecha,
+            autorizacion,
+            total_sin_impuestos,
+            total
+        FROM
+            v_ele_retenciones_sustento
+        WHERE
+                codigo = rec_header.codigo
+            AND numero = p_number;
+
+        CURSOR cur_detail IS
+        SELECT
+            tipo,
+            codigo_retencion,
+            base_imponible,
+            porcentaje,
+            valor_retenido
+        FROM
+            v_ele_retenciones_detalle
+        WHERE
+                codigo = rec_header.codigo
+            AND numero = p_number;
+
+        CURSOR cur_tax IS
+        SELECT
+            codigo_impuesto,
+            codigo_porcentaje,
+            base_imponible,
+            tarifa,
+            valor
+        FROM
+            v_ele_retenciones_impuesto
+        WHERE
+                codigo = rec_header.codigo
+            AND numero = p_number;
+
+    BEGIN
+        SELECT
+            *
+        INTO rec_header
+        FROM
+            v_ele_retenciones
+        WHERE
+            numero = p_number;
+
+        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
+
+        apex_json.initialize_clob_output;
+        apex_json.open_object;
+        apex_json.write('code', rec_header.codigo);
+        apex_json.write('number', rec_header.numero);
+        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('identificationType', rec_header.tipo_documento);
+        apex_json.write('identification', rec_header.documento);
+        apex_json.write('legalName', rec_header.razon_social);
+        apex_json.write('accessKey', v_access_key);
+        apex_json.write('fiscalPeriod', rec_header.periodo_fiscal);
+        apex_json.write('related', rec_header.relacionado);
+
+        -- Cada retencion de DISME cubre un solo documento sustento
+        apex_json.open_array('withholdSupports');
+        FOR s IN cur_support LOOP
+            apex_json.open_object;
+            apex_json.write('codeSupport', s.sustento);
+            apex_json.write('codeDocumentSupport', s.tipo_documento);
+            apex_json.write('numberDocumentSupport', s.documento);
+            apex_json.write('dateDocumentSupport',
+                            to_char(to_date(s.fecha, 'dd/mm/yyyy'), 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+            apex_json.write('authorizationDocumentSupport', s.autorizacion);
+            apex_json.write('totalWithoutTaxes', s.total_sin_impuestos);
+            apex_json.write('total', s.total);
+
+            v_line := 0;
+            apex_json.open_array('withholdDetails');
+            FOR d IN cur_detail LOOP
+                v_line := v_line + 1;
+                apex_json.open_object;
+                apex_json.write('line', v_line);
+                apex_json.write('taxCode', d.tipo);
+                apex_json.write('withholdCode', d.codigo_retencion);
+                apex_json.write('baseValue', d.base_imponible);
+                apex_json.write('percentage', d.porcentaje);
+                apex_json.write('withholdedValue', d.valor_retenido);
+                apex_json.close_object;
+            END LOOP;
+
+            apex_json.close_array;
+
+            apex_json.open_array('withholdDocumentTaxes');
+            FOR t IN cur_tax LOOP
+                apex_json.open_object;
+                apex_json.write('taxCode', t.codigo_impuesto);
+                apex_json.write('percentageCode', t.codigo_porcentaje);
+                apex_json.write('taxBase', t.base_imponible);
+                apex_json.write('taxIva', t.tarifa);
+                apex_json.write('value', t.valor);
+                apex_json.close_object;
+            END LOOP;
+
+            apex_json.close_array;
+            apex_json.close_object;
+        END LOOP;
+
+        apex_json.close_array;
+        apex_json.close_object;
+
+        l_body := apex_json.get_clob_output;
+        dbms_output.put_line('l_body=' || l_body);
+        apex_json.free_output;
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Type';
+        apex_web_service.g_request_headers(1).value := 'application/json';
+        l_response := apex_web_service.make_rest_request(
+            p_url         => default_server || '/withhold/rest/v1/withhold',
+            p_http_method => 'POST',
+            p_body        => l_body
+        );
+
+        dbms_output.put_line('status=' || apex_web_service.g_status_code);
+        dbms_output.put_line('l_response=' || l_response);
+        apex_json.parse(l_response);
+        RETURN apex_json.get_varchar2(p_path => 'title');
+    EXCEPTION
+        WHEN no_data_found THEN
+            RETURN 'Withhold '
+                   || p_number
+                   || ' was not found in v_ele_retenciones';
+    END fun_withhold;
 
 END pkg_roqui;
 /
