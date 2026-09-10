@@ -22,6 +22,7 @@ builder.Services.AddScoped<IVersionRepo, VersionRepo>();
 builder.Services.AddScoped<ITaxpayerRepo, TaxpayerRepo>();
 builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 builder.Services.AddScoped<IElectronicRepo, ElectronicRepo>();
+builder.Services.AddScoped<IWithholdRepo, WithholdRepo>();
 
 // Added Auto Mapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
@@ -30,7 +31,44 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    // Orden en que se muestran los grupos en Scalar
+    string[] tagOrder =
+    [
+        "Ping",
+        "Version",
+        "Taxpayer",
+        "Invoice",
+        "CreditNote",
+        "DebitNote",
+        "Liquidation",
+        "Withhold"
+    ];
+
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        if (document.Tags is { Count: > 0 })
+        {
+            var sortedTags = document.Tags
+                .OrderBy(tag =>
+                {
+                    var position = Array.IndexOf(tagOrder, tag.Name);
+                    return position < 0 ? int.MaxValue : position;
+                })
+                .ThenBy(tag => tag.Name)
+                .ToList();
+
+            document.Tags.Clear();
+            foreach (var tag in sortedTags)
+            {
+                document.Tags.Add(tag);
+            }
+        }
+
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 

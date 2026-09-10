@@ -22,6 +22,10 @@ public class AppDbContext : DbContext
     public DbSet<DocumentPayment> Payments { get; set; }
     public DbSet<Electronic> Electronics { get; set; }
     public DbSet<Parameter> Parameters { get; set; }
+    public DbSet<Withhold> Withholds { get; set; }
+    public DbSet<WithholdSupport> WithholdSupports { get; set; }
+    public DbSet<WithholdDetail> WithholdDetails { get; set; }
+    public DbSet<WithholdDocumentTax> WithholdDocumentTaxes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +55,24 @@ public class AppDbContext : DbContext
             .HasForeignKey(p => p.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Withhold>()
+            .HasMany(w => w.WithholdSupports)
+            .WithOne(s => s.Withhold)
+            .HasForeignKey(s => s.WithholdId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WithholdSupport>()
+            .HasMany(s => s.WithholdDetails)
+            .WithOne(d => d.WithholdSupport)
+            .HasForeignKey(d => d.WithholdSupportId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<WithholdSupport>()
+            .HasMany(s => s.WithholdDocumentTaxes)
+            .WithOne(t => t.WithholdSupport)
+            .HasForeignKey(t => t.WithholdSupportId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         //Unique constraints
         modelBuilder.Entity<Document>()
             .HasIndex(i => new { i.Code, i.Number })
@@ -58,6 +80,14 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Document>()
             .HasIndex(i => i.AccessKey)
+            .IsUnique();
+
+        modelBuilder.Entity<Withhold>()
+            .HasIndex(w => new { w.Code, w.Number })
+            .IsUnique();
+
+        modelBuilder.Entity<Withhold>()
+            .HasIndex(w => w.AccessKey)
             .IsUnique();
     }
 }
