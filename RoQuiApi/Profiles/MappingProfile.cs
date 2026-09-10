@@ -1,6 +1,7 @@
 using AutoMapper;
 using RoQuiApi.RoQui.Document.Dto;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
+using RoQuiApi.RoQui.Document.Withhold.Dto;
 using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 
@@ -24,5 +25,13 @@ public class MappingProfile : Profile
         CreateMap<TaxDto, DocumentDetailTax>();
         CreateMap<DocumentPayment, PaymentDto>();
         CreateMap<PaymentDto, DocumentPayment>();
+        CreateMap<Withhold, WithholdDto>();
+        CreateMap<WithholdDto, Withhold>();
+        CreateMap<WithholdSupport, WithholdSupportDto>();
+        CreateMap<WithholdSupportDto, WithholdSupport>();
+        CreateMap<WithholdDetail, WithholdDetailDto>();
+        CreateMap<WithholdDetailDto, WithholdDetail>();
+        CreateMap<WithholdDocumentTax, WithholdDocumentTaxDto>();
+        CreateMap<WithholdDocumentTaxDto, WithholdDocumentTax>();
     }
 }
