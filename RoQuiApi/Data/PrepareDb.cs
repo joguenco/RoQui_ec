@@ -4,6 +4,7 @@ namespace RoQuiApi.Data;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using RoQuiApi.Seed;
 
 public static class PrepareDb
 {
@@ -32,6 +33,6 @@ public static class PrepareDb
 
     private static void SeedData(AppDbContext context)
     {
-
+        ParameterSeed.SeedParameters(context);
     }
 }

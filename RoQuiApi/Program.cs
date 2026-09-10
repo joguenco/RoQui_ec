@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RoQuiApi.Data;
 using RoQuiApi.Profiles;
+using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Version.Repository;
@@ -20,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.AddScoped<IVersionRepo, VersionRepo>();
 builder.Services.AddScoped<ITaxpayerRepo, TaxpayerRepo>();
 builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
+builder.Services.AddScoped<IElectronicRepo, ElectronicRepo>();
 
 // Added Auto Mapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));

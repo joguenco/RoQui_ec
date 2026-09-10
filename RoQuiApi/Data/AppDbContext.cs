@@ -1,6 +1,7 @@
 namespace RoQuiApi.Data;
 
 using Microsoft.EntityFrameworkCore;
+using RoQuiApi.RoQui.Electronic.Model;
 using RoQuiApi.RoQui.Head.Model;
 using RoQuiApi.RoQui.Invoice.Model;
 
@@ -19,6 +20,8 @@ public class AppDbContext : DbContext
     public DbSet<DocumentDetail> DocumentDetails { get; set; }
     public DbSet<DocumentDetailTax> DocumentDetailTaxes { get; set; }
     public DbSet<DocumentPayment> Payments { get; set; }
+    public DbSet<Electronic> Electronics { get; set; }
+    public DbSet<Parameter> Parameters { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
