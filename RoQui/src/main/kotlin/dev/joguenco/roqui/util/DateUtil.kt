@@ -43,17 +43,20 @@ class DateUtil {
         fun extractOffsetDateTime(date: XMLGregorianCalendar): OffsetDateTime {
             val dateString =
                 date.year.toString() +
-                        "-" +
-                        date.month.toString() +
-                        "-" +
-                        date.day.toString() +
-                        " " +
-                        date.hour.toString() +
-                        ":" +
-                        date.minute.toString()
+                    "-" +
+                    date.month.toString() +
+                    "-" +
+                    date.day.toString() +
+                    " " +
+                    date.hour.toString() +
+                    ":" +
+                    date.minute.toString()
 
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
-            return OffsetDateTime.ofInstant(simpleDateFormat.parse(dateString).toInstant(), TimeZone.getDefault().toZoneId())
+            return OffsetDateTime.ofInstant(
+                simpleDateFormat.parse(dateString).toInstant(),
+                TimeZone.getDefault().toZoneId(),
+            )
         }
 
         fun getDatetime(): String {

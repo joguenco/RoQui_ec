@@ -26,6 +26,7 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
                         "/roqui/v1/refresh",
                         "/error",
                         "/ping",
+                        "/roqui/v2/version",
                         "/files/pdf/*",
                         "/files/xml/*",
                     )

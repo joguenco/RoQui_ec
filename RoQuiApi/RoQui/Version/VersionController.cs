@@ -7,11 +7,11 @@ using RoQuiApi.RoQui.Version.Repository;
 [Route("[controller]")]
 public class VersionController : ControllerBase
 {
-    private readonly IVersionRepo versionRepo;
+    private readonly IVersionRepo _versionRepo;
 
     public VersionController(IVersionRepo versionRepo)
     {
-        this.versionRepo = versionRepo;
+        _versionRepo = versionRepo;
     }
 
     [HttpGet(Name = "GetVersion")]
@@ -24,7 +24,7 @@ public class VersionController : ControllerBase
             Release = "0.0.1",
             VersionOS = Environment.OSVersion.VersionString,
             VersionLanguage = ".NET Runtime " + Environment.Version.ToString(),
-            VersionDatabase = versionRepo.GetVersion()
+            VersionDatabase = _versionRepo.GetVersion()
         };
     }
 }

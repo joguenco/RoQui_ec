@@ -83,6 +83,10 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
         }
     }
 
+    fun getApiKey(): String {
+        return parameterRepository.findValueByName("RoQui HTTP X-API-KEY")
+    }
+
     fun toDate(suscripcionEncryptedData: String, key: String): Date {
         val formatter = SimpleDateFormat("yyyy-MM-dd")
         return try {

@@ -25,6 +25,7 @@ public class ParameterSeed
                 new() { Id = 12, Name = "Logo PNG", Value = "logo.png", Observation = "URL Logo PNG", Type = "Resource" },
                 new() { Id = 13, Name = "Template Email", Value = "template.html", Observation = "URL template", Type = "Resource" },
                 new() { Id = 14, Name = "RoQui HTTP Server", Value = "http://localhost:8080", Observation = "Server for electronic documents authorization", Type = "Resource" },
+                new() { Id = 15, Name = "RoQui HTTP X-API-KEY", Value = "api__6tpXYCxsXpCs7QeuI44KtoCq", Observation = "X-API-KEY for authentication", Type = "Resource" },
                 new() { Id = 99, Name = "Subscription", Value = "w1b5fZ31Z+8qnlYW0Sa3vA==", Observation = "Subscription", Type = "Subscription" }
             };
 
