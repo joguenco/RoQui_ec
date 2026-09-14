@@ -7,7 +7,9 @@
     "RUC",
     "ESTABLECIMIENTO",
     "NOMBRE_COMERCIAL",
-    "DIRECCION"
+    "DIRECCION",
+    "PRINCIPAL",
+    "ESTADO"
 ) AS
     SELECT
         id,
@@ -19,7 +21,9 @@
         )       AS ruc,
         codigo  AS establecimiento,
         nombre_comercial,
-        direccion
+        direccion,
+        principal,
+        estado
     FROM
         sri_establecimientos
     WHERE

@@ -1,21 +1,30 @@
-CREATE OR REPLACE PACKAGE            pkg_roqui AS
-    default_server CONSTANT VARCHAR2(100) := 'http://172.17.0.1:5276';
-
+CREATE OR REPLACE PACKAGE pkg_roqui AS
     TYPE type_taxpayer IS RECORD (
-            identification        VARCHAR2(180),
+            identification    VARCHAR2(180),
             legal_name        VARCHAR2(180),
             forced_accounting VARCHAR2(9),
             special_taxpayer  VARCHAR2(9),
             rimpe             VARCHAR2(180),
             retention_agent   VARCHAR2(9)
     );
+    TYPE type_response IS RECORD (
+            status  NUMBER,
+            message VARCHAR2(900)
+    );
+    FUNCTION fun_get_url RETURN VARCHAR2;
+
+    FUNCTION fun_get_key RETURN VARCHAR2;
+
     FUNCTION fun_ping RETURN VARCHAR2;
+    
+    FUNCTION is_active RETURN NUMBER;
 
     FUNCTION fun_version RETURN VARCHAR2;
 
-    function fun_taxpayer return varchar2;
+    FUNCTION fun_taxpayer RETURN type_response;
 
     FUNCTION fun_invoice (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN VARCHAR2;
 
@@ -36,20 +45,20 @@ CREATE OR REPLACE PACKAGE            pkg_roqui AS
     ) RETURN VARCHAR2;
 
 END pkg_roqui;
-
 /
 
 
-CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
+CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
 
     FUNCTION fun_ping RETURN VARCHAR2 AS
-        v_result CLOB;
+        v_result     CLOB;
+        v_url_server VARCHAR2(900) := fun_get_url();
     BEGIN
         dbms_output.put_line('url='
-                             || default_server
+                             || v_url_server
                              || '/ping');
         v_result := apex_web_service.make_rest_request(
-            p_url         => default_server || '/ping',
+            p_url         => v_url_server || '/ping',
             p_http_method => 'GET'
         );
 
@@ -60,10 +69,11 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
     END fun_ping;
 
     FUNCTION fun_version RETURN VARCHAR2 AS
-        l_clob CLOB;
+        l_clob       CLOB;
+        v_url_server VARCHAR2(900) := fun_get_url();
     BEGIN
         l_clob := apex_web_service.make_rest_request(
-            p_url         => default_server || '/version',
+            p_url         => v_url_server || '/version',
             p_http_method => 'GET'
         );
 
@@ -73,19 +83,21 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         RETURN apex_json.get_varchar2(p_path => 'version');
     END fun_version;
 
-    FUNCTION fun_taxpayer RETURN VARCHAR2 AS
+    FUNCTION fun_taxpayer RETURN type_response AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
         rec_taxpayer type_taxpayer;
+        rec_response type_response;
         CURSOR cur_establishment IS
         SELECT
-            codigo           AS code,
+            establecimiento           AS code,
             nombre_comercial AS business_name,
             direccion        AS address,
             principal        principal
         FROM
-            sri_establecimientos
+            v_ele_establecimientos
         WHERE
             estado = 'ACTIVO';
 
@@ -140,7 +152,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/taxpayer/rest/v1/taxpayer',
+            p_url         => v_url_server || '/taxpayer/rest/v1/taxpayer',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -148,19 +160,22 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        RETURN rec_response;
     END fun_taxpayer;
 
     FUNCTION fun_invoice (
+        p_code IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
-        rec_header   v_ele_facturas%ROWTYPE;
+        rec_header   v_ele_facturas%rowtype;
         v_deadline   NUMBER;
         v_access_key VARCHAR2(100);
-
         CURSOR cur_detail IS
         SELECT
             linea,
@@ -177,7 +192,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         FROM
             v_ele_facturas_detalle
         WHERE
-                codigo = 'FAC'
+                codigo = p_code
             AND numero = p_number
         ORDER BY
             linea;
@@ -194,7 +209,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         FROM
             v_ele_impuestos_detalle
         WHERE
-                codigo = 'FAC'
+                codigo = p_code
             AND numero = p_number
             AND linea = p_line;
 
@@ -219,20 +234,24 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             numero = p_number;
 
         -- El formato va explicito para no depender del NLS_DATE_FORMAT de la sesion
-        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), 'FAC', rec_header.numero);
+        v_access_key := fun_clave_acceso(
+            to_char(rec_header.fecha, 'ddmmyyyy'),
+            p_code,
+            rec_header.numero
+        );
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', 'FV');
         apex_json.write('number', rec_header.numero);
-        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('identificationType', rec_header.tipo_documento);
         apex_json.write('identification', rec_header.documento);
         apex_json.write('legalName', rec_header.razon_social);
         apex_json.write('address', rec_header.direccion);
         apex_json.write('deliveryNote', rec_header.guia_remision);
         apex_json.write('accessKey', v_access_key);
-
         apex_json.open_array('invoiceDetails');
         FOR d IN cur_detail LOOP
             apex_json.open_object;
@@ -248,7 +267,9 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             apex_json.write('discount', d.descuento);
             apex_json.write('totalWithoutTax', d.precio_total_sin_impuesto);
             -- El detalle de Oracle no trae el total con impuestos, se calcula
-            apex_json.write('total', round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0), 2));
+            apex_json.write('total',
+                            round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0),
+                                  2));
 
             apex_json.open_array('invoiceDetailTaxes');
             FOR t IN cur_tax(d.linea) LOOP
@@ -266,11 +287,10 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         END LOOP;
 
         apex_json.close_array;
-
         apex_json.open_array('payments');
         FOR p IN cur_payment LOOP
             -- En Oracle el plazo es VARCHAR2 aunque guarde numeros
-            
+
             apex_json.open_object;
             apex_json.write('code', p.forma_pago);
             apex_json.write('total', p.total);
@@ -281,16 +301,14 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
 
         apex_json.close_array;
         apex_json.close_object;
-
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
         apex_json.free_output;
-
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/invoice/rest/v1/invoice',
+            p_url         => v_url_server || '/invoice/rest/v1/invoice',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -310,11 +328,11 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
-        rec_header   v_ele_notas_credito%ROWTYPE;
+        rec_header   v_ele_notas_credito%rowtype;
         v_access_key VARCHAR2(100);
-
         CURSOR cur_detail IS
         SELECT
             linea,
@@ -360,13 +378,18 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
+        v_access_key := fun_clave_acceso(
+            to_char(rec_header.fecha, 'ddmmyyyy'),
+            rec_header.codigo,
+            rec_header.numero
+        );
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
         apex_json.write('number', rec_header.numero);
-        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('identificationType', rec_header.tipo_documento);
         apex_json.write('identification', rec_header.documento);
         apex_json.write('legalName', rec_header.razon_social);
@@ -375,11 +398,11 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_json.write('modifiedDocument', rec_header.modificado);
         -- En esta vista la fecha viene como texto dd/mm/yyyy
         apex_json.write('modifiedDate',
-                        to_char(to_date(rec_header.fecha_modificado, 'dd/mm/yyyy'), 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+                        to_char(TO_DATE(rec_header.fecha_modificado, 'dd/mm/yyyy'), 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+
         apex_json.write('reason', rec_header.motivo);
         apex_json.write('totalWithoutTaxes', rec_header.total_sin_impuestos);
         apex_json.write('modifiedTotal', rec_header.total_modificado);
-
         apex_json.open_array('creditNoteDetails');
         FOR d IN cur_detail LOOP
             apex_json.open_object;
@@ -393,7 +416,9 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             apex_json.write('valueIva', d.valor_iva);
             apex_json.write('discount', d.descuento);
             apex_json.write('totalWithoutTax', d.precio_total_sin_impuesto);
-            apex_json.write('total', round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0), 2));
+            apex_json.write('total',
+                            round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0),
+                                  2));
 
             apex_json.open_array('creditNoteDetailTaxes');
             FOR t IN cur_tax(rec_header.codigo, d.linea) LOOP
@@ -412,7 +437,6 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
 
         apex_json.close_array;
         apex_json.close_object;
-
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
         apex_json.free_output;
@@ -420,7 +444,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/creditnote/rest/v1/creditnote',
+            p_url         => v_url_server || '/creditnote/rest/v1/creditnote',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -440,12 +464,12 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
-        rec_header   v_ele_notas_debito%ROWTYPE;
+        rec_header   v_ele_notas_debito%rowtype;
         v_access_key VARCHAR2(100);
         v_line       NUMBER := 0;
-
         CURSOR cur_detail IS
         SELECT
             razon,
@@ -477,20 +501,26 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
+        v_access_key := fun_clave_acceso(
+            to_char(rec_header.fecha, 'ddmmyyyy'),
+            rec_header.codigo,
+            rec_header.numero
+        );
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
         apex_json.write('number', rec_header.numero);
-        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('identificationType', rec_header.tipo_documento);
         apex_json.write('identification', rec_header.documento);
         apex_json.write('legalName', rec_header.razon_social);
         apex_json.write('accessKey', v_access_key);
         apex_json.write('modifiedDocumentType', rec_header.documento_modificado);
         apex_json.write('modifiedDocument', rec_header.modificado);
-        apex_json.write('modifiedDate', to_char(rec_header.fecha_modificado, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('modifiedDate',
+                        to_char(rec_header.fecha_modificado, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('totalWithoutTaxes', rec_header.total_sin_impuestos);
 
         -- La nota de debito no lleva productos, lleva motivos de cobro
@@ -518,7 +548,6 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
 
         apex_json.close_array;
         apex_json.close_object;
-
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
         apex_json.free_output;
@@ -526,7 +555,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/debitnote/rest/v1/debitnote',
+            p_url         => v_url_server || '/debitnote/rest/v1/debitnote',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -546,15 +575,17 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
-        rec_header   v_ele_liquidaciones%ROWTYPE;
+        rec_header   v_ele_liquidaciones%rowtype;
         v_access_key VARCHAR2(100);
 
         -- La vista de Oracle no trae LINEA, se genera con row_number
         CURSOR cur_detail IS
         SELECT
-            ROW_NUMBER() OVER(
+            ROW_NUMBER()
+            OVER(
                 ORDER BY
                     codigo_principal
             ) AS linea,
@@ -598,19 +629,23 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
+        v_access_key := fun_clave_acceso(
+            to_char(rec_header.fecha, 'ddmmyyyy'),
+            rec_header.codigo,
+            rec_header.numero
+        );
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
         apex_json.write('number', rec_header.numero);
-        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('identificationType', rec_header.tipo_documento);
         apex_json.write('identification', rec_header.documento);
         apex_json.write('legalName', rec_header.razon_social);
         apex_json.write('address', rec_header.direccion);
         apex_json.write('accessKey', v_access_key);
-
         apex_json.open_array('liquidationDetails');
         FOR d IN cur_detail LOOP
             apex_json.open_object;
@@ -625,7 +660,9 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             apex_json.write('valueIva', d.valor_iva);
             apex_json.write('discount', d.descuento);
             apex_json.write('totalWithoutTax', d.precio_total_sin_impuesto);
-            apex_json.write('total', round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0), 2));
+            apex_json.write('total',
+                            round(nvl(d.precio_total_sin_impuesto, 0) + nvl(d.valor_iva, 0),
+                                  2));
 
             apex_json.open_array('liquidationDetailTaxes');
             FOR t IN cur_tax(d.linea) LOOP
@@ -644,7 +681,6 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
 
         apex_json.close_array;
         apex_json.close_object;
-
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
         apex_json.free_output;
@@ -652,7 +688,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/liquidation/rest/v1/liquidation',
+            p_url         => v_url_server || '/liquidation/rest/v1/liquidation',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -672,12 +708,12 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
+        v_url_server VARCHAR2(900) := fun_get_url();
         l_response   CLOB;
         l_body       CLOB;
-        rec_header   v_ele_retenciones%ROWTYPE;
+        rec_header   v_ele_retenciones%rowtype;
         v_access_key VARCHAR2(100);
         v_line       NUMBER;
-
         CURSOR cur_support IS
         SELECT
             sustento,
@@ -728,13 +764,18 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(to_char(rec_header.fecha, 'ddmmyyyy'), rec_header.codigo, rec_header.numero);
+        v_access_key := fun_clave_acceso(
+            to_char(rec_header.fecha, 'ddmmyyyy'),
+            rec_header.codigo,
+            rec_header.numero
+        );
 
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
         apex_json.write('number', rec_header.numero);
-        apex_json.write('date', to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
         apex_json.write('identificationType', rec_header.tipo_documento);
         apex_json.write('identification', rec_header.documento);
         apex_json.write('legalName', rec_header.razon_social);
@@ -750,11 +791,11 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             apex_json.write('codeDocumentSupport', s.tipo_documento);
             apex_json.write('numberDocumentSupport', s.documento);
             apex_json.write('dateDocumentSupport',
-                            to_char(to_date(s.fecha, 'dd/mm/yyyy'), 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+                            to_char(TO_DATE(s.fecha, 'dd/mm/yyyy'), 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+
             apex_json.write('authorizationDocumentSupport', s.autorizacion);
             apex_json.write('totalWithoutTaxes', s.total_sin_impuestos);
             apex_json.write('total', s.total);
-
             v_line := 0;
             apex_json.open_array('withholdDetails');
             FOR d IN cur_detail LOOP
@@ -770,7 +811,6 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
             END LOOP;
 
             apex_json.close_array;
-
             apex_json.open_array('withholdDocumentTaxes');
             FOR t IN cur_tax LOOP
                 apex_json.open_object;
@@ -788,7 +828,6 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
 
         apex_json.close_array;
         apex_json.close_object;
-
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
         apex_json.free_output;
@@ -796,7 +835,7 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => default_server || '/withhold/rest/v1/withhold',
+            p_url         => v_url_server || '/withhold/rest/v1/withhold',
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -811,6 +850,54 @@ CREATE OR REPLACE PACKAGE BODY            pkg_roqui AS
                    || p_number
                    || ' was not found in v_ele_retenciones';
     END fun_withhold;
+
+    FUNCTION fun_get_url RETURN VARCHAR2 AS
+        v_url VARCHAR2(900);
+    BEGIN
+        SELECT
+            url
+        INTO v_url
+        FROM
+            roqui_parameters
+        WHERE
+            status = 'Activo';
+
+        RETURN v_url;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN NULL;
+    END fun_get_url;
+
+    FUNCTION fun_get_key RETURN VARCHAR2 AS
+        v_key VARCHAR2(900);
+    BEGIN
+        SELECT
+            key
+        INTO v_key
+        FROM
+            roqui_parameters
+        WHERE
+            status = 'Activo';
+
+        RETURN v_key;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN NULL;
+    END fun_get_key;
+    
+    FUNCTION is_active RETURN NUMBER AS
+        v_result NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_result
+        FROM
+            roqui_parameters
+        WHERE
+            status = 'Activo';
+
+        RETURN v_result;
+    END is_active;
 
 END pkg_roqui;
 /
