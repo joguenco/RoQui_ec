@@ -1,10 +1,10 @@
 namespace RoQuiApi.RoQui.Invoice.Controller;
 
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using RoQuiApi.RoQui.Document.Withhold.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
+using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Shared;
@@ -13,8 +13,6 @@ using RoQuiApi.RoQui.Shared;
 [Route("[controller]")]
 public class WithholdController : ControllerBase
 {
-    private static readonly HttpClient HttpClient = new();
-
     private readonly IWithholdRepo _withholdRepo;
 
     private readonly IElectronicRepo _electronicRepo;
@@ -42,28 +40,8 @@ public class WithholdController : ControllerBase
         _withholdRepo.CreateWithhold(withholdModel);
         _withholdRepo.SaveChanges();
 
-        var url = _electronicRepo.GetParameterByName("RoQui HTTP Server");
-        if (!string.IsNullOrWhiteSpace(url?.Value))
-        {
-            var authorizeUrl = $"{url.Value.TrimEnd('/')}/roqui/v1/withhold/authorize";
-            _ = AuthorizeWithhold(authorizeUrl, withholdBody.Code, withholdBody.Number);
-        }
+        _ = Client.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo);
 
         return Ok(new MessageDto { Title = "Withhold created successfully" });
-    }
-
-    private static async Task AuthorizeWithhold(string authorizeUrl, string code, string number)
-    {
-        try
-        {
-            await Task.Delay(6000);
-            using var content = JsonContent.Create(new { code, number });
-            var response = await HttpClient.PostAsync(authorizeUrl, content);
-            Console.WriteLine($"Authorize withhold {code}-{number}: {(int)response.StatusCode}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error authorizing withhold {code}-{number}: {ex.Message}");
-        }
     }
 }
