@@ -28,6 +28,8 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
                         "/ping",
                         "/roqui/v2/version",
                         "/roqui/v2/invoice/authorize",
+                        "/roqui/v2/withhold/authorize",
+                        "/roqui/v2/liquidation/authorize",
                         "/files/pdf/*",
                         "/files/xml/*",
                     )

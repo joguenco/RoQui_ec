@@ -373,18 +373,36 @@ FROM
 ORDER BY 
     j.number DESC;
 
-CREATE TABLE IF NOT EXISTS v_ele_report_liquidations (
-    total numeric(38,2),
-    date date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    code character varying(255),
-    email character varying(255),
-    identification character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    status character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_report_liquidations;
+CREATE VIEW v_ele_report_liquidations AS
+SELECT
+    j.id::bigint AS id,
+    j.code AS code,
+    j.number AS number,
+    j.access_key AS access_key,
+    j.date AS date,
+    j.total AS total,
+    j.identification AS identification,
+    j.legal_name AS legal_name,
+    (SELECT i.value
+     FROM v_ele_information i
+     WHERE i.name = 'Email'
+       AND i.identification = j.identification
+     LIMIT 1) AS email,
+    COALESCE(
+        (SELECT e.status
+         FROM ele_documents e
+         WHERE e.code = j.code
+           AND e.number = j.number
+        ),
+        'NO ENVIADO'
+    ) AS status
+FROM
+    v_ele_liquidations j
+-- La tabla documents guarda facturas y liquidaciones juntas,
+-- el codigo del ERP es lo unico que las distingue
+WHERE
+    j.code = 'LIQ';
 
 DROP VIEW IF EXISTS v_ele_report_withholds;
 CREATE VIEW v_ele_report_withholds AS

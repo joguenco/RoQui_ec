@@ -2,6 +2,7 @@ using AutoMapper;
 using RoQuiApi.RoQui.Document.Dto;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Document.Withhold.Dto;
+using RoQuiApi.RoQui.Invoice.Dto;
 using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 
@@ -25,6 +26,14 @@ public class MappingProfile : Profile
         CreateMap<TaxDto, DocumentDetailTax>();
         CreateMap<DocumentPayment, PaymentDto>();
         CreateMap<PaymentDto, DocumentPayment>();
+        CreateMap<Document, LiquidationDto>();
+        CreateMap<LiquidationDto, Document>();
+        // El detalle de liquidacion llama a sus impuestos LiquidationDetailTaxes,
+        // pero en el modelo la coleccion se llama InvoiceDetailTaxes
+        CreateMap<DocumentDetail, LiquidationDetailDto>()
+            .ForMember(dto => dto.LiquidationDetailTaxes, opt => opt.MapFrom(model => model.InvoiceDetailTaxes));
+        CreateMap<LiquidationDetailDto, DocumentDetail>()
+            .ForMember(model => model.InvoiceDetailTaxes, opt => opt.MapFrom(dto => dto.LiquidationDetailTaxes));
         CreateMap<Withhold, WithholdDto>();
         CreateMap<WithholdDto, Withhold>();
         CreateMap<WithholdSupport, WithholdSupportDto>();
