@@ -26,7 +26,7 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
     FUNCTION fun_invoice (
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2;
+    ) RETURN type_response;
 
     FUNCTION fun_credit_note (
         p_number IN VARCHAR2
@@ -174,9 +174,10 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     FUNCTION fun_invoice (
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2 AS
+    ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
         rec_header   v_ele_facturas%rowtype;
@@ -338,11 +339,15 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
 
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
-        apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        apex_json.parse(l_response);        
+        
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        RETURN rec_response;
     EXCEPTION
         WHEN no_data_found THEN
-            RETURN 'Invoice '
+            rec_response.status := 500;
+            rec_response.message := 'Invoice '
                    || p_number
                    || ' was not found in v_ele_facturas';
     END fun_invoice;
