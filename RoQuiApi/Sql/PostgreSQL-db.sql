@@ -204,7 +204,7 @@ CREATE VIEW v_ele_invoices AS
 DROP VIEW IF EXISTS v_ele_invoices_detail;
 CREATE VIEW v_ele_invoices_detail AS
     SELECT
-        d.id::bigint id,
+        dd.id::bigint id,
         d.code,
         d.number,
         dd.product_code                AS principal_code,
