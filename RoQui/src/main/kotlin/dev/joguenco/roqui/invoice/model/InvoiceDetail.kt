@@ -5,7 +5,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
-import java.util.UUID
 import org.hibernate.annotations.Immutable
 
 @Entity
@@ -13,8 +12,8 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_ele_invoices_detail")
 class InvoiceDetail {
 
-//    @Id val id: UUID? = null
     @Id val id: Long? = null
+
     @Column(name = "code") val code: String? = null
 
     @Column(name = "number") val number: String? = null

@@ -10,6 +10,7 @@ import org.hibernate.annotations.Immutable
 @Immutable
 @Table(name = "v_ele_taxpayer")
 class Taxpayer {
+
     @Id val id: Int? = null
 
     @Column(name = "identification") val identification: String? = null
