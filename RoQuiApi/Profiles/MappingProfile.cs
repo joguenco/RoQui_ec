@@ -27,6 +27,8 @@ public class MappingProfile : Profile
         CreateMap<DocumentPayment, PaymentDto>();
         CreateMap<PaymentDto, DocumentPayment>();
         CreateMap<Document, LiquidationDto>();
+        CreateMap<DocumentInformation, InformationDto>();
+        CreateMap<InformationDto, DocumentInformation>();
         CreateMap<LiquidationDto, Document>();
         // El detalle de liquidacion llama a sus impuestos LiquidationDetailTaxes,
         // pero en el modelo la coleccion se llama InvoiceDetailTaxes

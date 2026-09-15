@@ -19,7 +19,8 @@ public class AppDbContext : DbContext
     public DbSet<Document> Documents { get; set; }
     public DbSet<DocumentDetail> DocumentDetails { get; set; }
     public DbSet<DocumentDetailTax> DocumentDetailTaxes { get; set; }
-    public DbSet<DocumentPayment> Payments { get; set; }
+    public DbSet<DocumentPayment> DocumentPayments { get; set; }
+    public DbSet<DocumentInformation> DocumentInformations { get; set; }
     public DbSet<Electronic> Electronics { get; set; }
     public DbSet<Parameter> Parameters { get; set; }
     public DbSet<Withhold> Withholds { get; set; }
@@ -50,9 +51,15 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Document>()
-            .HasMany(d => d.Payments)
+            .HasMany(d => d.DocumentPayments)
             .WithOne(p => p.Document)
             .HasForeignKey(p => p.DocumentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Document>()
+            .HasMany(d => d.DocumentInformations)
+            .WithOne(i => i.Document)
+            .HasForeignKey(i => i.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Withhold>()

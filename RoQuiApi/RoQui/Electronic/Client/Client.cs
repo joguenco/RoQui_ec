@@ -8,8 +8,8 @@ public static class Client
     private static readonly HttpClient HttpClient = new();
 
     public static async Task Authorize(
-        string documentUrl, 
-        string code, 
+        string documentUrl,
+        string code,
         string number,
         IElectronicRepo electronicRepo)
     {
@@ -50,12 +50,10 @@ public static class Client
             request.Headers.Add("X-API-KEY", apiKey);
             var response = await HttpClient.SendAsync(request);
             Console.WriteLine($"Version check: {(int)response.StatusCode}");
-            // return await response.Content.ReadFromJsonAsync<VersionDto>();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error checking version: {ex.Message}");
-            // return null;
         }
     }
 }

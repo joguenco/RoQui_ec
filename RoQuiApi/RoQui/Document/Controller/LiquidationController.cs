@@ -38,7 +38,7 @@ public class LiquidationController : ControllerBase
         var liquidationDetailsModel = _mapper.Map<List<DocumentDetail>>(liquidationBody.LiquidationDetails);
         liquidationModel.DocumentDetails = liquidationDetailsModel;
         // La liquidacion de compras no lleva formas de pago en el XML del SRI
-        liquidationModel.Payments = [];
+        liquidationModel.DocumentPayments = [];
         _invoiceRepo.CreateInvoice(liquidationModel);
         _invoiceRepo.SaveChanges();
 

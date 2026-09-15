@@ -29,6 +29,15 @@ public class Document
     [Column("address", TypeName = "varchar")]
     public required string Address { get; set; }
 
+    [Column("updated_code_document", TypeName = "varchar")]
+    public string? UpdatedCodeDocument { get; set; }
+
+    [Column("updated_number_document", TypeName = "varchar")]
+    public string? UpdatedNumberDocument { get; set; }
+
+    [Column("updated_date_document", TypeName = "date")]
+    public DateTime? UpdatedDateDocument { get; set; }
+
     [Column("delivery_note", TypeName = "varchar")]
     public string? DeliveryNote { get; set; }
 
@@ -40,5 +49,7 @@ public class Document
 
     public virtual required ICollection<DocumentDetail> DocumentDetails { get; set; }
 
-    public virtual required ICollection<DocumentPayment> Payments { get; set; }
+    public virtual required ICollection<DocumentPayment> DocumentPayments { get; set; }
+
+    public virtual required ICollection<DocumentInformation> DocumentInformations { get; set; }
 }
