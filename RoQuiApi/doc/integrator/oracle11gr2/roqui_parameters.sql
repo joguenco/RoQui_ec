@@ -3,7 +3,8 @@ CREATE TABLE roqui_parameters (
     url         VARCHAR2(900) NOT NULL,
     key         VARCHAR2(900) NOT NULL,
     environment VARCHAR2(90) NOT NULL,
-    status      VARCHAR2(9) DEFAULT 'Activo' NOT NULL
+    status      VARCHAR2(9) DEFAULT 'Activo' NOT NULL,
+    CONSTRAINT roqui_parameters_pk PRIMARY KEY ( id )
 );
 
 COMMENT ON COLUMN roqui_parameters.environment IS
@@ -23,5 +24,5 @@ INSERT INTO roqui_parameters (
            'api_abcdef',
            'Pruebas',
            'Activo' );
-           
-commit;           
+
+COMMIT;

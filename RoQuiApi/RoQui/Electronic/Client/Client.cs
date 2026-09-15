@@ -25,7 +25,6 @@ public static class Client
 
             var authorizeUrl = url.Value.TrimEnd('/') + documentUrl;
 
-            await Task.Delay(6000);
             using var content = JsonContent.Create(new { code, number });
             using var request = new HttpRequestMessage(HttpMethod.Post, authorizeUrl)
             {
@@ -45,7 +44,6 @@ public static class Client
     {
         try
         {
-            await Task.Delay(6000);
             using var request = new HttpRequestMessage(HttpMethod.Get, versionUrl);
             request.Headers.Add("X-API-KEY", apiKey);
             var response = await HttpClient.SendAsync(request);
