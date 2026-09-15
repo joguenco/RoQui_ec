@@ -16,7 +16,7 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
     FUNCTION fun_get_key RETURN VARCHAR2;
 
     FUNCTION fun_ping RETURN VARCHAR2;
-    
+
     FUNCTION is_active RETURN NUMBER;
 
     FUNCTION fun_version RETURN VARCHAR2;
@@ -41,6 +41,12 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
     ) RETURN VARCHAR2;
 
     FUNCTION fun_withhold (
+        p_number IN VARCHAR2
+    ) RETURN VARCHAR2;
+
+    FUNCTION fun_access_key (
+        p_date   IN DATE,
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN VARCHAR2;
 
@@ -92,7 +98,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response type_response;
         CURSOR cur_establishment IS
         SELECT
-            establecimiento           AS code,
+            establecimiento  AS code,
             nombre_comercial AS business_name,
             direccion        AS address,
             principal        principal
@@ -166,7 +172,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     END fun_taxpayer;
 
     FUNCTION fun_invoice (
-        p_code IN VARCHAR2,
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN VARCHAR2 AS
 
@@ -222,7 +228,20 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_pagos
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
+
+        CURSOR cur_information (
+            p_identification_receptor VARCHAR
+        ) IS
+        SELECT
+            documento,
+            nombre,
+            valor
+        FROM
+            v_ele_informaciones
+        WHERE
+            documento = p_identification_receptor;
 
     BEGIN
         SELECT
@@ -231,15 +250,11 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_facturas
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         -- El formato va explicito para no depender del NLS_DATE_FORMAT de la sesion
-        v_access_key := fun_clave_acceso(
-            to_char(rec_header.fecha, 'ddmmyyyy'),
-            p_code,
-            rec_header.numero
-        );
-
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', 'FV');
@@ -299,6 +314,14 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             apex_json.close_object;
         END LOOP;
 
+        apex_json.close_array;
+        apex_json.open_array('informations');
+        FOR i IN cur_information(rec_header.documento) LOOP
+            apex_json.open_object;
+            apex_json.write('name', i.nombre);
+            apex_json.write('value', i.valor);
+            apex_json.close_object;
+        END LOOP;
         apex_json.close_array;
         apex_json.close_object;
         l_body := apex_json.get_clob_output;
@@ -378,12 +401,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(
-            to_char(rec_header.fecha, 'ddmmyyyy'),
-            rec_header.codigo,
-            rec_header.numero
-        );
-
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
@@ -501,12 +519,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(
-            to_char(rec_header.fecha, 'ddmmyyyy'),
-            rec_header.codigo,
-            rec_header.numero
-        );
-
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
@@ -629,12 +642,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(
-            to_char(rec_header.fecha, 'ddmmyyyy'),
-            rec_header.codigo,
-            rec_header.numero
-        );
-
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
@@ -764,12 +772,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHERE
             numero = p_number;
 
-        v_access_key := fun_clave_acceso(
-            to_char(rec_header.fecha, 'ddmmyyyy'),
-            rec_header.codigo,
-            rec_header.numero
-        );
-
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', rec_header.codigo);
@@ -884,7 +887,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHEN OTHERS THEN
             RETURN NULL;
     END fun_get_key;
-    
+
     FUNCTION is_active RETURN NUMBER AS
         v_result NUMBER;
     BEGIN
@@ -898,6 +901,66 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
 
         RETURN v_result;
     END is_active;
+
+    FUNCTION fun_access_key (
+        p_date   IN DATE,
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN VARCHAR2 AS
+
+        v_access_key     VARCHAR2(100);
+        v_identification VARCHAR2(13);
+        v_code_document  VARCHAR2(2);
+        v_environment    VARCHAR2(1) := '1';--Pruebas 1, Produccion 2
+    BEGIN
+        BEGIN
+            SELECT
+                decode(environment, 'Producción', 2, 1)
+            INTO v_environment
+            FROM
+                roqui_parameters
+            WHERE
+                status = 'Activo';
+
+        EXCEPTION
+            WHEN OTHERS THEN
+                v_environment := '1';
+        END;
+
+        SELECT
+            ruc
+        INTO v_identification
+        FROM
+            v_info_tributaria;
+
+        IF p_code = 'FAC' THEN
+            v_code_document := '01';
+        ELSIF p_code = 'LIQ' THEN
+            v_code_document := '03';
+        ELSIF p_code = 'RET' THEN
+            v_code_document := '07';
+        ELSIF p_code = 'DVC' THEN
+            v_code_document := '04';
+        ELSIF p_code = 'NCC' THEN
+            v_code_document := '04';
+        ELSIF p_code = 'GUI' THEN
+            v_code_document := '06';
+        END IF;
+
+        v_access_key := to_char(p_date, 'ddmmrrrr')
+                        || v_code_document
+                        || v_identification
+                        || v_environment
+                        || p_number
+                        || '12345678'
+                        || '1';
+
+        v_access_key := v_access_key || pkg_modulo11.funmodulo11(v_access_key);
+        RETURN v_access_key;
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN NULL;
+    END fun_access_key;
 
 END pkg_roqui;
 /
