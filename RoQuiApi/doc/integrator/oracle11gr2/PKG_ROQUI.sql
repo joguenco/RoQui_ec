@@ -50,6 +50,15 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2;
 
+    PROCEDURE pro_save_response (
+        p_code               IN VARCHAR2,
+        p_number             IN VARCHAR2,
+        p_authorization_code IN VARCHAR2,
+        p_authorization_date IN DATE,
+        p_observation        IN VARCHAR2,
+        p_status             IN VARCHAR2
+    );
+
 END pkg_roqui;
 /
 
@@ -323,6 +332,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             apex_json.write('value', i.valor);
             apex_json.close_object;
         END LOOP;
+
         apex_json.close_array;
         apex_json.close_object;
         l_body := apex_json.get_clob_output;
@@ -339,17 +349,27 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
 
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
-        apex_json.parse(l_response);        
-        
+        apex_json.parse(l_response);
         rec_response.status := apex_web_service.g_status_code;
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              'ENVIADO');
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
         RETURN rec_response;
     EXCEPTION
-        WHEN no_data_found THEN
-            rec_response.status := 500;
-            rec_response.message := 'Invoice '
-                   || p_number
-                   || ' was not found in v_ele_facturas';
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
     END fun_invoice;
 
     FUNCTION fun_credit_note (
@@ -966,6 +986,57 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         WHEN OTHERS THEN
             RETURN NULL;
     END fun_access_key;
+
+    PROCEDURE pro_save_response (
+        p_code               IN VARCHAR2,
+        p_number             IN VARCHAR2,
+        p_authorization_code IN VARCHAR2,
+        p_authorization_date IN DATE,
+        p_observation        IN VARCHAR2,
+        p_status             IN VARCHAR2
+    ) AS
+        v_count NUMBER;
+    BEGIN
+        SELECT
+            COUNT(*)
+        INTO v_count
+        FROM
+            ele_documentos_electronicos
+        WHERE
+                codigo = p_code
+            AND numero = p_number;
+
+        IF v_count = 0 THEN
+            INSERT INTO ele_documentos_electronicos (
+                codigo,
+                numero,
+                numero_autorizacion,
+                fecha_autorizacion,
+                observacion,
+                estado
+            ) VALUES ( p_code,
+                       p_number,
+                       p_authorization_code,
+                       p_authorization_date,
+                       p_observation,
+                       p_status );
+
+            COMMIT;
+        ELSE
+            UPDATE ele_documentos_electronicos
+            SET
+                numero_autorizacion = p_authorization_code,
+                fecha_autorizacion = p_authorization_date,
+                observacion = p_observation,
+                estado = p_status
+            WHERE
+                    codigo = p_code
+                AND numero = p_number;
+
+            COMMIT;
+        END IF;
+
+    END pro_save_response;
 
 END pkg_roqui;
 /
