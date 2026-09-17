@@ -30,35 +30,28 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/roqui")
 class InvoiceController {
 
-    @Autowired
-    lateinit var invoiceService: InvoiceService
+    @Autowired lateinit var invoiceService: InvoiceService
 
-    @Autowired
-    lateinit var parameterService: ParameterService
+    @Autowired lateinit var parameterService: ParameterService
 
-    @Autowired
-    lateinit var documentService: DocumentService
+    @Autowired lateinit var documentService: DocumentService
 
-    @Autowired
-    lateinit var webService: WebService
+    @Autowired lateinit var webService: WebService
 
-    @Autowired
-    lateinit var reportInvoiceService: ReportInvoiceService
+    @Autowired lateinit var reportInvoiceService: ReportInvoiceService
 
-    @Autowired
-    lateinit var informationService: InformationService
+    @Autowired lateinit var informationService: InformationService
 
     @PostMapping("/v1/invoice/authorize")
-    fun postAuthorizeV1(
-        @RequestBody document: DocumentDto
-    ): ResponseEntity<Any> {
+    fun postAuthorizeV1(@RequestBody document: DocumentDto): ResponseEntity<Any> {
         return authorize(document)
     }
 
     @PostMapping("/v2/invoice/authorize")
     fun postAuthorizeV2(
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
-        @RequestBody document: DocumentDto): ResponseEntity<Any> {
+        @RequestBody document: DocumentDto,
+    ): ResponseEntity<Any> {
 
         if (!isValidApiKey(requestApiKey, parameterService)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()

@@ -4,28 +4,42 @@ CREATE TABLE IF NOT EXISTS v_assets (
     value character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_credit_notes (
-    total numeric(38,2),
-    total_without_taxes numeric(38,2),
-    date date,
-    updated_date_document date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    address character varying(255),
-    code character varying(255),
-    code_document character varying(255),
-    emission_point character varying(255),
-    establishment character varying(255),
-    establishment_address character varying(255),
-    identification character varying(255),
-    identification_type character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    reason character varying(255),
-    sequence character varying(255),
-    updated_code_document character varying(255),
-    updated_number_document character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_credit_notes cascade;
+CREATE VIEW v_ele_credit_notes AS
+    SELECT
+        i.id::bigint id,
+        i.code,
+        i.number,
+        '04' AS code_document,
+        substr(i.number, 1, 3) AS establishment,
+        substr(i.number, 4, 3) AS emission_point,
+        substr(i.number, 7, 15) AS sequence,
+        i.date,
+        i.updated_code_document,
+        i.updated_number_document,
+        i.updated_date_document,
+        sum(d.total_without_tax) AS total_without_taxes,
+        sum(d.total) AS total,
+        i.identification_type,
+        i.identification,
+        i.legal_name,
+        i.address,
+        i.reason,
+        (
+        SELECT e.address FROM establishments e
+        WHERE e.code = substr(i.number, 1, 3)) AS establishment_address,
+        i.access_key
+    FROM documents i
+    JOIN documents_detail d ON i.id = d.document_id
+    -- El ERP usa dos codigos para la nota de credito: DVC devolucion de cliente
+    -- y NCC nota de credito cliente. Los dos son codDoc 04 para el SRI.
+    WHERE i.code IN ('DVC', 'NCC')
+    GROUP BY
+        i.id, i.code, i.number,
+        substr(i.number, 1, 3), substr(i.number, 4, 3), substr(i.number, 7, 15),
+        i.date, i.updated_code_document, i.updated_number_document, i.updated_date_document,
+        i.identification_type, i.identification, i.legal_name,
+        i.address, i.reason, i.access_key;
 
 
 DROP VIEW IF EXISTS v_ele_credit_notes_detail;
@@ -78,52 +92,64 @@ CREATE TABLE IF NOT EXISTS v_ele_debit_notes_detail (
     reason character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_delivery_notes (
-    date date,
-    date_end_transport date,
-    date_start_transport date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    address_start character varying(255),
-    carrier_identification character varying(255),
-    carrier_identification_type character varying(255),
-    carrier_legal_name character varying(255),
-    code character varying(255),
-    code_document character varying(255),
-    emission_point character varying(255),
-    establishment character varying(255),
-    establishment_address character varying(255),
-    number character varying(255),
-    observation character varying(255),
-    plate character varying(255),
-    sequence character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_delivery_notes cascade;
+CREATE VIEW v_ele_delivery_notes AS
+    SELECT
+        g.id::bigint id,
+        g.code,
+        g.number,
+        '06' AS code_document,
+        substr(g.number, 1, 3) AS establishment,
+        substr(g.number, 4, 3) AS emission_point,
+        substr(g.number, 7, 15) AS sequence,
+        g.date,
+        g.date_start_transport,
+        g.date_end_transport,
+        g.address_start,
+        g.carrier_identification_type,
+        g.carrier_identification,
+        g.carrier_legal_name,
+        g.plate,
+        g.observation,
+        (
+        SELECT e.address FROM establishments e
+        WHERE e.code = substr(g.number, 1, 3)) AS establishment_address,
+        g.access_key
+    FROM delivery_notes g;
 
-CREATE TABLE IF NOT EXISTS v_ele_delivery_notes_receiver (
-    date_document_support date,
-    line bigint,
-    id bigint NOT NULL,
-    address character varying(255),
-    authorization_document_support character varying(255),
-    code character varying(255),
-    code_document_support character varying(255),
-    identification character varying(255),
-    identification_type character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    number_document_support character varying(255),
-    transfer_reason character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_delivery_notes_receiver cascade;
+CREATE VIEW v_ele_delivery_notes_receiver AS
+    SELECT
+        r.id::bigint id,
+        g.code,
+        g.number,
+        r.line::bigint AS line,
+        r.identification_type,
+        r.identification,
+        r.legal_name,
+        r.address,
+        r.transfer_reason,
+        r.code_document_support,
+        r.number_document_support,
+        r.authorization_document_support,
+        r.date_document_support
+    FROM delivery_notes_receiver r
+    JOIN delivery_notes g ON g.id = r.delivery_note_id;
 
-CREATE TABLE IF NOT EXISTS v_ele_delivery_notes_receiver_detail (
-    quantity numeric(38,2),
-    line bigint,
-    id bigint NOT NULL,
-    code character varying(255),
-    name character varying(255),
-    number character varying(255),
-    principal_code character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_delivery_notes_receiver_detail;
+CREATE VIEW v_ele_delivery_notes_receiver_detail AS
+    SELECT
+        d.id::bigint id,
+        g.code,
+        g.number,
+        -- RoQui busca el detalle por la linea del DESTINATARIO, no por la suya
+        r.line::bigint AS line,
+        d.principal_code,
+        d.name,
+        d.quantity
+    FROM delivery_notes_receiver_detail d
+    JOIN delivery_notes_receiver r ON r.id = d.delivery_note_receiver_id
+    JOIN delivery_notes g ON g.id = r.delivery_note_id;
 
 DROP VIEW IF EXISTS v_ele_establishments;
 CREATE VIEW v_ele_establishments AS
@@ -140,18 +166,33 @@ CREATE VIEW v_ele_establishments AS
     FROM establishments e join taxpayers t
 	on t.id = e.taxpayer_id;
 
-CREATE TABLE IF NOT EXISTS v_ele_general_observations (
-    id integer NOT NULL,
-    name character varying(255),
-    value character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_general_observations cascade;
+CREATE VIEW v_ele_general_observations AS
+    SELECT
+        p.id::integer AS id,
+        p.name        AS name,
+        p.value       AS value
+    FROM ele_parameters p
+    -- El SRI pide el RUC del proveedor del sistema en todo comprobante (Anexo 26).
+    -- El valor se edita desde la pantalla de Parametros, no hace falta tocar el SQL.
+    -- El status apaga el campo sin borrar el parametro.
+    WHERE p.name = 'RUC Proveedor'
+      AND p.status = true;
 
-CREATE TABLE IF NOT EXISTS v_ele_information (
-    id integer NOT NULL,
-    identification character varying(255),
-    name character varying(255),
-    value character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_information cascade;
+CREATE VIEW v_ele_information AS
+    -- RoQui pide esta informacion por identificacion del cliente, no por documento,
+    -- y cada factura guarda su propia copia. Sin el DISTINCT ON se repetirian los
+    -- campos una vez por cada factura que tenga ese cliente.
+    -- Gana el valor del documento mas reciente.
+    SELECT DISTINCT ON (d.identification, di.name)
+        di.id::integer   AS id,
+        d.identification AS identification,
+        di.name          AS name,
+        di.value         AS value
+    FROM documents_information di
+    JOIN documents d ON d.id = di.document_id
+    ORDER BY d.identification, di.name, di.id DESC;
 
 DROP VIEW IF EXISTS v_ele_invoices cascade;
 CREATE VIEW v_ele_invoices AS
@@ -305,18 +346,34 @@ CREATE VIEW v_ele_payments AS
     FROM documents_payment p
     JOIN documents d ON d.id = p.document_id;
 
-CREATE TABLE IF NOT EXISTS v_ele_report_credit_notes (
-    total numeric(38,2),
-    date date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    code character varying(255),
-    email character varying(255),
-    identification character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    status character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_report_credit_notes;
+CREATE VIEW v_ele_report_credit_notes AS
+SELECT
+    j.id::bigint AS id,
+    j.code AS code,
+    j.number AS number,
+    j.access_key AS access_key,
+    j.date AS date,
+    j.total AS total,
+    j.identification AS identification,
+    j.legal_name AS legal_name,
+    (SELECT i.value
+     FROM v_ele_information i
+     WHERE i.name = 'Email'
+       AND i.identification = j.identification
+     LIMIT 1) AS email,
+    COALESCE(
+        (SELECT e.status
+         FROM ele_documents e
+         WHERE e.code = j.code
+           AND e.number = j.number
+        ),
+        'NO ENVIADO'
+    ) AS status
+FROM
+    v_ele_credit_notes j
+ORDER BY
+    j.number DESC;
 
 CREATE TABLE IF NOT EXISTS v_ele_report_debit_notes (
     total numeric(38,2),
@@ -331,18 +388,39 @@ CREATE TABLE IF NOT EXISTS v_ele_report_debit_notes (
     status character varying(255)
 );
 
-CREATE TABLE IF NOT EXISTS v_ele_report_delivery_notes (
-    total numeric(38,2),
-    date date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    code character varying(255),
-    email character varying(255),
-    identification character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    status character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_report_delivery_notes;
+CREATE VIEW v_ele_report_delivery_notes AS
+SELECT
+    g.id::bigint AS id,
+    g.code AS code,
+    g.number AS number,
+    g.access_key AS access_key,
+    g.date AS date,
+    -- la guia no mueve plata, solo mercaderia
+    0::numeric AS total,
+    -- en el reporte va el primer destinatario, que es a quien se le entrega
+    (SELECT r.identification FROM delivery_notes_receiver r
+     WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1) AS identification,
+    (SELECT r.legal_name FROM delivery_notes_receiver r
+     WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1) AS legal_name,
+    (SELECT i.value
+     FROM v_ele_information i
+     WHERE i.name = 'Email'
+       AND i.identification = (SELECT r.identification FROM delivery_notes_receiver r
+                               WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1)
+     LIMIT 1) AS email,
+    COALESCE(
+        (SELECT e.status
+         FROM ele_documents e
+         WHERE e.code = g.code
+           AND e.number = g.number
+        ),
+        'NO ENVIADO'
+    ) AS status
+FROM
+    delivery_notes g
+ORDER BY
+    g.number DESC;
 
 DROP VIEW IF EXISTS v_ele_report_invoices;
 CREATE VIEW v_ele_report_invoices AS

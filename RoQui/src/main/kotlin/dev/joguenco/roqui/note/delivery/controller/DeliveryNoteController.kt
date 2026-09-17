@@ -10,21 +10,24 @@ import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.note.delivery.service.DeliveryNoteService
 import dev.joguenco.roqui.note.delivery.service.ReportDeliveryNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
+import dev.joguenco.roqui.security.util.isValidApiKey
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
-@RequestMapping("/roqui/v1")
+@RequestMapping("/roqui")
 class DeliveryNoteController {
 
     @Autowired lateinit var deliveryNoteService: DeliveryNoteService
@@ -39,9 +42,25 @@ class DeliveryNoteController {
 
     @Autowired lateinit var informationService: InformationService
 
-    @PostMapping("/delivery-note/authorize")
-    fun postAuthorize(@RequestBody document: DocumentDto): ResponseEntity<Any> {
+    @PostMapping("/v1/delivery-note/authorize")
+    fun postAuthorizeV1(@RequestBody document: DocumentDto): ResponseEntity<Any> {
+        return authorize(document)
+    }
 
+    @PostMapping("/v2/deliverynote/authorize")
+    fun postAuthorizeV2(
+        @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
+        @RequestBody document: DocumentDto,
+    ): ResponseEntity<Any> {
+
+        if (!isValidApiKey(requestApiKey, parameterService)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        return authorize(document)
+    }
+
+    fun authorize(document: DocumentDto): ResponseEntity<Any> {
         if (deliveryNoteService.count(document.code, document.number) == 0L) {
             return ResponseEntity.notFound().build()
         }
@@ -72,7 +91,7 @@ class DeliveryNoteController {
         }
     }
 
-    @PostMapping("/delivery-note/authorize/dates/{startDate}/{endDate}")
+    @PostMapping("/v1/delivery-note/authorize/dates/{startDate}/{endDate}")
     fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
@@ -113,7 +132,7 @@ class DeliveryNoteController {
         return checkAll(startDate, endDate)
     }
 
-    @PostMapping("/delivery-note/check/dates/{startDate}/{endDate}")
+    @PostMapping("/v1/delivery-note/check/dates/{startDate}/{endDate}")
     fun postCheckAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,

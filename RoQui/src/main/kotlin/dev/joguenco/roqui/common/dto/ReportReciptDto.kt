@@ -2,10 +2,8 @@ package dev.joguenco.roqui.common.dto
 
 import java.math.BigDecimal
 import java.util.Date
-import java.util.UUID
 
 data class ReportReciptDto(
-//    val id: UUID? = null,
     val id: Long? = null,
     val code: String? = null,
     val number: String? = null,

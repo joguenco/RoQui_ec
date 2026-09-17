@@ -29,20 +29,24 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
     ) RETURN type_response;
 
     FUNCTION fun_credit_note (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2;
+    ) RETURN type_response;
 
     FUNCTION fun_debit_note (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2;
+    ) RETURN type_response;
 
     FUNCTION fun_liquidation (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2;
+    ) RETURN type_response;
 
     FUNCTION fun_withhold (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2;
+    ) RETURN type_response;
 
     FUNCTION fun_access_key (
         p_date   IN DATE,
@@ -373,10 +377,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     END fun_invoice;
 
     FUNCTION fun_credit_note (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2 AS
+    ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
         rec_header   v_ele_notas_credito%rowtype;
@@ -396,12 +402,12 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_notas_credito_detalle
         WHERE
-            numero = p_number
+                codigo = p_code
+            AND numero = p_number
         ORDER BY
             linea;
 
         CURSOR cur_tax (
-            p_code IN VARCHAR2,
             p_line IN NUMBER
         ) IS
         SELECT
@@ -418,13 +424,16 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             AND linea = p_line;
 
     BEGIN
+        -- La vista une devoluciones (DVC) y abonos (NCC), y hay numeros que se
+        -- repiten entre los dos, asi que sin el codigo el SELECT INTO revienta
         SELECT
             *
         INTO rec_header
         FROM
             v_ele_notas_credito
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
@@ -464,7 +473,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
                                   2));
 
             apex_json.open_array('creditNoteDetailTaxes');
-            FOR t IN cur_tax(rec_header.codigo, d.linea) LOOP
+            FOR t IN cur_tax(d.linea) LOOP
                 apex_json.open_object;
                 apex_json.write('taxCode', t.codigo_impuesto);
                 apex_json.write('taxCodePercentage', t.codigo_porcentaje);
@@ -495,19 +504,35 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              'ENVIADO');
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
+        RETURN rec_response;
     EXCEPTION
-        WHEN no_data_found THEN
-            RETURN 'Credit note '
-                   || p_number
-                   || ' was not found in v_ele_notas_credito';
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
     END fun_credit_note;
 
     FUNCTION fun_debit_note (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2 AS
+    ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
         rec_header   v_ele_notas_debito%rowtype;
@@ -520,7 +545,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_notas_debito_detalle
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         CURSOR cur_tax IS
         SELECT
@@ -532,7 +558,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_impuestos_detalle
         WHERE
-                codigo = rec_header.codigo
+                codigo = p_code
             AND numero = p_number;
 
     BEGIN
@@ -542,7 +568,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_notas_debito
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
@@ -601,19 +628,35 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              'ENVIADO');
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
+        RETURN rec_response;
     EXCEPTION
-        WHEN no_data_found THEN
-            RETURN 'Debit note '
-                   || p_number
-                   || ' was not found in v_ele_notas_debito';
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
     END fun_debit_note;
 
     FUNCTION fun_liquidation (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2 AS
+    ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
         rec_header   v_ele_liquidaciones%rowtype;
@@ -640,7 +683,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_liquidaciones_detalle
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         CURSOR cur_tax (
             p_line IN NUMBER
@@ -654,7 +698,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_impuestos_detalle
         WHERE
-                codigo = rec_header.codigo
+                codigo = p_code
             AND numero = p_number
             AND linea = p_line;
 
@@ -665,7 +709,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_liquidaciones
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
@@ -729,19 +774,35 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              'ENVIADO');
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
+        RETURN rec_response;
     EXCEPTION
-        WHEN no_data_found THEN
-            RETURN 'Liquidation '
-                   || p_number
-                   || ' was not found in v_ele_liquidaciones';
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
     END fun_liquidation;
 
     FUNCTION fun_withhold (
+        p_code   IN VARCHAR2,
         p_number IN VARCHAR2
-    ) RETURN VARCHAR2 AS
+    ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
         rec_header   v_ele_retenciones%rowtype;
@@ -759,7 +820,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_retenciones_sustento
         WHERE
-                codigo = rec_header.codigo
+                codigo = p_code
             AND numero = p_number;
 
         CURSOR cur_detail IS
@@ -772,7 +833,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_retenciones_detalle
         WHERE
-                codigo = rec_header.codigo
+                codigo = p_code
             AND numero = p_number;
 
         CURSOR cur_tax IS
@@ -785,7 +846,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_retenciones_impuesto
         WHERE
-                codigo = rec_header.codigo
+                codigo = p_code
             AND numero = p_number;
 
     BEGIN
@@ -795,7 +856,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         FROM
             v_ele_retenciones
         WHERE
-            numero = p_number;
+                codigo = p_code
+            AND numero = p_number;
 
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
@@ -871,12 +933,26 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
-        RETURN apex_json.get_varchar2(p_path => 'title');
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              'ENVIADO');
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
+        RETURN rec_response;
     EXCEPTION
-        WHEN no_data_found THEN
-            RETURN 'Withhold '
-                   || p_number
-                   || ' was not found in v_ele_retenciones';
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
     END fun_withhold;
 
     FUNCTION fun_get_url RETURN VARCHAR2 AS
@@ -970,6 +1046,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             v_code_document := '04';
         ELSIF p_code = 'GUI' THEN
             v_code_document := '06';
+        ELSIF p_code = 'NDC' THEN
+            v_code_document := '05';
         END IF;
 
         v_access_key := to_char(p_date, 'ddmmrrrr')

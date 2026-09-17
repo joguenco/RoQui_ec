@@ -6,7 +6,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.util.Date
-import java.util.UUID
 import org.hibernate.annotations.Immutable
 
 /** Listado de guias con su estado en el SRI. */
@@ -14,7 +13,7 @@ import org.hibernate.annotations.Immutable
 @Immutable
 @Table(name = "v_ele_report_delivery_notes")
 class ReportDeliveryNote {
-//    @Id val id: UUID? = null
+
     @Id val id: Long? = null
     @Column(name = "code") val code: String? = null
 

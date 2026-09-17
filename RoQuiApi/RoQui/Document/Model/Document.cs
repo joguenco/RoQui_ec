@@ -38,6 +38,9 @@ public class Document
     [Column("updated_date_document", TypeName = "date")]
     public DateTime? UpdatedDateDocument { get; set; }
 
+    [Column("reason", TypeName = "varchar")]
+    public string? Reason { get; set; }
+
     [Column("delivery_note", TypeName = "varchar")]
     public string? DeliveryNote { get; set; }
 
