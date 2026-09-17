@@ -21,7 +21,8 @@ class VersionController {
 
     @Value("\${app.version}") lateinit var appVersion: String
 
-    @GetMapping("/version") fun getVersionV1() = Application(versionService.getVersion(), appVersion)
+    @GetMapping("/version")
+    fun getVersionV1() = Application(versionService.getVersion(), appVersion)
 
     @GetMapping("/roqui/v2/version")
     fun getVersionV2(

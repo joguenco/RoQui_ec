@@ -23,6 +23,7 @@ builder.Services.AddScoped<ITaxpayerRepo, TaxpayerRepo>();
 builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 builder.Services.AddScoped<IElectronicRepo, ElectronicRepo>();
 builder.Services.AddScoped<IWithholdRepo, WithholdRepo>();
+builder.Services.AddScoped<IDeliveryNoteRepo, DeliveryNoteRepo>();
 
 // Added Auto Mapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));

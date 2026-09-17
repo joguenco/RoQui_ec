@@ -27,6 +27,9 @@ public class AppDbContext : DbContext
     public DbSet<WithholdSupport> WithholdSupports { get; set; }
     public DbSet<WithholdDetail> WithholdDetails { get; set; }
     public DbSet<WithholdDocumentTax> WithholdDocumentTaxes { get; set; }
+    public DbSet<DeliveryNote> DeliveryNotes { get; set; }
+    public DbSet<DeliveryNoteReceiver> DeliveryNoteReceivers { get; set; }
+    public DbSet<DeliveryNoteReceiverDetail> DeliveryNoteReceiverDetails { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,6 +83,18 @@ public class AppDbContext : DbContext
             .HasForeignKey(t => t.WithholdSupportId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<DeliveryNote>()
+            .HasMany(g => g.DeliveryNoteReceivers)
+            .WithOne(r => r.DeliveryNote)
+            .HasForeignKey(r => r.DeliveryNoteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DeliveryNoteReceiver>()
+            .HasMany(r => r.DeliveryNoteReceiverDetails)
+            .WithOne(d => d.DeliveryNoteReceiver)
+            .HasForeignKey(d => d.DeliveryNoteReceiverId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         //Unique constraints
         modelBuilder.Entity<Document>()
             .HasIndex(i => new { i.Code, i.Number })
@@ -95,6 +110,14 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Withhold>()
             .HasIndex(w => w.AccessKey)
+            .IsUnique();
+
+        modelBuilder.Entity<DeliveryNote>()
+            .HasIndex(g => new { g.Code, g.Number })
+            .IsUnique();
+
+        modelBuilder.Entity<DeliveryNote>()
+            .HasIndex(g => g.AccessKey)
             .IsUnique();
     }
 }

@@ -30,6 +30,8 @@ class SecurityConfiguration(private val authenticationProvider: AuthenticationPr
                         "/roqui/v2/invoice/authorize",
                         "/roqui/v2/withhold/authorize",
                         "/roqui/v2/liquidation/authorize",
+                        "/roqui/v2/creditnote/authorize",
+                        "/roqui/v2/deliverynote/authorize",
                         "/files/pdf/*",
                         "/files/xml/*",
                     )
