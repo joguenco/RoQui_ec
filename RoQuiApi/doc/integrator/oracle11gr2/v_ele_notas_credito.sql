@@ -240,4 +240,4 @@ CREATE OR REPLACE FORCE VIEW v_ele_notas_credito (
         motivo,
         direccion_establecimiento
     FROM
-        data
+        data;
