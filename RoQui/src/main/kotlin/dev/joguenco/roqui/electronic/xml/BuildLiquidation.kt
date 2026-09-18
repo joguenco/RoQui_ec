@@ -211,7 +211,7 @@ class BuildLiquidation(
             infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdditional = buildGeneralObservation(infoAdditional)
+        infoAdditional = buildGeneralInformation(infoAdditional)
 
         if (infoAdditional.campoAdicional.isEmpty()) {
             return null
@@ -220,12 +220,12 @@ class BuildLiquidation(
         return infoAdditional
     }
 
-    private fun buildGeneralObservation(
+    private fun buildGeneralInformation(
         infoAdicional: LiquidacionCompra.InfoAdicional
     ): LiquidacionCompra.InfoAdicional {
-        val generalObservation = liquidationService.getGeneralObservation()
+        val generalInformation = liquidationService.getGeneralInformation()
 
-        for (observation in generalObservation) {
+        for (observation in generalInformation) {
             val campoAdicional = LiquidacionCompra.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = observation.name
             campoAdicional.value = observation.value

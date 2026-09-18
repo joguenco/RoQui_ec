@@ -1,6 +1,6 @@
 package dev.joguenco.roqui.withhold.service
 
-import dev.joguenco.roqui.information.model.GeneralObservation
+import dev.joguenco.roqui.information.model.GeneralInformation
 import dev.joguenco.roqui.information.model.Information
 import dev.joguenco.roqui.information.repository.InformationRepository
 import dev.joguenco.roqui.taxpayer.repository.EstablishmentRepository
@@ -63,7 +63,7 @@ class WithholdService(
         return informationRepository.findInformationByIdentification(identification)
     }
 
-    fun getGeneralObservation(): MutableList<GeneralObservation> {
-        return informationRepository.findGeneralObservation()
+    fun getGeneralInformation(): MutableList<GeneralInformation> {
+        return informationRepository.findGeneralInformation()
     }
 }

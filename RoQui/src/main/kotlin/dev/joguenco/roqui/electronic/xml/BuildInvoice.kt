@@ -78,7 +78,7 @@ class BuildInvoice(
             infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdditional = buildGeneralObservation(infoAdditional)
+        infoAdditional = buildGeneralInformation(infoAdditional)
 
         if (infoAdditional.campoAdicional.isEmpty()) {
             return null
@@ -87,12 +87,12 @@ class BuildInvoice(
         return infoAdditional
     }
 
-    private fun buildGeneralObservation(
+    private fun buildGeneralInformation(
         infoAdicional: Factura.InfoAdicional
     ): Factura.InfoAdicional {
-        val generalObservation = invoiceService.getGeneralObservation()
+        val generalInformation = invoiceService.getGeneralInformation()
 
-        for (observation in generalObservation) {
+        for (observation in generalInformation) {
             val campoAdicional = Factura.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = observation.name
             campoAdicional.value = observation.value

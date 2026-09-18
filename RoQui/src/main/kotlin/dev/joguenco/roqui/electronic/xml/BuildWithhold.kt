@@ -249,7 +249,7 @@ class BuildWithhold(
             infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdditional = buildGeneralObservation(infoAdditional)
+        infoAdditional = buildGeneralInformation(infoAdditional)
 
         if (infoAdditional.campoAdicional.isEmpty()) {
             return null
@@ -258,12 +258,12 @@ class BuildWithhold(
         return infoAdditional
     }
 
-    private fun buildGeneralObservation(
+    private fun buildGeneralInformation(
         infoAdicional: ComprobanteRetencion.InfoAdicional
     ): ComprobanteRetencion.InfoAdicional {
-        val generalObservation = withholdService.getGeneralObservation()
+        val generalInformation = withholdService.getGeneralInformation()
 
-        for (observation in generalObservation) {
+        for (observation in generalInformation) {
             val campoAdicional = ComprobanteRetencion.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = observation.name
             campoAdicional.value = observation.value

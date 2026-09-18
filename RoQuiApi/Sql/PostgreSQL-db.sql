@@ -166,8 +166,8 @@ CREATE VIEW v_ele_establishments AS
     FROM establishments e join taxpayers t
 	on t.id = e.taxpayer_id;
 
-DROP VIEW IF EXISTS v_ele_general_observations cascade;
-CREATE VIEW v_ele_general_observations AS
+DROP VIEW IF EXISTS v_ele_general_informations cascade;
+CREATE VIEW v_ele_general_informations AS
     SELECT
         p.id::integer AS id,
         p.name        AS name,

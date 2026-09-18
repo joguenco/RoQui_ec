@@ -209,7 +209,7 @@ class BuildDebitNote(
             infoAdditional.campoAdicional.add(fieldAdditional)
         }
 
-        infoAdditional = buildGeneralObservation(infoAdditional)
+        infoAdditional = buildGeneralInformation(infoAdditional)
 
         if (infoAdditional.campoAdicional.isEmpty()) {
             return null
@@ -218,12 +218,12 @@ class BuildDebitNote(
         return infoAdditional
     }
 
-    private fun buildGeneralObservation(
+    private fun buildGeneralInformation(
         infoAdicional: NotaDebito.InfoAdicional
     ): NotaDebito.InfoAdicional {
-        val generalObservation = debitNoteService.getGeneralObservation()
+        val generalInformation = debitNoteService.getGeneralInformation()
 
-        for (observation in generalObservation) {
+        for (observation in generalInformation) {
             val campoAdicional = NotaDebito.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = observation.name
             campoAdicional.value = observation.value

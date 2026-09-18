@@ -81,7 +81,7 @@ class BuildCreditNote(
 
             infoAdditional.campoAdicional.add(fieldAdditional)
         }
-        infoAdditional = buildGeneralObservation(infoAdditional)
+        infoAdditional = buildGeneralInformation(infoAdditional)
 
         if (infoAdditional.campoAdicional.isEmpty()) {
             return null
@@ -90,12 +90,12 @@ class BuildCreditNote(
         return infoAdditional
     }
 
-    private fun buildGeneralObservation(
+    private fun buildGeneralInformation(
         infoAdicional: NotaCredito.InfoAdicional
     ): NotaCredito.InfoAdicional {
-        val generalObservation = creditNoteService.getGeneralObservation()
+        val generalInformation = creditNoteService.getGeneralInformation()
 
-        for (observation in generalObservation) {
+        for (observation in generalInformation) {
             val campoAdicional = NotaCredito.InfoAdicional.CampoAdicional()
             campoAdicional.nombre = observation.name
             campoAdicional.value = observation.value

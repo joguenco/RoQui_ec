@@ -191,7 +191,7 @@ class BuildDeliveryNote(
     private fun buildAdditionalInformation(): GuiaRemision.InfoAdicional? {
         val infoAdditional = GuiaRemision.InfoAdicional()
 
-        for (observation in deliveryNoteService.getGeneralObservation()) {
+        for (observation in deliveryNoteService.getGeneralInformation()) {
             val fieldAdditional = GuiaRemision.InfoAdicional.CampoAdicional()
             fieldAdditional.nombre = observation.name
             fieldAdditional.value = observation.value

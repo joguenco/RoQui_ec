@@ -8,8 +8,8 @@ import org.hibernate.annotations.Immutable
 
 @Entity
 @Immutable
-@Table(name = "v_ele_general_observations")
-class GeneralObservation {
+@Table(name = "v_ele_general_informations")
+class GeneralInformation {
 
     @Id val id: Int? = null
 
