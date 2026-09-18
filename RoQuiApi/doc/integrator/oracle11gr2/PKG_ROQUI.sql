@@ -27,11 +27,6 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN type_response;
-    
-    FUNCTION fun_invoice_status (
-        p_code   IN VARCHAR2,
-        p_number IN VARCHAR2
-    ) RETURN type_response;
 
     FUNCTION fun_credit_note (
         p_code   IN VARCHAR2,
@@ -67,6 +62,11 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
         p_observation        IN VARCHAR2,
         p_status             IN VARCHAR2
     );
+
+    FUNCTION fun_document_status (
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN type_response;
 
 END pkg_roqui;
 /
@@ -1122,17 +1122,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
 
     END pro_save_response;
 
-    FUNCTION fun_invoice_status (
+    FUNCTION fun_document_status (
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
-        v_url_action VARCHAR2(900) := '/invoice/rest/v1/invoice/authorize';
+        v_url_action VARCHAR2(900) := '/document/rest/v1/document/authorize';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
-    BEGIN
+    BEGIN        
         apex_json.initialize_clob_output;
         apex_json.open_object;
         apex_json.write('code', 'FV');
@@ -1173,7 +1173,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
                               'ERROR');
             RETURN rec_response;
-    END fun_invoice_status;
+    END fun_document_status;
 
 END pkg_roqui;
 /
