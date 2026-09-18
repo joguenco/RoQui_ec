@@ -27,6 +27,11 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN type_response;
+    
+    FUNCTION fun_invoice_status (
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN type_response;
 
     FUNCTION fun_credit_note (
         p_code   IN VARCHAR2,
@@ -190,6 +195,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/invoice/rest/v1/invoice/send';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
@@ -346,7 +352,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => v_url_server || '/invoice/rest/v1/invoice',
+            p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -358,10 +364,10 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
         IF rec_response.status = 200 THEN
             pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              'ENVIADO');
+                              rec_response.message);
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
-                              'ERROR');
+                              rec_response.message);
         END IF;
 
         RETURN rec_response;
@@ -1115,6 +1121,59 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         END IF;
 
     END pro_save_response;
+
+    FUNCTION fun_invoice_status (
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN type_response AS
+
+        v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/invoice/rest/v1/invoice/authorize';
+        rec_response type_response;
+        l_response   CLOB;
+        l_body       CLOB;
+    BEGIN
+        apex_json.initialize_clob_output;
+        apex_json.open_object;
+        apex_json.write('code', 'FV');
+        apex_json.write('number', p_number);
+        apex_json.close_object;
+        l_body := apex_json.get_clob_output;
+        dbms_output.put_line('l_body=' || l_body);
+        apex_json.free_output;
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Type';
+        apex_web_service.g_request_headers(1).value := 'application/json';
+        l_response := apex_web_service.make_rest_request(
+            p_url         => v_url_server || v_url_action,
+            p_http_method => 'POST',
+            p_body        => l_body
+        );
+
+        dbms_output.put_line('status=' || apex_web_service.g_status_code);
+        dbms_output.put_line('l_response=' || l_response);
+        apex_json.parse(l_response);
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              rec_response.message);
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              rec_response.message);
+        END IF;
+
+        RETURN rec_response;
+    EXCEPTION
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
+    END fun_invoice_status;
 
 END pkg_roqui;
 /

@@ -8,6 +8,7 @@ using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
+using RoQuiApi.RoQui.Document.Dto;
 
 [ApiController]
 [Route("[controller]")]
@@ -26,11 +27,17 @@ public class InvoiceController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("rest/v1/invoice", Name = "CreateInvoice")]
+    [HttpPost("rest/v1/invoice/send", Name = "CreateInvoice")]
     public async Task<ActionResult<MessageDto>> CreateInvoice(InvoiceDto invoiceBody)
     {
         try
         {
+            var status = _electronicRepo.GetElectronicByCodeAndNumber(invoiceBody.Code, invoiceBody.Number);
+            if (status == "AUTORIZADO")
+            {
+                return Ok(new MessageDto { Title = status });
+            }
+
             var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(invoiceBody.Code, invoiceBody.Number);
             if (existingDocument != null)
             {
@@ -51,11 +58,25 @@ public class InvoiceController : ControllerBase
 
             _ = Client.Authorize("/roqui/v2/invoice/authorize", invoiceBody.Code, invoiceBody.Number, _electronicRepo);
 
-            return Ok(new MessageDto { Title = "Invoice created successfully" });
+            return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new MessageDto { Title = "Error creating invoice", Errors = new Error { Message = [ex.Message] } });
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+        }
+    }
+
+    [HttpPost("rest/v1/invoice/authorize", Name = "AuthorizeInvoice")]
+    public async Task<ActionResult<MessageDto>> AuthorizeInvoice(DocumentStatusDto document)
+    {
+        try
+        {
+            var status = _electronicRepo.GetElectronicByCodeAndNumber(document.Code, document.Number);
+            return Ok(new MessageDto { Title = status });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }
 }
