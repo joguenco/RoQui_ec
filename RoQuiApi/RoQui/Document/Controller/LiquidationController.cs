@@ -25,25 +25,38 @@ public class LiquidationController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("rest/v1/liquidation", Name = "CreateLiquidation")]
-    public ActionResult<MessageDto> CreateLiquidation(LiquidationDto liquidationBody)
+    [HttpPost("rest/v1/liquidation/send", Name = "CreateLiquidation")]
+    public async Task<ActionResult<MessageDto>> CreateLiquidation(LiquidationDto liquidationBody)
     {
-        var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
-        if (existingDocument != null)
+        try
         {
-            _invoiceRepo.DeleteDocument(existingDocument);
+            var status = _electronicRepo.GetElectronicByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
+            if (status == "AUTORIZADO")
+            {
+                return Ok(new MessageDto { Title = status });
+            }
+
+            var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
+            if (existingDocument != null)
+            {
+                _invoiceRepo.DeleteDocument(existingDocument);
+            }
+
+            var liquidationModel = _mapper.Map<Document>(liquidationBody);
+            var liquidationDetailsModel = _mapper.Map<List<DocumentDetail>>(liquidationBody.LiquidationDetails);
+            liquidationModel.DocumentDetails = liquidationDetailsModel;
+            // La liquidacion de compras no lleva formas de pago en el XML del SRI
+            liquidationModel.DocumentPayments = [];
+            _invoiceRepo.CreateInvoice(liquidationModel);
+            _invoiceRepo.SaveChanges();
+
+            _ = Client.Authorize("/roqui/v2/liquidation/authorize", liquidationBody.Code, liquidationBody.Number, _electronicRepo);
+
+            return Ok(new MessageDto { Title = "ENVIADO" });
         }
-
-        var liquidationModel = _mapper.Map<Document>(liquidationBody);
-        var liquidationDetailsModel = _mapper.Map<List<DocumentDetail>>(liquidationBody.LiquidationDetails);
-        liquidationModel.DocumentDetails = liquidationDetailsModel;
-        // La liquidacion de compras no lleva formas de pago en el XML del SRI
-        liquidationModel.DocumentPayments = [];
-        _invoiceRepo.CreateInvoice(liquidationModel);
-        _invoiceRepo.SaveChanges();
-
-        _ = Client.Authorize("/roqui/v2/liquidation/authorize", liquidationBody.Code, liquidationBody.Number, _electronicRepo);
-
-        return Ok(new MessageDto { Title = "Liquidation created successfully" });
+        catch (Exception ex)
+        {
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+        }
     }
 }

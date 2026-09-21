@@ -25,23 +25,36 @@ public class WithholdController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("rest/v1/withhold", Name = "CreateWithhold")]
-    public ActionResult<MessageDto> CreateWithhold(WithholdDto withholdBody)
+    [HttpPost("rest/v1/withhold/send", Name = "CreateWithhold")]
+    public async Task<ActionResult<MessageDto>> CreateWithhold(WithholdDto withholdBody)
     {
-        var existingWithhold = _withholdRepo.GetWithholdByCodeAndNumber(withholdBody.Code, withholdBody.Number);
-        if (existingWithhold != null)
+        try
         {
-            _withholdRepo.DeleteWithhold(existingWithhold);
+            var status = _electronicRepo.GetElectronicByCodeAndNumber(withholdBody.Code, withholdBody.Number);
+            if (status == "AUTORIZADO")
+            {
+                return Ok(new MessageDto { Title = status });
+            }
+
+            var existingWithhold = _withholdRepo.GetWithholdByCodeAndNumber(withholdBody.Code, withholdBody.Number);
+            if (existingWithhold != null)
+            {
+                _withholdRepo.DeleteWithhold(existingWithhold);
+            }
+
+            var withholdModel = _mapper.Map<Model.Withhold>(withholdBody);
+            var supportsModel = _mapper.Map<List<WithholdSupport>>(withholdBody.WithholdSupports);
+            withholdModel.WithholdSupports = supportsModel;
+            _withholdRepo.CreateWithhold(withholdModel);
+            _withholdRepo.SaveChanges();
+
+            _ = Client.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo);
+
+            return Ok(new MessageDto { Title = "ENVIADO" });
         }
-
-        var withholdModel = _mapper.Map<Model.Withhold>(withholdBody);
-        var supportsModel = _mapper.Map<List<WithholdSupport>>(withholdBody.WithholdSupports);
-        withholdModel.WithholdSupports = supportsModel;
-        _withholdRepo.CreateWithhold(withholdModel);
-        _withholdRepo.SaveChanges();
-
-        _ = Client.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo);
-
-        return Ok(new MessageDto { Title = "Withhold created successfully" });
+        catch (Exception ex)
+        {
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+        }
     }
 }
