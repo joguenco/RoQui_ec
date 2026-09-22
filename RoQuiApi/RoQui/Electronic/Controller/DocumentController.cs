@@ -17,12 +17,23 @@ public class DocumentController : ControllerBase
     }
 
     [HttpPost("rest/v1/document/authorize", Name = "AuthorizeDocument")]
-    public async Task<ActionResult<MessageDto>> AuthorizeDocument(DocumentStatusDto document)
+    public ActionResult<DocumentStatusDto> AuthorizeDocument(DocumentStatusDto document)
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(document.Code, document.Number);
-            return Ok(new MessageDto { Title = status });
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(document.Code, document.Number);
+
+            // Oracle necesita los cuatro datos por separado para meterlos en su columna,
+            // no solo el estado.
+            return Ok(new DocumentStatusDto
+            {
+                Code = document.Code,
+                Number = document.Number,
+                AuthorizationCode = electronic?.AuthorizationCode,
+                AuthorizationDate = electronic?.AuthorizationDate,
+                Observation = electronic?.Observation,
+                Status = electronic?.Status ?? "NO ENVIADO"
+            });
         }
         catch (Exception ex)
         {

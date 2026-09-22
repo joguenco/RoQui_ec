@@ -30,6 +30,8 @@ public class AppDbContext : DbContext
     public DbSet<DeliveryNote> DeliveryNotes { get; set; }
     public DbSet<DeliveryNoteReceiver> DeliveryNoteReceivers { get; set; }
     public DbSet<DeliveryNoteReceiverDetail> DeliveryNoteReceiverDetails { get; set; }
+    public DbSet<DebitNoteReason> DebitNoteReasons { get; set; }
+    public DbSet<DebitNoteTax> DebitNoteTaxes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

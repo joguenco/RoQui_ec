@@ -61,36 +61,49 @@ CREATE VIEW v_ele_credit_notes_detail AS
     FROM documents_detail dd
     JOIN documents d ON d.id = dd.document_id;
 
-CREATE TABLE IF NOT EXISTS v_ele_debit_notes (
-    total numeric(38,2),
-    total_without_taxes numeric(38,2),
-    date date,
-    updated_date_document date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    address character varying(255),
-    code character varying(255),
-    code_document character varying(255),
-    emission_point character varying(255),
-    establishment character varying(255),
-    establishment_address character varying(255),
-    identification character varying(255),
-    identification_type character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    sequence character varying(255),
-    updated_code_document character varying(255),
-    updated_number_document character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_debit_notes cascade;
+CREATE VIEW v_ele_debit_notes AS
+    SELECT
+        d.id::bigint id,
+        d.code,
+        d.number,
+        '05' AS code_document,
+        substr(d.number, 1, 3) AS establishment,
+        substr(d.number, 4, 3) AS emission_point,
+        substr(d.number, 7, 15) AS sequence,
+        d.date,
+        d.updated_code_document,
+        d.updated_number_document,
+        d.updated_date_document,
+        -- el total sin impuestos es la suma de los motivos
+        coalesce(r.total, 0) AS total_without_taxes,
+        coalesce(r.total, 0) + coalesce(t.total, 0) AS total,
+        d.identification_type,
+        d.identification,
+        d.legal_name,
+        d.address,
+        (
+        SELECT e.address FROM establishments e
+        WHERE e.code = substr(d.number, 1, 3)) AS establishment_address,
+        d.access_key
+    FROM documents d
+    LEFT JOIN (SELECT document_id, sum(value) total
+                 FROM debit_notes_reason GROUP BY document_id) r ON r.document_id = d.id
+    LEFT JOIN (SELECT document_id, sum(value) total
+                 FROM debit_notes_tax GROUP BY document_id) t ON t.document_id = d.id
+    WHERE d.code = 'NDC';
 
-CREATE TABLE IF NOT EXISTS v_ele_debit_notes_detail (
-    value numeric(38,2),
-    line bigint,
-    id bigint NOT NULL,
-    code character varying(255),
-    number character varying(255),
-    reason character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_debit_notes_detail cascade;
+CREATE VIEW v_ele_debit_notes_detail AS
+    SELECT
+        r.id::bigint id,
+        d.code,
+        d.number,
+        r.line::bigint AS line,
+        r.reason,
+        r.value
+    FROM debit_notes_reason r
+    JOIN documents d ON d.id = r.document_id;
 
 DROP VIEW IF EXISTS v_ele_delivery_notes cascade;
 CREATE VIEW v_ele_delivery_notes AS
@@ -375,18 +388,34 @@ FROM
 ORDER BY
     j.number DESC;
 
-CREATE TABLE IF NOT EXISTS v_ele_report_debit_notes (
-    total numeric(38,2),
-    date date,
-    id bigint NOT NULL,
-    access_key character varying(255),
-    code character varying(255),
-    email character varying(255),
-    identification character varying(255),
-    legal_name character varying(255),
-    number character varying(255),
-    status character varying(255)
-);
+DROP VIEW IF EXISTS v_ele_report_debit_notes cascade;
+CREATE VIEW v_ele_report_debit_notes AS
+SELECT
+    j.id::bigint AS id,
+    j.code AS code,
+    j.number AS number,
+    j.access_key AS access_key,
+    j.date AS date,
+    j.total AS total,
+    j.identification AS identification,
+    j.legal_name AS legal_name,
+    (SELECT i.value
+     FROM v_ele_information i
+     WHERE i.name = 'Email'
+       AND i.identification = j.identification
+     LIMIT 1) AS email,
+    COALESCE(
+        (SELECT e.status
+         FROM ele_documents e
+         WHERE e.code = j.code
+           AND e.number = j.number
+        ),
+        'NO ENVIADO'
+    ) AS status
+FROM
+    v_ele_debit_notes j
+ORDER BY
+    j.number DESC;
 
 DROP VIEW IF EXISTS v_ele_report_delivery_notes;
 CREATE VIEW v_ele_report_delivery_notes AS
@@ -531,7 +560,23 @@ CREATE VIEW v_ele_taxes_detail AS
         t.value
     FROM documents_detail_taxes t
     JOIN documents_detail dd ON dd.id = t.document_detail_id
-    JOIN documents d ON d.id = dd.document_id;
+    JOIN documents d ON d.id = dd.document_id
+    UNION ALL
+    -- La nota de debito lleva los impuestos en la cabecera, no por linea, pero
+    -- RoQui los busca todos aqui. Le sumo un millon al id para que no choquen.
+    SELECT
+        (t.id + 1000000)::bigint id,
+        d.code,
+        d.number,
+        NULL                           AS principal_code,
+        1::bigint                      AS line,
+        t.tax_code,
+        t.tax_code_percentage          AS percentage_code,
+        t.base                         AS tax_base,
+        t.tax_value                    AS tax_iva,
+        t.value
+    FROM debit_notes_tax t
+    JOIN documents d ON d.id = t.document_id;
 
 CREATE OR REPLACE VIEW v_ele_taxpayer AS
     SELECT 

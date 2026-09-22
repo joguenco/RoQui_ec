@@ -8,8 +8,11 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
             retention_agent   VARCHAR2(9)
     );
     TYPE type_response IS RECORD (
-            status  NUMBER,
-            message VARCHAR2(900)
+            status            NUMBER,
+            http_status_code  NUMBER,
+            message           VARCHAR2(4000),
+            autorization      VARCHAR2(100),
+            date_autorization DATE
     );
     FUNCTION fun_get_url RETURN VARCHAR2;
 
@@ -574,6 +577,18 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
                 codigo = p_code
             AND numero = p_number;
 
+        CURSOR cur_payment IS
+        SELECT
+            forma_pago,
+            total,
+            plazo,
+            tiempo
+        FROM
+            v_ele_pagos
+        WHERE
+                codigo = p_code
+            AND numero = p_number;
+
     BEGIN
         SELECT
             *
@@ -621,6 +636,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             apex_json.write('taxValue', t.tarifa);
             apex_json.write('base', t.base_imponible);
             apex_json.write('value', t.valor);
+            apex_json.close_object;
+        END LOOP;
+
+        apex_json.close_array;
+        apex_json.open_array('payments');
+        FOR p IN cur_payment LOOP
+            apex_json.open_object;
+            apex_json.write('code', p.forma_pago);
+            apex_json.write('total', p.total);
+            apex_json.write('deadline', p.plazo);
+            apex_json.write('unitTime', p.tiempo);
             apex_json.close_object;
         END LOOP;
 
@@ -1293,6 +1319,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
+        v_date_text  VARCHAR2(40);
     BEGIN        
         apex_json.initialize_clob_output;
         apex_json.open_object;
@@ -1317,13 +1344,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
         rec_response.status := apex_web_service.g_status_code;
-        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        rec_response.http_status_code := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'observation');
+        rec_response.autorization := apex_json.get_varchar2(p_path => 'authorizationCode');
+        v_date_text := apex_json.get_varchar2(p_path => 'authorizationDate');
+        IF v_date_text IS NOT NULL THEN
+            -- llega como 2026-09-21T15:20:00, me quedo con los 19 primeros
+            rec_response.date_autorization := to_date(substr(v_date_text, 1, 19),
+                                                      'yyyy-mm-dd"T"hh24:mi:ss');
+        END IF;
+
         IF rec_response.status = 200 THEN
-            pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              rec_response.message);
+            pro_save_response(p_code, p_number, rec_response.autorization,
+                              rec_response.date_autorization, rec_response.message,
+                              apex_json.get_varchar2(p_path => 'status'));
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
-                              rec_response.message);
+                              'ERROR');
         END IF;
 
         RETURN rec_response;

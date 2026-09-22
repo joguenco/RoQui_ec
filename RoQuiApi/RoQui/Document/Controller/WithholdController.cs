@@ -30,10 +30,10 @@ public class WithholdController : ControllerBase
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(withholdBody.Code, withholdBody.Number);
-            if (status == "AUTORIZADO")
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(withholdBody.Code, withholdBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
             {
-                return Ok(new MessageDto { Title = status });
+                return Ok(new MessageDto { Title = electronic.Status });
             }
 
             var existingWithhold = _withholdRepo.GetWithholdByCodeAndNumber(withholdBody.Code, withholdBody.Number);

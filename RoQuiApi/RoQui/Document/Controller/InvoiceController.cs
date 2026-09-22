@@ -31,10 +31,10 @@ public class InvoiceController : ControllerBase
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(invoiceBody.Code, invoiceBody.Number);
-            if (status == "AUTORIZADO")
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(invoiceBody.Code, invoiceBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
             {
-                return Ok(new MessageDto { Title = status });
+                return Ok(new MessageDto { Title = electronic.Status });
             }
 
             var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(invoiceBody.Code, invoiceBody.Number);

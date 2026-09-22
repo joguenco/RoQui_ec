@@ -30,10 +30,10 @@ public class DeliveryNoteController : ControllerBase
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);
-            if (status == "AUTORIZADO")
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
             {
-                return Ok(new MessageDto { Title = status });
+                return Ok(new MessageDto { Title = electronic.Status });
             }
 
             var existingDeliveryNote = _deliveryNoteRepo.GetDeliveryNoteByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);

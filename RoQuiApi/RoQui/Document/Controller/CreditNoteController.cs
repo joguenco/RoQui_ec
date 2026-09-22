@@ -30,10 +30,10 @@ public class CreditNoteController : ControllerBase
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(creditNoteBody.Code, creditNoteBody.Number);
-            if (status == "AUTORIZADO")
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(creditNoteBody.Code, creditNoteBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
             {
-                return Ok(new MessageDto { Title = status });
+                return Ok(new MessageDto { Title = electronic.Status });
             }
 
             var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(creditNoteBody.Code, creditNoteBody.Number);

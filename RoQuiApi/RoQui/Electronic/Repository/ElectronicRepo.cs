@@ -12,14 +12,23 @@ public class ElectronicRepo : IElectronicRepo
         _context = context;
     }
 
-    public string GetElectronicByCodeAndNumber(string code, string number)
+    public Electronic? GetElectronicByCodeAndNumber(string code, string number)
     {
         var electronic = _context.Electronics.FirstOrDefault(e => e.Code == code && e.Number == number);
         if (electronic == null)
         {
-            return "NO ENVIADO";
+
+            return new Electronic
+            {
+                Code = code,
+                Number = number,
+                AuthorizationCode = null,
+                AuthorizationDate = null,
+                Observation = null,
+                Status = "NO ENVIADO"
+            };
         }
-        return electronic.Status ?? "NO ENVIADO";
+        return electronic;
     }
 
     public Parameter? GetParameterByName(string name)

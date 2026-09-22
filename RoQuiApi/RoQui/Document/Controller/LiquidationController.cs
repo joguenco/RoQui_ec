@@ -30,10 +30,10 @@ public class LiquidationController : ControllerBase
     {
         try
         {
-            var status = _electronicRepo.GetElectronicByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
-            if (status == "AUTORIZADO")
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
             {
-                return Ok(new MessageDto { Title = status });
+                return Ok(new MessageDto { Title = electronic.Status });
             }
 
             var existingDocument = _invoiceRepo.GetDocumentByCodeAndNumber(liquidationBody.Code, liquidationBody.Number);
