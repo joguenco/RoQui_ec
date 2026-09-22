@@ -93,7 +93,7 @@ class BuildDeliveryNote(
         if (tributaryInformation.deliveryNote.accessKey!!.length == 49) {
             infoTributaria.claveAcceso = tributaryInformation.deliveryNote.accessKey
             infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
-            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
         }
 
         infoTributaria.codDoc = COD_DOC

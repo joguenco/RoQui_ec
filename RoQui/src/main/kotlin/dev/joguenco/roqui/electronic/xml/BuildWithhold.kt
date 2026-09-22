@@ -94,7 +94,7 @@ class BuildWithhold(
         if (tributaryInformation.withhold.accessKey!!.length == 49) {
             infoTributaria.claveAcceso = tributaryInformation.withhold.accessKey
             infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
-            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
         }
 
         infoTributaria.codDoc = tributaryInformation.withhold.codeDocument

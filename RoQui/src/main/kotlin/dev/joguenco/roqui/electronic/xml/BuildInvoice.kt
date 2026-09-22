@@ -113,7 +113,7 @@ class BuildInvoice(
         if (tributaryInformation.invoice.accessKey!!.length == 49) {
             infoTributaria.claveAcceso = tributaryInformation.invoice.accessKey
             infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
-            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
         }
 
         infoTributaria.codDoc = tributaryInformation.invoice.codeDocument

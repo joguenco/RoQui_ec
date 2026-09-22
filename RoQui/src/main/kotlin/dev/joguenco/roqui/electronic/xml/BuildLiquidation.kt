@@ -79,7 +79,7 @@ class BuildLiquidation(
         if (tributaryInformation.liquidation.accessKey!!.length == 49) {
             infoTributaria.claveAcceso = tributaryInformation.liquidation.accessKey
             infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
-            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
         }
 
         infoTributaria.codDoc = tributaryInformation.liquidation.codeDocument

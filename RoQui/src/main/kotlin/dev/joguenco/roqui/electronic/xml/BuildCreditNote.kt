@@ -116,7 +116,7 @@ class BuildCreditNote(
         if (tributaryInformation.creditNote.accessKey!!.length == 49) {
             infoTributaria.claveAcceso = tributaryInformation.creditNote.accessKey
             infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
-            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(39, 40)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
         }
 
         infoTributaria.codDoc = tributaryInformation.creditNote.codeDocument
