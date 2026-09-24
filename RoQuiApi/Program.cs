@@ -4,6 +4,7 @@ using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Invoice.Repository;
+using RoQuiApi.RoQui.Security;
 using RoQuiApi.RoQui.Version.Repository;
 using Scalar.AspNetCore;
 
@@ -24,6 +25,11 @@ builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
 builder.Services.AddScoped<IElectronicRepo, ElectronicRepo>();
 builder.Services.AddScoped<IWithholdRepo, WithholdRepo>();
 builder.Services.AddScoped<IDeliveryNoteRepo, DeliveryNoteRepo>();
+
+// Validacion de la X-API-KEY. Van como Scoped porque el validador pide el
+// repositorio, y ese depende del DbContext.
+builder.Services.AddScoped<IApiKeyValidator, ApiKeyValidator>();
+builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
 
 // Added Auto Mapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
@@ -78,8 +84,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    PrepareDb.Prepare(app);
 }
+
+// Las vistas v_ele_* y los parametros tienen que crearse tambien en produccion.
+// Esto estaba dentro del if de arriba, y en IIS el entorno es Production, asi que
+// la base se quedaba sin vistas y RoQui no arrancaba por el ddl-auto=validate.
+PrepareDb.Prepare(app);
 
 app.UseHttpsRedirection();
 

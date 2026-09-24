@@ -8,6 +8,7 @@ using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
+using RoQuiApi.RoQui.Security;
 
 [ApiController]
 [Route("[controller]")]
@@ -26,6 +27,7 @@ public class InvoiceController : ControllerBase
         _mapper = mapper;
     }
 
+    [ApiKey]
     [HttpPost("rest/v1/invoice/send", Name = "CreateInvoice")]
     public async Task<ActionResult<MessageDto>> CreateInvoice(InvoiceDto invoiceBody)
     {

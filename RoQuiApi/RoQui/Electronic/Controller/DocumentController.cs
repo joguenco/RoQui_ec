@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Document.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Shared;
+using RoQuiApi.RoQui.Security;
 
 [ApiController]
 [Route("[controller]")]
@@ -16,6 +17,7 @@ public class DocumentController : ControllerBase
         _electronicRepo = electronicRepo;
     }
 
+    [ApiKey]
     [HttpPost("rest/v1/document/authorize", Name = "AuthorizeDocument")]
     public ActionResult<DocumentStatusDto> AuthorizeDocument(DocumentStatusDto document)
     {
