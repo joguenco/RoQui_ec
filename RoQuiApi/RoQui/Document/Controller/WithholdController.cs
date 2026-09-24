@@ -8,6 +8,7 @@ using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Shared;
+using RoQuiApi.RoQui.Security;
 
 [ApiController]
 [Route("[controller]")]
@@ -25,6 +26,7 @@ public class WithholdController : ControllerBase
         _mapper = mapper;
     }
 
+    [ApiKey]
     [HttpPost("rest/v1/withhold/send", Name = "CreateWithhold")]
     public async Task<ActionResult<MessageDto>> CreateWithhold(WithholdDto withholdBody)
     {

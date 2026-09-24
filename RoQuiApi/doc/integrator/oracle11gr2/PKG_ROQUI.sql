@@ -183,6 +183,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || '/taxpayer/rest/v1/taxpayer',
             p_http_method => 'POST',
@@ -359,6 +361,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -510,6 +514,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -658,6 +664,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -805,6 +813,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -965,6 +975,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -1117,6 +1129,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
@@ -1334,6 +1348,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers.delete();
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
+        apex_web_service.g_request_headers(2).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(2).value := fun_get_key();
         l_response := apex_web_service.make_rest_request(
             p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',

@@ -8,6 +8,7 @@ using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
+using RoQuiApi.RoQui.Security;
 
 [ApiController]
 [Route("[controller]")]
@@ -25,6 +26,7 @@ public class LiquidationController : ControllerBase
         _mapper = mapper;
     }
 
+    [ApiKey]
     [HttpPost("rest/v1/liquidation/send", Name = "CreateLiquidation")]
     public async Task<ActionResult<MessageDto>> CreateLiquidation(LiquidationDto liquidationBody)
     {

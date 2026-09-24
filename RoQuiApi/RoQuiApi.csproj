@@ -19,4 +19,10 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.2" />
   </ItemGroup>
 
+  <!-- PrepareDb busca este .sql en disco con Directory.GetCurrentDirectory().
+       Sin esto no se copia al publicar y en IIS no se crean las vistas. -->
+  <ItemGroup>
+    <Content Include="Sql\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

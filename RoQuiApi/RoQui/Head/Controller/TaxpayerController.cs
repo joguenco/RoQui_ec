@@ -7,6 +7,7 @@ namespace RoQuiApi.RoQui.Head.Controller;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using RoQuiApi.RoQui.Security;
 
 
 [ApiController]
@@ -24,6 +25,7 @@ public class TaxpayerController : ControllerBase
         _mapper = mapper;
     }
 
+    [ApiKey]
     [HttpPost("rest/v1/taxpayer", Name = "CreateTaxpayer")]
     public ActionResult<MessageDto> CreateTaxpayer(TaxpayerDto taxpayerBody)
     {
