@@ -91,6 +91,20 @@ class LiquidationController {
         }
     }
 
+    @PostMapping("/v2/liquidation/authorize/dates/{startDate}/{endDate}")
+    fun postAuthorizeAllV2(
+        @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
+        @PathVariable(value = "startDate") startDate: String,
+        @PathVariable(value = "endDate") endDate: String,
+    ): ResponseEntity<out Any?> {
+
+        if (!isValidApiKey(requestApiKey, parameterService)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
+
+        return postAuthorizeAll(startDate, endDate)
+    }
+
     @PostMapping("/v1/liquidation/authorize/dates/{startDate}/{endDate}")
     fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
