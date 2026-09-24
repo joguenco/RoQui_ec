@@ -55,4 +55,9 @@ public class Document
     public virtual required ICollection<DocumentPayment> DocumentPayments { get; set; }
 
     public virtual required ICollection<DocumentInformation> DocumentInformations { get; set; }
+
+    // Solo las llena la nota de debito; en factura y liquidacion quedan vacias
+    public virtual ICollection<DebitNoteReason>? DebitNoteReasons { get; set; }
+
+    public virtual ICollection<DebitNoteTax>? DebitNoteTaxes { get; set; }
 }

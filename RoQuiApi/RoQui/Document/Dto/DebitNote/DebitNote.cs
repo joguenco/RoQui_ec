@@ -49,4 +49,8 @@ public class DebitNoteDto
     [Required]
     [MinLength(1, ErrorMessage = "The debit note must contain at least one tax.")]
     public virtual required ICollection<TaxDto> DebitNoteTaxes { get; set; }
+
+    // El XML del SRI los admite opcionales, pero sin ellos el generador del PDF
+    // se cae y el documento nunca llega a firmarse
+    public virtual ICollection<PaymentDto>? Payments { get; set; }
 }

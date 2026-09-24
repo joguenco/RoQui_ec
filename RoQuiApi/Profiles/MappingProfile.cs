@@ -65,5 +65,12 @@ public class MappingProfile : Profile
         CreateMap<DeliveryNoteReceiverDto, DeliveryNoteReceiver>();
         CreateMap<DeliveryNoteReceiverDetail, DeliveryNoteReceiverDetailDto>();
         CreateMap<DeliveryNoteReceiverDetailDto, DeliveryNoteReceiverDetail>();
+        // La nota de debito usa los mismos Modified* que la de credito
+        CreateMap<DebitNoteDto, Document>()
+            .ForMember(model => model.UpdatedCodeDocument, opt => opt.MapFrom(dto => dto.ModifiedDocumentType))
+            .ForMember(model => model.UpdatedNumberDocument, opt => opt.MapFrom(dto => dto.ModifiedDocument))
+            .ForMember(model => model.UpdatedDateDocument, opt => opt.MapFrom(dto => dto.ModifiedDate));
+        CreateMap<DebitNoteDetailDto, DebitNoteReason>();
+        CreateMap<TaxDto, DebitNoteTax>();
     }
 }

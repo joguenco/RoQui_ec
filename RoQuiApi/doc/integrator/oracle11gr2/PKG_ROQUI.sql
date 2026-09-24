@@ -8,8 +8,11 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
             retention_agent   VARCHAR2(9)
     );
     TYPE type_response IS RECORD (
-            status  NUMBER,
-            message VARCHAR2(900)
+            status            NUMBER,
+            http_status_code  NUMBER,
+            message           VARCHAR2(4000),
+            autorization      VARCHAR2(100),
+            date_autorization DATE
     );
     FUNCTION fun_get_url RETURN VARCHAR2;
 
@@ -44,6 +47,11 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
     ) RETURN type_response;
 
     FUNCTION fun_withhold (
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN type_response;
+
+    FUNCTION fun_delivery_note (
         p_code   IN VARCHAR2,
         p_number IN VARCHAR2
     ) RETURN type_response;
@@ -388,6 +396,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/creditnote/rest/v1/creditnote/send';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
@@ -502,7 +511,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => v_url_server || '/creditnote/rest/v1/creditnote',
+            p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -514,7 +523,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
         IF rec_response.status = 200 THEN
             pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              'ENVIADO');
+                              rec_response.message);
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
                               'ERROR');
@@ -538,6 +547,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/debitnote/rest/v1/debitnote/send';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
@@ -563,6 +573,18 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             valor
         FROM
             v_ele_impuestos_detalle
+        WHERE
+                codigo = p_code
+            AND numero = p_number;
+
+        CURSOR cur_payment IS
+        SELECT
+            forma_pago,
+            total,
+            plazo,
+            tiempo
+        FROM
+            v_ele_pagos
         WHERE
                 codigo = p_code
             AND numero = p_number;
@@ -618,6 +640,17 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         END LOOP;
 
         apex_json.close_array;
+        apex_json.open_array('payments');
+        FOR p IN cur_payment LOOP
+            apex_json.open_object;
+            apex_json.write('code', p.forma_pago);
+            apex_json.write('total', p.total);
+            apex_json.write('deadline', p.plazo);
+            apex_json.write('unitTime', p.tiempo);
+            apex_json.close_object;
+        END LOOP;
+
+        apex_json.close_array;
         apex_json.close_object;
         l_body := apex_json.get_clob_output;
         dbms_output.put_line('l_body=' || l_body);
@@ -626,7 +659,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => v_url_server || '/debitnote/rest/v1/debitnote',
+            p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -638,7 +671,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
         IF rec_response.status = 200 THEN
             pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              'ENVIADO');
+                              rec_response.message);
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
                               'ERROR');
@@ -662,6 +695,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/liquidation/rest/v1/liquidation/send';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
@@ -772,7 +806,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => v_url_server || '/liquidation/rest/v1/liquidation',
+            p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -784,7 +818,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
         IF rec_response.status = 200 THEN
             pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              'ENVIADO');
+                              rec_response.message);
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
                               'ERROR');
@@ -808,6 +842,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     ) RETURN type_response AS
 
         v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/withhold/rest/v1/withhold/send';
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
@@ -931,7 +966,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         apex_web_service.g_request_headers(1).name := 'Content-Type';
         apex_web_service.g_request_headers(1).value := 'application/json';
         l_response := apex_web_service.make_rest_request(
-            p_url         => v_url_server || '/withhold/rest/v1/withhold',
+            p_url         => v_url_server || v_url_action,
             p_http_method => 'POST',
             p_body        => l_body
         );
@@ -943,7 +978,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response.message := apex_json.get_varchar2(p_path => 'title');
         IF rec_response.status = 200 THEN
             pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              'ENVIADO');
+                              rec_response.message);
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
                               'ERROR');
@@ -960,6 +995,158 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
                               'ERROR');
             RETURN rec_response;
     END fun_withhold;
+
+    FUNCTION fun_delivery_note (
+        p_code   IN VARCHAR2,
+        p_number IN VARCHAR2
+    ) RETURN type_response AS
+
+        v_url_server VARCHAR2(900) := fun_get_url();
+        v_url_action VARCHAR2(900) := '/deliverynote/rest/v1/deliverynote/send';
+        rec_response type_response;
+        l_response   CLOB;
+        l_body       CLOB;
+        rec_header   v_ele_guias%rowtype;
+        v_access_key VARCHAR2(100);
+        v_line       NUMBER;
+        v_line_item  NUMBER;
+        CURSOR cur_receiver IS
+        SELECT
+            documento,
+            razon_social,
+            direccion,
+            motivo_traslado,
+            codigo_documento,
+            numero_documento,
+            autorizacion_documento,
+            fecha_documento
+        FROM
+            v_ele_guias_receptor
+        WHERE
+                codigo = p_code
+            AND numero = p_number;
+
+        -- el detalle se busca por el destinatario, no por la guia entera
+        CURSOR cur_detail (
+            p_document IN VARCHAR2
+        ) IS
+        SELECT
+            codigo_articulo,
+            nombre_articulo,
+            cantidad
+        FROM
+            v_ele_guias_receptor_detalle
+        WHERE
+                codigo = p_code
+            AND numero = p_number
+            AND documento = p_document;
+
+    BEGIN
+        SELECT
+            *
+        INTO rec_header
+        FROM
+            v_ele_guias
+        WHERE
+                codigo = p_code
+            AND numero = p_number;
+
+        v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
+        apex_json.initialize_clob_output;
+        apex_json.open_object;
+        apex_json.write('code', rec_header.codigo);
+        apex_json.write('number', rec_header.numero);
+        apex_json.write('date',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('addressStart', rec_header.direccion_partida);
+        apex_json.write('carrierIdentificationType', rec_header.tipo_documento);
+        apex_json.write('carrierIdentification', rec_header.documento);
+        apex_json.write('carrierLegalName', rec_header.razon_social_transportista);
+        apex_json.write('plate', rec_header.placa);
+        apex_json.write('dateStartTransport',
+                        to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('dateEndTransport',
+                        to_char(rec_header.fecha_fin, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+        apex_json.write('accessKey', v_access_key);
+        v_line := 0;
+        apex_json.open_array('deliveryNoteReceivers');
+        FOR r IN cur_receiver LOOP
+            v_line := v_line + 1;
+            apex_json.open_object;
+            apex_json.write('line', v_line);
+            apex_json.write('identificationType',
+                            CASE
+                                WHEN r.documento = '9999999999999' THEN '07'
+                                WHEN length(r.documento) = 13 THEN '04'
+                                WHEN length(r.documento) = 10 THEN '05'
+                                ELSE '06'
+                            END);
+
+            apex_json.write('identification', r.documento);
+            apex_json.write('legalName', r.razon_social);
+            apex_json.write('address', r.direccion);
+            apex_json.write('transferReason', r.motivo_traslado);
+            apex_json.write('codeDocumentSupport', r.codigo_documento);
+            apex_json.write('numberDocumentSupport', r.numero_documento);
+            apex_json.write('authorizationDocumentSupport', r.autorizacion_documento);
+            -- si va nulo, RoQui revienta al formatear la fecha del sustento
+            apex_json.write('dateDocumentSupport',
+                            to_char(r.fecha_documento, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
+
+            v_line_item := 0;
+            apex_json.open_array('deliveryNoteReceiverDetails');
+            FOR d IN cur_detail(r.documento) LOOP
+                v_line_item := v_line_item + 1;
+                apex_json.open_object;
+                apex_json.write('line', v_line_item);
+                apex_json.write('principalCode', d.codigo_articulo);
+                apex_json.write('name', d.nombre_articulo);
+                apex_json.write('quantity', d.cantidad);
+                apex_json.close_object;
+            END LOOP;
+
+            apex_json.close_array;
+            apex_json.close_object;
+        END LOOP;
+
+        apex_json.close_array;
+        apex_json.close_object;
+        l_body := apex_json.get_clob_output;
+        dbms_output.put_line('l_body=' || l_body);
+        apex_json.free_output;
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'Content-Type';
+        apex_web_service.g_request_headers(1).value := 'application/json';
+        l_response := apex_web_service.make_rest_request(
+            p_url         => v_url_server || v_url_action,
+            p_http_method => 'POST',
+            p_body        => l_body
+        );
+
+        dbms_output.put_line('status=' || apex_web_service.g_status_code);
+        dbms_output.put_line('l_response=' || l_response);
+        apex_json.parse(l_response);
+        rec_response.status := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        IF rec_response.status = 200 THEN
+            pro_save_response(p_code, p_number, NULL, NULL, NULL,
+                              rec_response.message);
+        ELSE
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+        END IF;
+
+        RETURN rec_response;
+    EXCEPTION
+        WHEN OTHERS THEN
+            rec_response.status := NULL;
+            rec_response.message := sqlerrm
+                                    || ' '
+                                    || sqlcode;
+            pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
+                              'ERROR');
+            RETURN rec_response;
+    END fun_delivery_note;
 
     FUNCTION fun_get_url RETURN VARCHAR2 AS
         v_url VARCHAR2(900);
@@ -1132,10 +1319,13 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         rec_response type_response;
         l_response   CLOB;
         l_body       CLOB;
+        v_date_text  VARCHAR2(40);
     BEGIN        
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', 'FV');
+        -- La factura es el unico que cambia de nombre entre los dos sistemas:
+        -- en Oracle es FAC y en PostgreSQL FV. Los demas se llaman igual.
+        apex_json.write('code', CASE WHEN p_code = 'FAC' THEN 'FV' ELSE p_code END);
         apex_json.write('number', p_number);
         apex_json.close_object;
         l_body := apex_json.get_clob_output;
@@ -1154,13 +1344,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('l_response=' || l_response);
         apex_json.parse(l_response);
         rec_response.status := apex_web_service.g_status_code;
-        rec_response.message := apex_json.get_varchar2(p_path => 'title');
+        rec_response.http_status_code := apex_web_service.g_status_code;
+        rec_response.message := apex_json.get_varchar2(p_path => 'observation');
+        rec_response.autorization := apex_json.get_varchar2(p_path => 'authorizationCode');
+        v_date_text := apex_json.get_varchar2(p_path => 'authorizationDate');
+        IF v_date_text IS NOT NULL THEN
+            -- llega como 2026-09-21T15:20:00, me quedo con los 19 primeros
+            rec_response.date_autorization := to_date(substr(v_date_text, 1, 19),
+                                                      'yyyy-mm-dd"T"hh24:mi:ss');
+        END IF;
+
         IF rec_response.status = 200 THEN
-            pro_save_response(p_code, p_number, NULL, NULL, NULL,
-                              rec_response.message);
+            pro_save_response(p_code, p_number, rec_response.autorization,
+                              rec_response.date_autorization, rec_response.message,
+                              apex_json.get_varchar2(p_path => 'status'));
         ELSE
             pro_save_response(p_code, p_number, NULL, NULL, rec_response.message,
-                              rec_response.message);
+                              'ERROR');
         END IF;
 
         RETURN rec_response;

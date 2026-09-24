@@ -25,23 +25,36 @@ public class DeliveryNoteController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpPost("rest/v1/deliverynote", Name = "CreateDeliveryNote")]
-    public ActionResult<MessageDto> CreateDeliveryNote(DeliveryNoteDto deliveryNoteBody)
+    [HttpPost("rest/v1/deliverynote/send", Name = "CreateDeliveryNote")]
+    public async Task<ActionResult<MessageDto>> CreateDeliveryNote(DeliveryNoteDto deliveryNoteBody)
     {
-        var existingDeliveryNote = _deliveryNoteRepo.GetDeliveryNoteByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);
-        if (existingDeliveryNote != null)
+        try
         {
-            _deliveryNoteRepo.DeleteDeliveryNote(existingDeliveryNote);
+            var electronic = _electronicRepo.GetElectronicByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);
+            if (electronic?.Status == "AUTORIZADO")
+            {
+                return Ok(new MessageDto { Title = electronic.Status });
+            }
+
+            var existingDeliveryNote = _deliveryNoteRepo.GetDeliveryNoteByCodeAndNumber(deliveryNoteBody.Code, deliveryNoteBody.Number);
+            if (existingDeliveryNote != null)
+            {
+                _deliveryNoteRepo.DeleteDeliveryNote(existingDeliveryNote);
+            }
+
+            var deliveryNoteModel = _mapper.Map<DeliveryNote>(deliveryNoteBody);
+            var receiversModel = _mapper.Map<List<DeliveryNoteReceiver>>(deliveryNoteBody.DeliveryNoteReceivers);
+            deliveryNoteModel.DeliveryNoteReceivers = receiversModel;
+            _deliveryNoteRepo.CreateDeliveryNote(deliveryNoteModel);
+            _deliveryNoteRepo.SaveChanges();
+
+            _ = Client.Authorize("/roqui/v2/deliverynote/authorize", deliveryNoteBody.Code, deliveryNoteBody.Number, _electronicRepo);
+
+            return Ok(new MessageDto { Title = "ENVIADO" });
         }
-
-        var deliveryNoteModel = _mapper.Map<DeliveryNote>(deliveryNoteBody);
-        var receiversModel = _mapper.Map<List<DeliveryNoteReceiver>>(deliveryNoteBody.DeliveryNoteReceivers);
-        deliveryNoteModel.DeliveryNoteReceivers = receiversModel;
-        _deliveryNoteRepo.CreateDeliveryNote(deliveryNoteModel);
-        _deliveryNoteRepo.SaveChanges();
-
-        _ = Client.Authorize("/roqui/v2/deliverynote/authorize", deliveryNoteBody.Code, deliveryNoteBody.Number, _electronicRepo);
-
-        return Ok(new MessageDto { Title = "Delivery note created successfully" });
+        catch (Exception ex)
+        {
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+        }
     }
 }

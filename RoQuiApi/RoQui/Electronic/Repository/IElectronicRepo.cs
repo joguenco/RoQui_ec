@@ -5,5 +5,5 @@ using RoQuiApi.RoQui.Electronic.Model;
 public interface IElectronicRepo
 {
     Parameter? GetParameterByName(string name);
-    string GetElectronicByCodeAndNumber(string code, string number);
+    Electronic? GetElectronicByCodeAndNumber(string code, string number);
 }
