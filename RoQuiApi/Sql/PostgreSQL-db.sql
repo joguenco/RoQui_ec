@@ -380,6 +380,10 @@ SELECT
          FROM ele_documents e
          WHERE e.code = j.code
            AND e.number = j.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ),
         'NO ENVIADO'
     ) AS status
@@ -409,6 +413,10 @@ SELECT
          FROM ele_documents e
          WHERE e.code = j.code
            AND e.number = j.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ),
         'NO ENVIADO'
     ) AS status
@@ -443,6 +451,10 @@ SELECT
          FROM ele_documents e
          WHERE e.code = g.code
            AND e.number = g.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ),
         'NO ENVIADO'
     ) AS status
@@ -472,6 +484,10 @@ SELECT
          FROM ele_documents e 
          WHERE e.code = j.code 
            AND e.number = j.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ), 
         'NO ENVIADO'
     ) AS status
@@ -501,6 +517,10 @@ SELECT
          FROM ele_documents e
          WHERE e.code = j.code
            AND e.number = j.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ),
         'NO ENVIADO'
     ) AS status
@@ -537,6 +557,10 @@ SELECT
          FROM ele_documents e
          WHERE e.code = w.code
            AND e.number = w.number
+         -- si un documento quedo duplicado, gana el que tiene autorizacion:
+         -- el SRI no des-autoriza lo que ya autorizo
+         ORDER BY e.authorization_code NULLS LAST, e.id DESC
+         LIMIT 1
         ),
         'NO ENVIADO'
     ) AS status
