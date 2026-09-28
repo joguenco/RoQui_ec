@@ -26,4 +26,10 @@ class EstablishmentRepository : CustomEstablishmentRepository {
             .resultList
             .get(0) as Establishment
     }
+
+    override fun findAll(): List<Establishment> {
+        return entityManager
+            .createQuery("from Establishment " + "order by code ", Establishment::class.java)
+            .resultList
+    }
 }
