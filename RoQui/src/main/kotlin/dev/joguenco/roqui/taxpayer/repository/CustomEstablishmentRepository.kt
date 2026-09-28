@@ -7,4 +7,6 @@ interface CustomEstablishmentRepository {
     fun findByCode(code: String): Establishment
 
     fun findPrincipal(): Establishment
+
+    fun findAll(): List<Establishment>
 }

@@ -25,4 +25,10 @@ class TaxpayerController {
 
         return ResponseEntity.ok(taxpayer)
     }
+
+    // Lista vacia en vez de 204, asi el cliente pinta la tabla igual.
+    @GetMapping("/establishments")
+    fun getEstablishments(): ResponseEntity<Any> {
+        return ResponseEntity.ok(taxpayerService.getEstablishments())
+    }
 }
