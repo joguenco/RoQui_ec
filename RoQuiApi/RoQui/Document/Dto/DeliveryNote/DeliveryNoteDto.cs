@@ -1,6 +1,7 @@
-namespace RoQuiApi.RoQui.Document.DeliveryNote.Dto;
+﻿namespace RoQuiApi.RoQui.Document.DeliveryNote.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Shared;
 
 public class DeliveryNoteDto
 {
@@ -40,7 +41,7 @@ public class DeliveryNoteDto
     public string? Observation { get; set; }
 
     [Required]
-    [RegularExpression(@"^\d{49}$", ErrorMessage = "The access key must contain exactly 49 digits.")]
+    [AccessKey]
     public required string AccessKey { get; set; }
 
     [Required]

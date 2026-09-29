@@ -1,6 +1,7 @@
-namespace RoQuiApi.RoQui.Invoice.Dto;
+﻿namespace RoQuiApi.RoQui.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Shared;
 
 public class CreditNoteDto
 {
@@ -23,7 +24,7 @@ public class CreditNoteDto
     public required string LegalName { get; set; }
 
     [Required]
-    [RegularExpression(@"^\d{49}$", ErrorMessage = "The access key must contain exactly 49 digits.")]
+    [AccessKey]
     public required string AccessKey { get; set; }
 
     [Required]
