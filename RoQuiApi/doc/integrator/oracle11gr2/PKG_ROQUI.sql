@@ -104,6 +104,9 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         l_clob       CLOB;
         v_url_server VARCHAR2(900) := fun_get_url();
     BEGIN
+        apex_web_service.g_request_headers.delete();
+        apex_web_service.g_request_headers(1).name := 'X-API-KEY';
+        apex_web_service.g_request_headers(1).value := fun_get_key();
         l_clob := apex_web_service.make_rest_request(
             p_url         => v_url_server || '/version',
             p_http_method => 'GET'
@@ -112,7 +115,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         dbms_output.put_line('status=' || apex_web_service.g_status_code);
         dbms_output.put_line('l_clob=' || l_clob);
         apex_json.parse(l_clob);
-        RETURN apex_json.get_varchar2(p_path => 'version');
+        -- El JSON trae release, no version. Antes devolvia siempre NULL.
+        RETURN apex_json.get_varchar2(p_path => 'release');
     END fun_version;
 
     FUNCTION fun_taxpayer RETURN type_response AS

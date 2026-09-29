@@ -1,6 +1,7 @@
 namespace RoQuiApi.RoQui.Version;
 
 using Microsoft.AspNetCore.Mvc;
+using RoQuiApi.RoQui.Security;
 using RoQuiApi.RoQui.Version.Repository;
 
 [ApiController]
@@ -14,6 +15,9 @@ public class VersionController : ControllerBase
         _versionRepo = versionRepo;
     }
 
+    // Devuelve las versiones del sistema operativo, del runtime y de la base,
+    // asi que no puede quedar abierto a cualquiera.
+    [ApiKey]
     [HttpGet(Name = "GetVersion")]
     public VersionDto Get()
     {
