@@ -1,4 +1,4 @@
-namespace RoQuiApi.RoQui.Invoice.Controller;
+﻿namespace RoQuiApi.RoQui.Invoice.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Invoice.Repository;
@@ -63,7 +63,7 @@ public class InvoiceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+            return ErrorResult.From(ex, "factura");
         }
     }
 }

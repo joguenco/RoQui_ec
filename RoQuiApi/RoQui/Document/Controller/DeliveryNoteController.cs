@@ -1,4 +1,4 @@
-namespace RoQuiApi.RoQui.Invoice.Controller;
+﻿namespace RoQuiApi.RoQui.Invoice.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -56,7 +56,7 @@ public class DeliveryNoteController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
+            return ErrorResult.From(ex, "guia de remision");
         }
     }
 }
