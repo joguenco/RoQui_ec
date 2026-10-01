@@ -8,5 +8,5 @@ Software para facturación electrónica Ecuador
 [Frontend for RoQui_ec](roqui-client/README.md)
 
 # RoQui API Server
-[Backend for RoQui_ec](RoQuiApi/README.md)
+[API Backend for RoQui_Api](RoQuiApi/README.md)
 
