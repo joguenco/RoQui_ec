@@ -3,7 +3,7 @@ namespace RoQuiApi.RoQui.Electronic.Client;
 using System.Net.Http.Json;
 using RoQuiApi.RoQui.Electronic.Repository;
 
-public static class Client
+public class Client<T>
 {
     private static readonly HttpClient HttpClient = new();
 
@@ -11,14 +11,15 @@ public static class Client
         string documentUrl,
         string code,
         string number,
-        IElectronicRepo electronicRepo)
+        IElectronicRepo electronicRepo,
+        ILogger<T> logger)
     {
         try
         {
             var url = electronicRepo.GetParameterByName("RoQui HTTP Server");
             var apiKey = electronicRepo.GetParameterByName("RoQui HTTP X-API-KEY");
 
-            if (string.IsNullOrWhiteSpace(url?.Value) && string.IsNullOrWhiteSpace(apiKey?.Value))
+            if (string.IsNullOrWhiteSpace(url?.Value) || string.IsNullOrWhiteSpace(apiKey?.Value))
             {
                 throw new InvalidOperationException("Invalid configuration for electronic document authorization.");
             }
@@ -32,11 +33,11 @@ public static class Client
             };
             request.Headers.Add("X-API-KEY", apiKey.Value);
             var response = await HttpClient.SendAsync(request);
-            Console.WriteLine($"Authorize invoice {code}-{number}: {(int)response.StatusCode}");
+            logger.LogInformation("Authorize invoice {code}-{number}: {status}", code, number, response.StatusCode);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error authorizing invoice {code}-{number}: {ex.Message}");
+            logger.LogError(ex, "Error authorizing invoice {code}-{number}", code, number);
         }
     }
 

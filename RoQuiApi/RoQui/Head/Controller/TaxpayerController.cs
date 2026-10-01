@@ -17,12 +17,13 @@ public class TaxpayerController : ControllerBase
 
     private readonly ITaxpayerRepo _taxpayerRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<TaxpayerController> _logger;
 
-
-    public TaxpayerController(ITaxpayerRepo taxpayerRepo, IMapper mapper)
+    public TaxpayerController(ITaxpayerRepo taxpayerRepo, IMapper mapper, ILogger<TaxpayerController> logger)
     {
         _taxpayerRepo = taxpayerRepo;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [ApiKey]
@@ -39,7 +40,6 @@ public class TaxpayerController : ControllerBase
         }
         else if (_taxpayerRepo.CountTaxpayers() > 1)
         {
-
             return BadRequest(new MessageDto
             {
                 Status = StatusCodes.Status400BadRequest,
@@ -55,13 +55,15 @@ public class TaxpayerController : ControllerBase
             var existingTaxpayer = _taxpayerRepo.GetTaxpayerByIdentification(taxpayerBody.Identification);
             if (existingTaxpayer == null)
             {
+                var message = "The taxpayer with the provided identification does not exist in the database";
+                _logger.LogError("Error in CreateTaxpayer controller: {message}", message);
                 return BadRequest(new MessageDto
                 {
                     Status = StatusCodes.Status400BadRequest,
                     Title = "Taxpayer not found",
                     Errors = new Error
                     {
-                        Message = ["The taxpayer with the provided identification does not exist in the database"]
+                        Message = [message]
                     }
                 });
             }

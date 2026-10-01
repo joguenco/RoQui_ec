@@ -15,15 +15,16 @@ using RoQuiApi.RoQui.Security;
 public class WithholdController : ControllerBase
 {
     private readonly IWithholdRepo _withholdRepo;
-
     private readonly IElectronicRepo _electronicRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<WithholdController> _logger;
 
-    public WithholdController(IWithholdRepo withholdRepo, IElectronicRepo electronicRepo, IMapper mapper)
+    public WithholdController(IWithholdRepo withholdRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<WithholdController> logger)
     {
         _withholdRepo = withholdRepo;
         _electronicRepo = electronicRepo;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [ApiKey]
@@ -50,7 +51,7 @@ public class WithholdController : ControllerBase
             _withholdRepo.CreateWithhold(withholdModel);
             _withholdRepo.SaveChanges();
 
-            _ = Client.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo);
+            _ = Client<WithholdController>.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo, _logger);
 
             return Ok(new MessageDto { Title = "ENVIADO" });
         }

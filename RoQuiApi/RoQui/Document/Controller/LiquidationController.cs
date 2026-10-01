@@ -15,15 +15,16 @@ using RoQuiApi.RoQui.Security;
 public class LiquidationController : ControllerBase
 {
     private readonly IInvoiceRepo _invoiceRepo;
-
     private readonly IElectronicRepo _electronicRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<LiquidationController> _logger;
 
-    public LiquidationController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper)
+    public LiquidationController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<LiquidationController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [ApiKey]
@@ -52,7 +53,7 @@ public class LiquidationController : ControllerBase
             _invoiceRepo.CreateInvoice(liquidationModel);
             _invoiceRepo.SaveChanges();
 
-            _ = Client.Authorize("/roqui/v2/liquidation/authorize", liquidationBody.Code, liquidationBody.Number, _electronicRepo);
+            _ = Client<LiquidationController>.Authorize("/roqui/v2/liquidation/authorize", liquidationBody.Code, liquidationBody.Number, _electronicRepo, _logger);
 
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
