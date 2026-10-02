@@ -1,4 +1,4 @@
-﻿namespace RoQuiApi.RoQui.Invoice.Controller;
+namespace RoQuiApi.RoQui.Invoice.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -9,6 +9,7 @@ using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -58,11 +59,13 @@ public class CreditNoteController : ControllerBase
 
             _ = Client<CreditNoteController>.Authorize("/roqui/v2/creditnote/authorize", creditNoteBody.Code, creditNoteBody.Number, _electronicRepo, _logger);
 
+            _logger.LogInformation("Created {code} {number}", creditNoteBody.Code, creditNoteBody.Number);
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
-            return ErrorResult.From(ex, "nota de credito");
+            _logger.LogCritical(ex, "Error: {creditNoteBody}", JsonSerializer.Serialize(creditNoteBody));
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }
 }

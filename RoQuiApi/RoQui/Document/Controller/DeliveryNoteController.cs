@@ -1,4 +1,4 @@
-﻿namespace RoQuiApi.RoQui.Invoice.Controller;
+namespace RoQuiApi.RoQui.Invoice.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -9,6 +9,7 @@ using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -53,11 +54,13 @@ public class DeliveryNoteController : ControllerBase
 
             _ = Client<DeliveryNoteController>.Authorize("/roqui/v2/deliverynote/authorize", deliveryNoteBody.Code, deliveryNoteBody.Number, _electronicRepo, _logger);
 
+            _logger.LogInformation("Created {code} {number}", deliveryNoteBody.Code, deliveryNoteBody.Number);
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
-            return ErrorResult.From(ex, "guia de remision");
+            _logger.LogCritical(ex, "Error: {deliveryNoteBody}", JsonSerializer.Serialize(deliveryNoteBody));
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }
 }
