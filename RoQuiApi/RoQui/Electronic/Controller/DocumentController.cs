@@ -1,4 +1,4 @@
-﻿namespace RoQuiApi.RoQui.Electronic.Controller;
+namespace RoQuiApi.RoQui.Electronic.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Document.Dto;
@@ -39,7 +39,7 @@ public class DocumentController : ControllerBase
         }
         catch (Exception ex)
         {
-            return ErrorResult.From(ex, "estado del documento");
+            return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }
 }

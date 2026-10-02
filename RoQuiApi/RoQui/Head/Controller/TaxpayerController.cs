@@ -1,4 +1,4 @@
-using RoQuiApi.RoQui.Head.Dto;
+﻿using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Shared;
@@ -42,7 +42,6 @@ public class TaxpayerController : ControllerBase
         {
             return BadRequest(new MessageDto
             {
-                Status = StatusCodes.Status400BadRequest,
                 Title = "Various taxpayers in the database",
                 Errors = new Error
                 {
@@ -59,7 +58,6 @@ public class TaxpayerController : ControllerBase
                 _logger.LogError("Error in CreateTaxpayer controller: {message}", message);
                 return BadRequest(new MessageDto
                 {
-                    Status = StatusCodes.Status400BadRequest,
                     Title = "Taxpayer not found",
                     Errors = new Error
                     {
@@ -83,6 +81,6 @@ public class TaxpayerController : ControllerBase
             }
         }
 
-        return StatusCode(StatusCodes.Status204NoContent, new MessageDto { Status = StatusCodes.Status204NoContent, Title = "Nothing to update" });
+        return StatusCode(StatusCodes.Status204NoContent, new MessageDto { Title = "Nothing to update" });
     }
 }
