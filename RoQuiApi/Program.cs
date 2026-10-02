@@ -21,7 +21,7 @@ using Serilog.Filters;
 // que al reiniciar no se abra otro archivo con _001.
 var loggerConfiguration = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/general/roqui_api.log", rollingInterval: RollingInterval.Day, shared: true);
+    .WriteTo.File("logs/roqui_api.log", rollingInterval: RollingInterval.Day, shared: true);
 
 foreach (var (controller, folder) in new (Type, string)[]
 {
