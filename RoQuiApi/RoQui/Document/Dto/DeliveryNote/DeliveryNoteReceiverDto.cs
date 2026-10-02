@@ -1,6 +1,7 @@
 namespace RoQuiApi.RoQui.Document.DeliveryNote.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Shared;
 
 public class DeliveryNoteReceiverDto
 {
@@ -9,6 +10,7 @@ public class DeliveryNoteReceiverDto
     public required int Line { get; set; }
 
     [Required]
+    [IdentificationType]
     public required string IdentificationType { get; set; }
 
     [Required]

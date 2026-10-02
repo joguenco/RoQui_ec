@@ -1,6 +1,96 @@
-@import '../../node_modules/bulma/versions/bulma-no-dark-mode.scss';
+/* Bulma completo, con el tema oscuro. El tema lo elige el boton de la
+   cabecera (data-theme en <html>), no el de Windows. */
+@import '../../node_modules/bulma/bulma.scss';
 @import '../../node_modules/@fontsource/commit-mono/500.css';
 
 body {
   font-family: 'Commit Mono', monospace;
+}
+
+/* ---- Arreglos del tema oscuro. En claro no cambia nada. ---- */
+
+/* que el navegador pinte oscuros sus propios controles: el autocompletar de
+   los campos, el calendario de las fechas, las barras de desplazamiento */
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* los botones y avisos "is-light" de Bulma (PDF, XML, el recuadro del login)
+   llevan un fondo casi blanco: en oscuro van con el tono oscuro de su color */
+[data-theme='dark'] .button.is-light {
+  --bulma-button-background-l: 20%;
+  --bulma-button-color-l: 75%;
+}
+
+[data-theme='dark'] .notification.is-light {
+  --bulma-notification-background-l: 20%;
+  --bulma-notification-color-l: 85%;
+}
+
+/* el menu de Inicio lleva el texto en gris oscuro fijo y los iconos en negro */
+[data-theme='dark'] .panel .has-text-grey-dark {
+  color: var(--bulma-text-strong) !important;
+}
+
+[data-theme='dark'] .panel img {
+  filter: invert(1);
+}
+
+/* los paneles de Inicio y Parametros quedaban casi negros: un fondo un poco
+   mas claro con el tono azul de su cabecera, y la fila se aclara al pasar */
+[data-theme='dark'] .panel.is-link {
+  background-color: hsl(var(--bulma-link-h), 25%, 16%);
+}
+
+[data-theme='dark'] .panel.is-link .panel-block:hover {
+  background-color: hsl(var(--bulma-link-h), 25%, 21%);
+}
+
+[data-theme='dark'] .panel.is-link .panel-block a {
+  color: var(--bulma-text-strong);
+}
+
+/* tablas y ventanitas con los grises de Establecimientos: el cuerpo un poco
+   mas claro que la pagina y la cabecera un poco mas fuerte */
+[data-theme='dark'] .table {
+  --bulma-table-striped-row-even-background-color: hsl(
+    var(--bulma-scheme-h),
+    var(--bulma-scheme-s),
+    17%
+  );
+  --bulma-table-row-hover-background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 20%);
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 14%);
+}
+
+[data-theme='dark'] .table thead,
+[data-theme='dark'] .table tfoot {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 21%);
+}
+
+[data-theme='dark'] .modal-card-body {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 14%);
+}
+
+/* la barra de arriba: gris como la cabecera de Establecimientos, con una
+   linea turquesa abajo para no perder el color de RoQui */
+[data-theme='dark'] .navbar.is-primary {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 21%);
+  border-bottom: 2px solid var(--bulma-primary);
+}
+
+[data-theme='dark'] .navbar.is-primary a.navbar-item:hover,
+[data-theme='dark'] .navbar.is-primary a.navbar-item.is-active,
+[data-theme='dark'] .navbar.is-primary .navbar-link:hover {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), 27%);
+}
+
+[data-theme='dark'] .navbar .has-text-grey-dark,
+[data-theme='dark'] .navbar .has-text-grey-darker {
+  color: var(--bulma-text-strong) !important;
+}
+
+/* la estrella y la casa son negras; el sol y la luna no se tocan */
+[data-theme='dark'] .navbar-brand img,
+[data-theme='dark'] .navbar-start img {
+  filter: invert(1);
 }

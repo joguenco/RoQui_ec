@@ -9,6 +9,7 @@ using RoQuiApi.RoQui.Invoice.Model;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -53,10 +54,12 @@ public class WithholdController : ControllerBase
 
             _ = Client<WithholdController>.Authorize("/roqui/v2/withhold/authorize", withholdBody.Code, withholdBody.Number, _electronicRepo, _logger);
 
+            _logger.LogInformation("Created {code} {number}", withholdBody.Code, withholdBody.Number);
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
+            _logger.LogCritical(ex, "Error: {withholdBody}", JsonSerializer.Serialize(withholdBody));
             return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }

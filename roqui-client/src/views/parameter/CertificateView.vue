@@ -164,6 +164,8 @@ export default {
 
 <style scoped>
 .modal-card-head {
-  background-color: #66d1ff;
+  /* el celeste no cambia con el tema, su texto va siempre oscuro */
+  background-color: var(--bulma-info);
+  --bulma-strong-color: hsl(var(--bulma-text-h), var(--bulma-text-s), 21%);
 }
 </style>

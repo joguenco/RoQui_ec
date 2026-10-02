@@ -1,8 +1,9 @@
-namespace RoQuiApi.RoQui.Document.DeliveryNote.Dto;
+﻿namespace RoQuiApi.RoQui.Document.DeliveryNote.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Shared;
 
-public class DeliveryNoteDto
+public class DeliveryNoteDto : IValidatableObject
 {
     [Required]
     public required string Code { get; set; }
@@ -18,6 +19,7 @@ public class DeliveryNoteDto
     public required string AddressStart { get; set; }
 
     [Required]
+    [IdentificationType]
     public required string CarrierIdentificationType { get; set; }
 
     [Required]
@@ -40,10 +42,20 @@ public class DeliveryNoteDto
     public string? Observation { get; set; }
 
     [Required]
-    [RegularExpression(@"^\d{49}$", ErrorMessage = "The access key must contain exactly 49 digits.")]
+    [AccessKey]
     public required string AccessKey { get; set; }
 
     [Required]
     [MinLength(1, ErrorMessage = "The delivery note must contain at least one receiver.")]
     public virtual required ICollection<DeliveryNoteReceiverDto> DeliveryNoteReceivers { get; set; }
+
+    // La fecha, el codigo y el numero se usan para construir la clave de acceso,
+    // asi que tienen que cuadrar con lo que viaja dentro de ella.
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        foreach (var error in RoQuiApi.RoQui.Shared.AccessKey.ValidateAgainst(AccessKey, Code, Number, Date, "06"))
+        {
+            yield return new ValidationResult(error);
+        }
+    }
 }

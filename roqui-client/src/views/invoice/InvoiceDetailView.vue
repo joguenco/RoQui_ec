@@ -118,7 +118,8 @@
         <p><strong>Autorización: </strong> {{ document.authorization }}</p>
         <p><strong>Fecha de Autorización: </strong> {{ document.authorizationDate }}</p>
         <p><strong>Estado: </strong> {{ document.status }}</p>
-        <p><strong>Observación: </strong> {{ document.observation }}</p>
+        <p><strong>Observación: </strong></p>
+        <AppObservation :observation="document.observation" />
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
@@ -133,8 +134,10 @@ import invoiceService from '@/services/invoice-service'
 import documentService from '@/services/document-service'
 import { emailService } from '@/services/email-client-service'
 import { format } from '@formkit/tempo'
+import AppObservation from '@/components/shared/AppObservation.vue'
 
 export default {
+  components: { AppObservation },
   data: () => ({
     user: {},
     isActive: false,
@@ -277,6 +280,8 @@ a.status_no_enviado {
   opacity: 0.4;
 }
 .modal-card-head {
-  background-color: #66d1ff;
+  /* el celeste no cambia con el tema, su texto va siempre oscuro */
+  background-color: var(--bulma-info);
+  --bulma-strong-color: hsl(var(--bulma-text-h), var(--bulma-text-s), 21%);
 }
 </style>

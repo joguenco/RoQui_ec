@@ -9,6 +9,7 @@ using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -55,10 +56,12 @@ public class LiquidationController : ControllerBase
 
             _ = Client<LiquidationController>.Authorize("/roqui/v2/liquidation/authorize", liquidationBody.Code, liquidationBody.Number, _electronicRepo, _logger);
 
+            _logger.LogInformation("Created {code} {number}", liquidationBody.Code, liquidationBody.Number);
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
+            _logger.LogCritical(ex, "Error: {liquidationBody}", JsonSerializer.Serialize(liquidationBody));
             return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }

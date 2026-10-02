@@ -1,9 +1,10 @@
-namespace RoQuiApi.RoQui.Document.Invoice.Dto;
+﻿namespace RoQuiApi.RoQui.Document.Invoice.Dto;
 
 using System.ComponentModel.DataAnnotations;
+using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Document.Dto;
 
-public class InvoiceDto
+public class InvoiceDto : IValidatableObject
 {
     [Required]
     public required string Code { get; set; }
@@ -12,6 +13,7 @@ public class InvoiceDto
     [Required]
     public required DateTime Date { get; set; }
     [Required]
+    [IdentificationType]
     public required string IdentificationType { get; set; }
     [Required]
     public required string Identification { get; set; }
@@ -22,7 +24,7 @@ public class InvoiceDto
 
     public string? DeliveryNote { get; set; }
     [Required]
-    [RegularExpression(@"^\d{49}$", ErrorMessage = "The access key must contain exactly 49 digits.")]
+    [AccessKey]
     public required string AccessKey { get; set; }
 
     [Required]
@@ -34,4 +36,14 @@ public class InvoiceDto
     public virtual required ICollection<PaymentDto> Payments { get; set; }
 
     public virtual ICollection<InformationDto>? Informations { get; set; }
+
+    // La fecha, el codigo y el numero se usan para construir la clave de acceso,
+    // asi que tienen que cuadrar con lo que viaja dentro de ella.
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        foreach (var error in RoQuiApi.RoQui.Shared.AccessKey.ValidateAgainst(AccessKey, Code, Number, Date, "01"))
+        {
+            yield return new ValidationResult(error);
+        }
+    }
 }

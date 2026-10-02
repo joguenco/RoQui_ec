@@ -1,4 +1,4 @@
-namespace RoQuiApi.RoQui.Security;
+﻿namespace RoQuiApi.RoQui.Security;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -23,7 +23,7 @@ public class ApiKeyAuthorizationFilter : IAuthorizationFilter
         if (!_apiKeyValidator.IsValid(requestApiKey))
         {
             context.Result = new UnauthorizedObjectResult(
-                new MessageDto { Title = "Invalid API Key", Status = 401 });
+                new MessageDto { Title = "Invalid API Key" });
         }
     }
 }

@@ -9,6 +9,7 @@ using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
+using System.Text.Json;
 
 [ApiController]
 [Route("[controller]")]
@@ -72,10 +73,12 @@ public class DebitNoteController : ControllerBase
 
             _ = Client<DebitNoteController>.Authorize("/roqui/v2/debitnote/authorize", debitNoteBody.Code, debitNoteBody.Number, _electronicRepo, _logger);
 
+            _logger.LogInformation("Created {code} {number}", debitNoteBody.Code, debitNoteBody.Number);
             return Ok(new MessageDto { Title = "ENVIADO" });
         }
         catch (Exception ex)
         {
+            _logger.LogCritical(ex, "Error: {debitNoteBody}", JsonSerializer.Serialize(debitNoteBody));
             return StatusCode(500, new MessageDto { Title = "Error", Errors = new Error { Message = [ex.Message] } });
         }
     }
