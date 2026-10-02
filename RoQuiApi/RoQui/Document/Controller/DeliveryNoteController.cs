@@ -15,15 +15,16 @@ using RoQuiApi.RoQui.Security;
 public class DeliveryNoteController : ControllerBase
 {
     private readonly IDeliveryNoteRepo _deliveryNoteRepo;
-
     private readonly IElectronicRepo _electronicRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<DeliveryNoteController> _logger;
 
-    public DeliveryNoteController(IDeliveryNoteRepo deliveryNoteRepo, IElectronicRepo electronicRepo, IMapper mapper)
+    public DeliveryNoteController(IDeliveryNoteRepo deliveryNoteRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<DeliveryNoteController> logger)
     {
         _deliveryNoteRepo = deliveryNoteRepo;
         _electronicRepo = electronicRepo;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [ApiKey]
@@ -50,7 +51,7 @@ public class DeliveryNoteController : ControllerBase
             _deliveryNoteRepo.CreateDeliveryNote(deliveryNoteModel);
             _deliveryNoteRepo.SaveChanges();
 
-            _ = Client.Authorize("/roqui/v2/deliverynote/authorize", deliveryNoteBody.Code, deliveryNoteBody.Number, _electronicRepo);
+            _ = Client<DeliveryNoteController>.Authorize("/roqui/v2/deliverynote/authorize", deliveryNoteBody.Code, deliveryNoteBody.Number, _electronicRepo, _logger);
 
             return Ok(new MessageDto { Title = "ENVIADO" });
         }

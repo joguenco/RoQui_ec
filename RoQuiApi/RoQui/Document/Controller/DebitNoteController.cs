@@ -15,15 +15,16 @@ using RoQuiApi.RoQui.Security;
 public class DebitNoteController : ControllerBase
 {
     private readonly IInvoiceRepo _invoiceRepo;
-
     private readonly IElectronicRepo _electronicRepo;
     private readonly IMapper _mapper;
+    private readonly ILogger<DebitNoteController> _logger;
 
-    public DebitNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper)
+    public DebitNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<DebitNoteController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [ApiKey]
@@ -69,7 +70,7 @@ public class DebitNoteController : ControllerBase
             _invoiceRepo.CreateInvoice(debitNoteModel);
             _invoiceRepo.SaveChanges();
 
-            _ = Client.Authorize("/roqui/v2/debitnote/authorize", debitNoteBody.Code, debitNoteBody.Number, _electronicRepo);
+            _ = Client<DebitNoteController>.Authorize("/roqui/v2/debitnote/authorize", debitNoteBody.Code, debitNoteBody.Number, _electronicRepo, _logger);
 
             return Ok(new MessageDto { Title = "ENVIADO" });
         }

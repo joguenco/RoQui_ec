@@ -7,8 +7,15 @@ using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Security;
 using RoQuiApi.RoQui.Version.Repository;
 using Scalar.AspNetCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/roqui_api.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
