@@ -105,6 +105,8 @@ MODELOS = {
     # este no es un modelo, es el dto de los reportes
     # lleva el mismo tipo porque recibe el id de los modelos de arriba
     "common/dto/ReportReciptDto.kt": ("Long", "UUID"),
+    # el de las guias, que no lleva total ni correo
+    "note/delivery/dto/ReportDeliveryNoteDto.kt": ("Long", "UUID"),
 }
 
 # los servicios que se revisan en el ps

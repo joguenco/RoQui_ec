@@ -4,7 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.math.BigDecimal
 import java.util.Date
 import org.hibernate.annotations.Immutable
 
@@ -23,14 +22,12 @@ class ReportDeliveryNote {
 
     @Column(name = "date", columnDefinition = "DATE") val date: Date? = null
 
-    /** Cuantos destinatarios lleva el viaje. */
-    @Column(name = "total") val total: BigDecimal? = null
-
+    /** El transportista, no el destinatario. */
     @Column(name = "identification") val identification: String? = null
 
     @Column(name = "legal_name") val legalName: String? = null
 
-    @Column(name = "email") val email: String? = null
+    @Column(name = "plate") val plate: String? = null
 
     @Column(name = "status") val status: String? = null
 }

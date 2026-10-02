@@ -1,7 +1,7 @@
 package dev.joguenco.roqui.note.delivery.service
 
-import dev.joguenco.roqui.common.dto.ReportReciptDto
 import dev.joguenco.roqui.common.repository.CustomReportRepository
+import dev.joguenco.roqui.note.delivery.dto.ReportDeliveryNoteDto
 import dev.joguenco.roqui.note.delivery.model.ReportDeliveryNote
 import dev.joguenco.roqui.util.DateUtil
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ class ReportDeliveryNoteService(
         startDate: String,
         endDate: String,
         status: String = "All",
-    ): MutableList<ReportReciptDto> {
+    ): MutableList<ReportDeliveryNoteDto> {
 
         val startDateForQuery = DateUtil.toDate(startDate)
         val endDateForQuery = DateUtil.toDate(endDate)
@@ -28,16 +28,15 @@ class ReportDeliveryNoteService(
 
         return result
             .map {
-                ReportReciptDto(
+                ReportDeliveryNoteDto(
                     id = it.id,
                     code = it.code,
                     number = it.number,
                     accessKey = it.accessKey,
                     date = it.date,
-                    total = it.total,
                     identification = it.identification,
                     legalName = it.legalName,
-                    email = it.email,
+                    plate = it.plate,
                     status = it.status,
                 )
             }

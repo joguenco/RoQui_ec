@@ -1,6 +1,6 @@
 package dev.joguenco.roqui.note.delivery.controller
 
-import dev.joguenco.roqui.common.dto.ReportReciptDto
+import dev.joguenco.roqui.note.delivery.dto.ReportDeliveryNoteDto
 import dev.joguenco.roqui.note.delivery.service.ReportDeliveryNoteService
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
@@ -33,6 +33,6 @@ class ReportDeliveryNoteController {
         }
         val reportDeliveryNote =
             reportDeliveryNoteService.getDeliveryNoteByDatesAndStatus(startDate, endDate, status)
-        return ResponseEntity<MutableList<ReportReciptDto>>(reportDeliveryNote, HttpStatus.OK)
+        return ResponseEntity<MutableList<ReportDeliveryNoteDto>>(reportDeliveryNote, HttpStatus.OK)
     }
 }
