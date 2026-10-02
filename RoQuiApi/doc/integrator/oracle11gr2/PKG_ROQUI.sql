@@ -62,6 +62,10 @@ CREATE OR REPLACE PACKAGE pkg_roqui AS
         p_number IN VARCHAR2
     ) RETURN VARCHAR2;
 
+    FUNCTION fun_roqui_code (
+        p_code IN VARCHAR2
+    ) RETURN VARCHAR2;
+
     PROCEDURE pro_save_response (
         p_code               IN VARCHAR2,
         p_number             IN VARCHAR2,
@@ -291,7 +295,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', 'FV');
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -461,7 +465,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -612,7 +616,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -767,7 +771,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -917,7 +921,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -1070,7 +1074,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
         v_access_key := fun_access_key(rec_header.fecha, rec_header.codigo, rec_header.numero);
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        apex_json.write('code', rec_header.codigo);
+        apex_json.write('code', fun_roqui_code(rec_header.codigo));
         apex_json.write('number', rec_header.numero);
         apex_json.write('date',
                         to_char(rec_header.fecha, 'yyyy-mm-dd"T"hh24:mi:ss"Z"'));
@@ -1276,6 +1280,23 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
             RETURN NULL;
     END fun_access_key;
 
+    -- A RoQuiApi van los codigos de DonPos. Dentro de Oracle siguen los de roteg.
+    FUNCTION fun_roqui_code (
+        p_code IN VARCHAR2
+    ) RETURN VARCHAR2 AS
+    BEGIN
+        RETURN
+            CASE p_code
+                WHEN 'FAC' THEN 'FV'
+                WHEN 'LIQ' THEN 'LQ'
+                WHEN 'DVC' THEN 'DV'
+                WHEN 'NCC' THEN 'NC'
+                WHEN 'NDC' THEN 'ND'
+                WHEN 'RET' THEN 'RT'
+                ELSE p_code
+            END;
+    END fun_roqui_code;
+
     PROCEDURE pro_save_response (
         p_code               IN VARCHAR2,
         p_number             IN VARCHAR2,
@@ -1341,9 +1362,8 @@ CREATE OR REPLACE PACKAGE BODY pkg_roqui AS
     BEGIN        
         apex_json.initialize_clob_output;
         apex_json.open_object;
-        -- La factura es el unico que cambia de nombre entre los dos sistemas:
-        -- en Oracle es FAC y en PostgreSQL FV. Los demas se llaman igual.
-        apex_json.write('code', CASE WHEN p_code = 'FAC' THEN 'FV' ELSE p_code END);
+        -- En PostgreSQL se guardo con el codigo traducido, se busca igual.
+        apex_json.write('code', fun_roqui_code(p_code));
         apex_json.write('number', p_number);
         apex_json.close_object;
         l_body := apex_json.get_clob_output;

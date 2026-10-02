@@ -31,9 +31,9 @@ CREATE VIEW v_ele_credit_notes AS
         i.access_key
     FROM documents i
     JOIN documents_detail d ON i.id = d.document_id
-    -- El ERP usa dos codigos para la nota de credito: DVC devolucion de cliente
-    -- y NCC nota de credito cliente. Los dos son codDoc 04 para el SRI.
-    WHERE i.code IN ('DVC', 'NCC')
+    -- Dos codigos para la nota de credito: DV devolucion (DVC en roteg) y NC
+    -- nota de credito (NCC en roteg). Los dos son codDoc 04 para el SRI.
+    WHERE i.code IN ('DV', 'NC')
     GROUP BY
         i.id, i.code, i.number,
         substr(i.number, 1, 3), substr(i.number, 4, 3), substr(i.number, 7, 15),
@@ -91,7 +91,7 @@ CREATE VIEW v_ele_debit_notes AS
                  FROM debit_notes_reason GROUP BY document_id) r ON r.document_id = d.id
     LEFT JOIN (SELECT document_id, sum(value) total
                  FROM debit_notes_tax GROUP BY document_id) t ON t.document_id = d.id
-    WHERE d.code = 'NDC';
+    WHERE d.code = 'ND';
 
 DROP VIEW IF EXISTS v_ele_debit_notes_detail cascade;
 CREATE VIEW v_ele_debit_notes_detail AS
@@ -240,6 +240,9 @@ CREATE VIEW v_ele_invoices AS
     join documents_detail d
     on
         i.id = d.document_id
+    -- documents guarda los cuatro tipos juntos, el codigo es lo unico que los
+    -- distingue. roteg ya los manda traducidos.
+    where i.code = 'FV'
     group by
         i.id,
         i.code,
@@ -299,6 +302,9 @@ CREATE VIEW v_ele_liquidations AS
         i.access_key
     FROM documents i
     JOIN documents_detail d ON i.id = d.document_id
+    -- documents guarda los cuatro tipos juntos, el codigo es lo unico que los
+    -- distingue. roteg ya los manda traducidos.
+    WHERE i.code = 'LQ'
     GROUP BY
         i.id, i.code, i.number,
         substr(i.number, 1, 3), substr(i.number, 4, 3), substr(i.number, 7, 15),
@@ -433,19 +439,10 @@ SELECT
     g.number AS number,
     g.access_key AS access_key,
     g.date AS date,
-    -- la guia no mueve plata, solo mercaderia
-    0::numeric AS total,
-    -- en el reporte va el primer destinatario, que es a quien se le entrega
-    (SELECT r.identification FROM delivery_notes_receiver r
-     WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1) AS identification,
-    (SELECT r.legal_name FROM delivery_notes_receiver r
-     WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1) AS legal_name,
-    (SELECT i.value
-     FROM v_ele_information i
-     WHERE i.name = 'Email'
-       AND i.identification = (SELECT r.identification FROM delivery_notes_receiver r
-                               WHERE r.delivery_note_id = g.id ORDER BY r.line LIMIT 1)
-     LIMIT 1) AS email,
+    -- en el reporte va el transportista con su placa, igual que en MariaDB
+    g.carrier_identification AS identification,
+    g.carrier_legal_name AS legal_name,
+    g.plate AS plate,
     COALESCE(
         (SELECT e.status
          FROM ele_documents e
@@ -525,11 +522,7 @@ SELECT
         'NO ENVIADO'
     ) AS status
 FROM
-    v_ele_liquidations j
--- La tabla documents guarda facturas y liquidaciones juntas,
--- el codigo del ERP es lo unico que las distingue
-WHERE
-    j.code = 'LIQ';
+    v_ele_liquidations j;
 
 DROP VIEW IF EXISTS v_ele_report_withholds;
 CREATE VIEW v_ele_report_withholds AS
