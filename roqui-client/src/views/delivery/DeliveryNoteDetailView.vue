@@ -4,15 +4,14 @@
       <thead>
         <tr>
           <th class="titulo">
-            <a title="Número de Documento" class="button">Guía</a>
+            <a title="Número de Documento" class="button">Guía Remisión</a>
           </th>
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Destinatarios</th>
           <th class="titulo">Documento</th>
-          <th class="titulo">Razón Social</th>
-          <th class="titulo">Correo</th>
+          <th class="titulo">Razón Social Transportador</th>
+          <th class="titulo">Placa</th>
           <th class="titulo">Estado</th>
           <th class="titulo">PDF</th>
           <th class="titulo">XML</th>
@@ -24,15 +23,14 @@
       <tfoot>
         <tr>
           <th class="titulo">
-            <a title="Número de Documento" class="button">Guía</a>
+            <a title="Número de Documento" class="button">Guía Remisión</a>
           </th>
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Destinatarios</th>
           <th class="titulo">Documento</th>
-          <th class="titulo">Razón Social</th>
-          <th class="titulo">Correo</th>
+          <th class="titulo">Razón Social Transportador</th>
+          <th class="titulo">Placa</th>
           <th class="titulo">Estado</th>
           <th class="titulo">PDF</th>
           <th class="titulo">XML</th>
@@ -48,18 +46,9 @@
             <p>{{ d.number }}</p>
           </td>
           <td>{{ d.date }}</td>
-          <td class="numero">{{ d.total }}</td>
           <td class="numero">{{ d.identification }}</td>
           <td>{{ d.legalName }}</td>
-          <td>
-            <a class="button is-fullwidth is-loading" v-show="d.isSending">{{ d.email }}</a>
-            <a
-              class="button is-text is-outlined is-fullwidth"
-              @click="sendEmail(d.code, d.number, index)"
-              v-show="!d.isSending"
-              >{{ d.email }}</a
-            >
-          </td>
+          <td>{{ d.plate }}</td>
           <td>
             <a
               class="button is-link is-outlined"
@@ -117,7 +106,8 @@
         <p><strong>Autorización: </strong> {{ document.authorization }}</p>
         <p><strong>Fecha de Autorización: </strong> {{ document.authorizationDate }}</p>
         <p><strong>Estado: </strong> {{ document.status }}</p>
-        <p><strong>Observación: </strong> {{ document.observation }}</p>
+        <p><strong>Observación: </strong></p>
+        <AppObservation :observation="document.observation" />
       </section>
       <footer class="modal-card-foot">
         <div class="buttons">
@@ -130,10 +120,11 @@
 <script>
 import deliveryNoteService from '@/services/delivery-note-service'
 import documentService from '@/services/document-service'
-import { emailService } from '@/services/email-client-service'
 import { format } from '@formkit/tempo'
+import AppObservation from '@/components/shared/AppObservation.vue'
 
 export default {
+  components: { AppObservation },
   data: () => ({
     user: {},
     isActive: false,
@@ -209,23 +200,6 @@ export default {
         })
     },
 
-    sendEmail(code, number, index) {
-      this.localDetails[index].isSending = true
-      emailService
-        .send(this.user.accessToken, code, number)
-        .then(() => {
-          this.localDetails[index].isSending = false
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.error('Error: ' + error.response.data)
-          } else {
-            console.error('Error message:', error.message)
-          }
-          this.localDetails[index].isSending = false
-        })
-    },
-
     showDocument(code, number) {
       documentService
         .find(this.user.accessToken, code, number)
@@ -276,6 +250,8 @@ a.status_no_enviado {
   opacity: 0.4;
 }
 .modal-card-head {
-  background-color: #66d1ff;
+  /* el celeste no cambia con el tema, su texto va siempre oscuro */
+  background-color: var(--bulma-info);
+  --bulma-strong-color: hsl(var(--bulma-text-h), var(--bulma-text-s), 21%);
 }
 </style>

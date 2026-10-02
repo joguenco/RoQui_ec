@@ -17,12 +17,12 @@
       <p v-show="taxpayer.other"><strong>Régimen: </strong>{{ taxpayer.other }}</p>
     </div>
   </article>
-  <article class="message is-info m-6">
+  <article class="message is-dark m-6">
     <div class="message-header">
       <p>Establecimientos</p>
     </div>
     <div class="message-body">
-      <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+      <table class="table is-fullwidth">
         <thead>
           <tr>
             <th class="titulo">Código</th>
@@ -87,3 +87,10 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.message-body .table {
+  // sin el fondo blanco, que dentro del recuadro gris parecia un borde
+  background-color: transparent;
+}
+</style>
