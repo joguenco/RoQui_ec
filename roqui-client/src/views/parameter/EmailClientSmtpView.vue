@@ -358,12 +358,15 @@ export default {
 
 <style scoped>
 .card-header {
-  background-color: #66d1ff;
+  background-color: var(--bulma-info);
+  --bulma-card-header-color: hsl(var(--bulma-text-h), var(--bulma-text-s), 21%);
 }
 .modal-card-head {
-  background-color: #66d1ff;
+  /* el celeste no cambia con el tema, su texto va siempre oscuro */
+  background-color: var(--bulma-info);
+  --bulma-strong-color: hsl(var(--bulma-text-h), var(--bulma-text-s), 21%);
 }
 .card-footer {
-  background-color: #f9fafb;
+  background-color: var(--bulma-scheme-main-bis);
 }
 </style>
