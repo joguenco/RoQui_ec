@@ -86,3 +86,6 @@ and go to http://localhost:5276/scalar
 ```
 dotnet watch --launch-profile https
 ```
+
+## Instalación de RoQui API en IIS
+Ver la guía: [doc/iis/README.md](doc/iis/README.md)
