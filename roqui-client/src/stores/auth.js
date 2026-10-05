@@ -28,8 +28,8 @@ export const useAuthStore = defineStore('auth', () => {
     // Decode and store role from access token (if present)
     if (tokens.accessToken) {
       const payload = decodeJwt(tokens.accessToken)
-      // Try common claim names for role
-      const resolvedRole = payload && (payload.role || payload.roles || payload.sub || null)
+      // Try common claim names for role. Not "sub": that is the username, not the role
+      const resolvedRole = payload && (payload.role || payload.roles || null)
       // Normalize when roles is an array
       let finalRole = null
       if (Array.isArray(resolvedRole)) {
@@ -139,17 +139,22 @@ export const useAuthStore = defineStore('auth', () => {
     const storedAccessToken = localStorage.getItem('accessToken')
     const storedRefreshToken = localStorage.getItem('refreshToken')
     const storedUser = localStorage.getItem('user')
-    const storedRole = localStorage.getItem('role')
 
     if (storedAccessToken) {
       accessToken.value = storedAccessToken
-      // ensure role is in sync with token
+      // ensure role is in sync with token. A token without role (an old session)
+      // leaves no role, so the user has to log in again to see Parámetros
       const payload = decodeJwt(storedAccessToken)
-      const resolvedRole = payload && (payload.role || payload.roles || payload.sub || null)
+      const resolvedRole = payload && (payload.role || payload.roles || null)
       if (Array.isArray(resolvedRole)) {
         role.value = resolvedRole.length > 0 ? resolvedRole[0] : null
       } else {
         role.value = resolvedRole
+      }
+      if (role.value) {
+        localStorage.setItem('role', role.value)
+      } else {
+        localStorage.removeItem('role')
       }
     }
     if (storedRefreshToken) {
@@ -161,9 +166,6 @@ export const useAuthStore = defineStore('auth', () => {
       } catch {
         user.value = null
       }
-    }
-    if (storedRole && !role.value) {
-      role.value = storedRole
     }
   }
 
