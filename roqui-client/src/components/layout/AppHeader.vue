@@ -80,7 +80,7 @@ export default {
 
   beforeMount() {
     let role = localStorage.getItem('role')
-    if (role !== 'Administrator' && role !== 'Manager') {
+    if (role !== 'Administrator') {
       console.log('hide parameter menu')
       this.showParameterOption = false
     }

@@ -53,8 +53,19 @@ class AuthenticationService(
         }
     }
 
+    // El cliente necesita el rol para saber que menus mostrar.
     private fun createAccessToken(user: UserDetails) =
-        tokenService.generate(userDetails = user, expirationDate = getAccessTokenExpiration())
+        tokenService.generate(
+            userDetails = user,
+            expirationDate = getAccessTokenExpiration(),
+            additionalClaims = roleClaim(user),
+        )
+
+    // Spring guarda el rol como ROLE_Administrator, al token va sin el prefijo.
+    private fun roleClaim(user: UserDetails): Map<String, Any> =
+        user.authorities.firstOrNull()?.authority?.removePrefix("ROLE_")?.let {
+            mapOf("role" to it)
+        } ?: emptyMap()
 
     private fun createRefreshToken(user: UserDetails) =
         tokenService.generate(userDetails = user, expirationDate = getRefreshTokenExpiration())

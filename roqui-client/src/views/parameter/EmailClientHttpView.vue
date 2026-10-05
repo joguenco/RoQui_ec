@@ -72,7 +72,7 @@ export default {
 
   beforeMount() {
     let role = localStorage.getItem('role')
-    if (role !== 'Administrator' && role !== 'Manager') {
+    if (role !== 'Administrator') {
       this.$router.push('/home')
     }
   },
