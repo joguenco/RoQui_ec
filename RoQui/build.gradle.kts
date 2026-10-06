@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("kapt") version "1.9.25"
     id("com.ncorti.ktfmt.gradle") version "0.26.0"
+    kotlin("plugin.lombok") version "1.9.25"
 }
 
 group = "dev.joguenco"
@@ -45,8 +46,6 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.springframework.boot:spring-boot-starter-security")
     testImplementation("org.springframework.security:spring-security-test")
-    // SystemUtils
-    implementation("org.apache.commons:commons-lang3:3.13.0")
     // AutoMapper Entity to DTO
     implementation("org.mapstruct:mapstruct:1.6.3")
     kapt("org.mapstruct:mapstruct-processor:1.6.3")
@@ -58,9 +57,15 @@ dependencies {
     implementation("dev.joguenco.printer:RoQuiPrinter:2.0.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.1")
-    implementation("net.sf.jasperreports:jasperreports:6.21.5")
-    implementation("net.sf.barcode4j:barcode4j:2.1")
-    implementation("org.apache.xmlgraphics:batik-all:1.18")
+    implementation("net.sf.jasperreports:jasperreports:6.21.5") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
+    implementation("net.sf.barcode4j:barcode4j:2.1") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
+    implementation("org.apache.xmlgraphics:batik-all:1.18") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
     implementation("com.github.librepdf:openpdf:1.3.30")
     // Client SRI
     implementation("dev.joguenco.client:RoQuiClientSri:1.2.0")
@@ -91,6 +96,7 @@ kapt {
         // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
         arg("mapstruct.defaultComponentModel", "spring")
     }
+    keepJavacAnnotationProcessors = true
 }
 
 ktfmt { kotlinLangStyle() }

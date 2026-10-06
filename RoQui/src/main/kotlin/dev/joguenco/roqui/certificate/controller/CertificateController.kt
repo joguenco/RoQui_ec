@@ -4,6 +4,7 @@ import dev.joguenco.roqui.certificate.dto.DayDto
 import dev.joguenco.roqui.certificate.service.CertificateService
 import dev.joguenco.roqui.exception.FileImportException
 import dev.joguenco.roqui.shared.dto.Message
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,11 +21,14 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/roqui/v1")
 class CertificateController {
 
+    private val log = LoggerFactory.getLogger(CertificateController::class.java)
+
     @Autowired lateinit var certificateService: CertificateService
 
     @GetMapping("/certificate")
     fun getCertificate(): ResponseEntity<Any> {
         if (!certificateService.checkCertificateFile()) {
+            log.error("Certificate file not found")
             return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
         }
 
@@ -35,6 +39,7 @@ class CertificateController {
     @GetMapping("/certificate/days-to-expiry")
     fun getDaysToExpiry(): ResponseEntity<Any> {
         if (!certificateService.checkCertificateFile()) {
+            log.error("Certificate file not found")
             return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
         }
 
@@ -56,8 +61,8 @@ class CertificateController {
 
             ResponseEntity(message, HttpStatus.OK)
         } catch (ex: FileImportException) {
-            message.message = ex.message.toString()
-            ResponseEntity(message, HttpStatus.BAD_REQUEST)
+            log.error("Error loading certificate: ${ex.message}")
+            ResponseEntity(Message("Failed to load certificate"), HttpStatus.BAD_REQUEST)
         }
     }
 }

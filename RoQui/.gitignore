@@ -43,3 +43,5 @@ local.properties
 
 ### Python ###
 __pycache__/
+
+RoQui.log

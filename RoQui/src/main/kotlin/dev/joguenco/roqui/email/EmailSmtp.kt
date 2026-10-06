@@ -10,6 +10,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import org.apache.commons.mail2.jakarta.EmailAttachment
 import org.apache.commons.mail2.jakarta.HtmlEmail
+import org.slf4j.LoggerFactory
 
 class EmailSmtp(
     val code: String,
@@ -23,6 +24,7 @@ class EmailSmtp(
         informationService: InformationService,
     ) : this("", "", parameterService, informationService)
 
+    private val log = LoggerFactory.getLogger(EmailSmtp::class.java)
     private val htmlEmail = HtmlEmail()
 
     fun send(): Boolean {
@@ -43,7 +45,7 @@ class EmailSmtp(
 
             val templateFile = parameterService.getEmailTemplate()
             if (!FilesUtil.isFileExists(templateFile)) {
-                println("Template file does not exist: $templateFile")
+                log.error("Template file does not exist: $templateFile")
                 return false
             }
 
@@ -187,7 +189,7 @@ class EmailSmtp(
 
         val templateFile = parameterService.getEmailTemplate()
         if (!FilesUtil.isFileExists(templateFile)) {
-            println("Template file does not exist: $templateFile")
+            log.error("Template file does not exist: $templateFile")
             return Pair(false, "Template file does not exist: $templateFile")
         }
 
