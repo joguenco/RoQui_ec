@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.math.BigDecimal
+import java.util.UUID
 import org.hibernate.annotations.Immutable
 
 /**
@@ -18,7 +19,7 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_ele_withholds_document_taxes")
 class WithholdDocumentTax {
 
-    @Id val id: Long? = null
+    @Id val id: UUID? = null
 
     @Column(name = "code") val code: String? = null
 

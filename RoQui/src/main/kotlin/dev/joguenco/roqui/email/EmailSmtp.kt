@@ -41,7 +41,13 @@ class EmailSmtp(
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = getDocumentTypeName() + " $serieNumber"
 
-            var message = getHtmlMessage(parameterService.getEmailTemplate())
+            val templateFile = parameterService.getEmailTemplate()
+            if (!FilesUtil.isFileExists(templateFile)) {
+                println("Template file does not exist: $templateFile")
+                return false
+            }
+
+            var message = getHtmlMessage(templateFile)
             message = message.replace("Nombre_Empresa", legalName)
             message = message.replace("Tipo_Comprobante", getDocumentTypeName("html"))
             message = message.replace("Numero_Comprobante", serieNumber)
@@ -179,7 +185,13 @@ class EmailSmtp(
 
         htmlEmail.subject = "RoQui Ecuador"
 
-        var message = getHtmlMessage(parameterService.getEmailTemplate())
+        val templateFile = parameterService.getEmailTemplate()
+        if (!FilesUtil.isFileExists(templateFile)) {
+            println("Template file does not exist: $templateFile")
+            return Pair(false, "Template file does not exist: $templateFile")
+        }
+
+        var message = getHtmlMessage(templateFile)
         message = message.replace("Nombre_Empresa", legalName)
         message = message.replace("Tipo_Comprobante", "Mi Comprobante de Prueba")
         message = message.replace("Numero_Comprobante", "000-000-000000001")

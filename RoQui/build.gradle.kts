@@ -32,7 +32,7 @@ dependencies {
     // Database MariaDB
     // runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     // Database PostgreSQL
-    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     // Database SQL Server
     // runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.util.Date
+import java.util.UUID
 import org.hibernate.annotations.Immutable
 
 @Entity
@@ -12,7 +13,7 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_ele_withholds")
 class Withhold {
 
-    @Id val id: Long? = null
+    @Id val id: UUID? = null
 
     @Column(name = "code") val code: String? = null
 

@@ -52,13 +52,16 @@ class SendXML(
         if (!status) {
             return getErrorAuthorization(message)
         }
-
-        if (ambientType == AmbientType.PRODUCTION) {
-            val response = Check.execute(webService.productionAuthorization, accessKey)
-            return response
-        } else {
-            val response = Check.execute(webService.developmentAuthorization, accessKey)
-            return response
+        try {
+            if (ambientType == AmbientType.PRODUCTION) {
+                val response = Check.execute(webService.productionAuthorization, accessKey)
+                return response
+            } else {
+                val response = Check.execute(webService.developmentAuthorization, accessKey)
+                return response
+            }
+        } catch (e: Exception) {
+            return getErrorAuthorization(e.message ?: "Unknown error")
         }
     }
 

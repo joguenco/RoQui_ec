@@ -43,54 +43,29 @@ class PdfBuilder(
 
         val typeDocument = getTypeDocument(accessKey)
 
+        val xmlGenerated = "$pathXmlFile${File.separatorChar}$accessKey.xml"
+        if (!FilesUtil.isFileExists(xmlGenerated)) {
+            println("XML file does not exist: $xmlGenerated")
+            return false
+        }
+
         if (typeDocument == TypeDocument.FACTURA) {
-            val report =
-                InvoiceReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            val report = InvoiceReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
             return report.pdf(authorization, authorizationDate)
         } else if (typeDocument == TypeDocument.NOTA_CREDITO) {
-            return CreditNoteReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            return CreditNoteReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
                 .pdf(authorization, authorizationDate)
         } else if (typeDocument == TypeDocument.NOTA_DEBITO) {
-            return DebitNoteReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            return DebitNoteReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
                 .pdf(authorization, authorizationDate)
         } else if (typeDocument == TypeDocument.LIQUIDACION) {
-            return LiquidationReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            return LiquidationReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
                 .pdf(authorization, authorizationDate)
         } else if (typeDocument == TypeDocument.RETENCION) {
-            return WithholdReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            return WithholdReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
                 .pdf(authorization, authorizationDate)
         } else if (typeDocument == TypeDocument.GUIA) {
-            return DeliveryReport(
-                    "$pathXmlFile${File.separatorChar}$accessKey.xml",
-                    reportFolder,
-                    pathLogo,
-                    pdfOutFolder,
-                )
+            return DeliveryReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
                 .pdf(authorization, authorizationDate)
         }
         return false

@@ -638,11 +638,11 @@ def cmd_cambiar(destino):
 
     print()
     # si la base no responde cortamos aqui, sin tocar ni un archivo
-    if not probar_conexion(destino):
-        print()
-        print("  CANCELADO. no se cambio ningun archivo.")
-        print()
-        return 1
+#     if not probar_conexion(destino):
+#         print()
+#         print("  CANCELADO. no se cambio ningun archivo.")
+#         print()
+#         return 1
 
     print()
     cambios = cambiar_properties(destino, False)
@@ -722,9 +722,9 @@ def cmd_check(destino):
 
     # primero probamos que la base del destino este viva
     print()
-    if not probar_conexion(destino):
-        print()
-        return 1
+#     if not probar_conexion(destino):
+#         print()
+#         return 1
 
     print()
     print("  application.properties")

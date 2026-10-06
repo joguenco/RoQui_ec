@@ -11,7 +11,7 @@ import org.hibernate.annotations.Immutable
 @Table(name = "v_users")
 class User {
 
-    @Id val id: Int? = null
+    @Id val id: Long? = null
 
     @Column(name = "username") val username: String? = null
 

@@ -5,7 +5,7 @@
 - Bulma 1
 - Node 24
 - Vite 8
-- pnpm 11
+- pnpm 12
 
 ## Initialization
 ```
