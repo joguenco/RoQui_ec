@@ -87,5 +87,30 @@ and go to http://localhost:5276/scalar
 dotnet watch --launch-profile https
 ```
 
+## Test
+1. Create database:
+```
+create database roqui_test;
+```
+2. Migrate de database
+- cmd
+```
+set ASPNETCORE_ENVIRONMENT=Testing
+dotnet ef database update
+```
+- powershell
+```
+$env:ASPNETCORE_ENVIRONMENT="Testing"
+dotnet ef database update
+```
+- bash
+```
+ASPNETCORE_ENVIRONMENT=Testing dotnet ef database update
+```
+3. Go to RoQuiApi.Test and run
+```
+dotnet run --launch-profile test
+```
+
 ## Instalación de RoQui API en IIS
 Ver la guía: [doc/iis/README.md](doc/iis/README.md)

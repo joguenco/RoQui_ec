@@ -8,13 +8,24 @@ using RoQuiApi.Seed;
 
 public static class PrepareDb
 {
-    public static void Prepare(IApplicationBuilder app)
+    public static void Prepare(IApplicationBuilder app, bool clearData)
     {
         using (var serviceScope = app.ApplicationServices.CreateScope())
         {
-            ObjectDbCreator(serviceScope.ServiceProvider.GetService<AppDbContext>());
-            SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+            var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+            if (clearData)
+            {
+                ClearData(context.Database);
+            }
+
+            ObjectDbCreator(context);
+            SeedData(context);
         }
+    }
+
+    private static void ClearData(DatabaseFacade db)
+    {
+        db.ExecuteSqlRaw("delete from taxpayers");
     }
 
     private static void ObjectDbCreator(AppDbContext context)

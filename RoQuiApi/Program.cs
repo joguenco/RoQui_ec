@@ -160,7 +160,7 @@ if (app.Environment.IsDevelopment())
 // Las vistas v_ele_* y los parametros tienen que crearse tambien en produccion.
 // Esto estaba dentro del if de arriba, y en IIS el entorno es Production, asi que
 // la base se quedaba sin vistas y RoQui no arrancaba por el ddl-auto=validate.
-PrepareDb.Prepare(app);
+PrepareDb.Prepare(app, clearData: app.Environment.IsEnvironment("Testing"));
 
 app.UseHttpsRedirection();
 
