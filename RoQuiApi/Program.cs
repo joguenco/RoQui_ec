@@ -7,41 +7,15 @@ using RoQuiApi.Data;
 using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
-using RoQuiApi.RoQui.Invoice.Controller;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Security;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Version.Repository;
+using RoQuiApi.Util;
 using Scalar.AspNetCore;
-using Serilog;
-using Serilog.Filters;
-
-// En logs/general va todo y cada documento tiene ademas su carpeta. Un archivo
-// por dia, Serilog guarda los ultimos 31 y borra solo los viejos. shared para
-// que al reiniciar no se abra otro archivo con _001.
-var loggerConfiguration = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.File("logs/roqui_api.log", rollingInterval: RollingInterval.Day, shared: true);
-
-foreach (var (controller, folder) in new (Type, string)[]
-{
-    (typeof(InvoiceController), "invoice"),
-    (typeof(LiquidationController), "liquidation"),
-    (typeof(CreditNoteController), "creditnote"),
-    (typeof(DebitNoteController), "debitnote"),
-    (typeof(DeliveryNoteController), "deliverynote"),
-    (typeof(WithholdController), "withhold"),
-})
-{
-    loggerConfiguration.WriteTo.Logger(document => document
-        .Filter.ByIncludingOnly(Matching.FromSource(controller.FullName!))
-        .WriteTo.File($"logs/{folder}/{folder}.log", rollingInterval: RollingInterval.Day, shared: true));
-}
-
-Log.Logger = loggerConfiguration.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog();
+builder.Host.UseLoggerConfig();
 
 // Add services to the container.
 
@@ -108,45 +82,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
         });
     };
 });
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi(options =>
-{
-    // Orden en que se muestran los grupos en Scalar
-    string[] tagOrder =
-    [
-        "Ping",
-        "Version",
-        "Taxpayer",
-        "Invoice",
-        "CreditNote",
-        "DebitNote",
-        "Liquidation",
-        "Withhold"
-    ];
-
-    options.AddDocumentTransformer((document, context, cancellationToken) =>
-    {
-        if (document.Tags is { Count: > 0 })
-        {
-            var sortedTags = document.Tags
-                .OrderBy(tag =>
-                {
-                    var position = Array.IndexOf(tagOrder, tag.Name);
-                    return position < 0 ? int.MaxValue : position;
-                })
-                .ThenBy(tag => tag.Name)
-                .ToList();
-
-            document.Tags.Clear();
-            foreach (var tag in sortedTags)
-            {
-                document.Tags.Add(tag);
-            }
-        }
-
-        return Task.CompletedTask;
-    });
-});
+builder.Services.AddOpenApiConfig();
 
 var app = builder.Build();
 
