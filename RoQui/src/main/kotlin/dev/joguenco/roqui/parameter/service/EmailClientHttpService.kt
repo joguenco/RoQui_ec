@@ -1,10 +1,13 @@
 package dev.joguenco.roqui.parameter.service
 
 import dev.joguenco.roqui.parameter.dto.EmailServerHttpDto
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class EmailClientHttpService(private val parameterService: ParameterService) {
+
+    private val log = LoggerFactory.getLogger(EmailClientHttpService::class.java)
 
     fun getEmailServerConfiguration(): EmailServerHttpDto {
         val server =
@@ -35,6 +38,7 @@ class EmailClientHttpService(private val parameterService: ParameterService) {
 
             true
         } catch (e: Exception) {
+            log.error("Error updating the email configuration: ${e.message}")
             false
         }
     }

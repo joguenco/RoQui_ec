@@ -14,6 +14,7 @@ import dev.joguenco.roqui.security.util.isValidApiKey
 import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/roqui")
 class InvoiceController {
+
+    private val log = LoggerFactory.getLogger(InvoiceController::class.java)
 
     @Autowired lateinit var invoiceService: InvoiceService
 
@@ -86,8 +89,9 @@ class InvoiceController {
 
             return ResponseEntity.ok(stateCheck)
         } catch (e: Exception) {
-            println("Error Authorize ${e.message}")
-            return ResponseEntity.badRequest().body(Message(e.message!!))
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.internalServerError()
+                .body(Message(e.message ?: "Unexpected error"))
         }
     }
 
@@ -133,8 +137,9 @@ class InvoiceController {
             try {
                 StatusDto(buildInvoice.process(TypeDocument.FACTURA))
             } catch (e: Exception) {
-                println("Error AuthorizeAll ${e.message}")
-                return ResponseEntity.badRequest().body(Message(e.message!!))
+                log.error("Error AuthorizeAll ${e.message}")
+                return ResponseEntity.internalServerError()
+                    .body(Message(e.message ?: "Unexpected error"))
             }
         }
 
@@ -175,8 +180,9 @@ class InvoiceController {
             try {
                 StatusDto(buildInvoice.check(informationService))
             } catch (e: Exception) {
-                println("Error checkAll ${e.message}")
-                return ResponseEntity.badRequest().body(Message(e.message!!))
+                log.error("Error checkAll ${e.message}")
+                return ResponseEntity.internalServerError()
+                    .body(Message(e.message ?: "Unexpected error"))
             }
         }
 

@@ -3,6 +3,7 @@ package dev.joguenco.roqui.electronic.send
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -17,14 +18,17 @@ class WebService {
 
     @Value("\${sri.url.ws.production.authorization}") lateinit var productionAuthorization: String
 
-    fun printPropertyValues() {
-        println("Developer reception: $developmentReception")
-        println("Developer authorization: $developmentAuthorization")
-        println("Production reception: $productionReception")
-        println("Production authorization: $productionAuthorization")
-    }
+    // Nadie la llama. Se deja comentada por si hace falta ver las URLs del SRI.
+    // fun printPropertyValues() {
+    //     println("Developer reception: $developmentReception")
+    //     println("Developer authorization: $developmentAuthorization")
+    //     println("Production reception: $productionReception")
+    //     println("Production authorization: $productionAuthorization")
+    // }
 
     companion object {
+        private val log = LoggerFactory.getLogger(WebService::class.java)
+
         fun isAlive(urlWebServices: String): Pair<Boolean, String> {
             var c: HttpURLConnection? = null
             try {
@@ -36,7 +40,7 @@ class WebService {
                     return true to "Successful connection"
                 }
             } catch (e: IOException) {
-                println("Error SRI web service connection : " + e.message)
+                log.warn("Error SRI web service connection: ${e.message}")
             } finally {
                 c?.disconnect()
             }

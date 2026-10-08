@@ -8,6 +8,7 @@ import dev.joguenco.roqui.electronic.ErrorMessage.getErrorResponse
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
+import org.slf4j.LoggerFactory
 import recepcion.ws.sri.gob.ec.RespuestaSolicitud
 
 class SendXML(
@@ -15,6 +16,8 @@ class SendXML(
     private val baseDirectory: String,
     private val webService: WebService,
 ) {
+    private val log = LoggerFactory.getLogger(SendXML::class.java)
+
     fun send(): RespuestaSolicitud {
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
 
@@ -61,6 +64,7 @@ class SendXML(
                 return response
             }
         } catch (e: Exception) {
+            log.warn("Error checking the authorization in the SRI: ${e.message}")
             return getErrorAuthorization(e.message ?: "Unknown error")
         }
     }

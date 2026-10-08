@@ -10,12 +10,15 @@ import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
+import org.slf4j.LoggerFactory
 
 class PdfBuilder(
     private val accessKey: String,
     private val baseDirectory: String,
     private val pathLogo: String,
 ) {
+    private val log = LoggerFactory.getLogger(PdfBuilder::class.java)
+
     private var authorization: String = ""
     private var authorizationDate: String = ""
 
@@ -45,7 +48,7 @@ class PdfBuilder(
 
         val xmlGenerated = "$pathXmlFile${File.separatorChar}$accessKey.xml"
         if (!FilesUtil.isFileExists(xmlGenerated)) {
-            println("XML file does not exist: $xmlGenerated")
+            log.error("XML file does not exist: $xmlGenerated")
             return false
         }
 

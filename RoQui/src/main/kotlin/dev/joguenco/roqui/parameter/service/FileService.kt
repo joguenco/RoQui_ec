@@ -7,11 +7,14 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import org.apache.coyote.BadRequestException
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
 class FileService(private val parameterService: ParameterService) {
+
+    private val log = LoggerFactory.getLogger(FileService::class.java)
 
     fun uploadFile(file: MultipartFile): String {
         throwIfFileEmpty(file)
@@ -38,7 +41,7 @@ class FileService(private val parameterService: ParameterService) {
 
             return "Load file complete"
         } catch (ex: Exception) {
-            println(ex.message)
+            log.warn("Error loading the file: ${ex.message}")
             throw FileImportException("Error to load the file")
         }
     }

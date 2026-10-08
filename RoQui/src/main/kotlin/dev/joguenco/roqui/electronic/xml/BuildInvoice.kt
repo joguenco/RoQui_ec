@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 class BuildInvoice(
     val code: String,
@@ -18,6 +19,8 @@ class BuildInvoice(
     private val baseDirectory: String,
     private val invoiceService: InvoiceService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildInvoice::class.java)
 
     private val tributaryInformation = invoiceService.getInvoiceAndTaxpayer(code, number)
 
@@ -57,11 +60,11 @@ class BuildInvoice(
                 )
 
             marshaller.marshal(factura, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, factura.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println(e.message)
+            log.error("Error BuildInvoice: ${e.message}")
             return Pair("", "")
         }
     }

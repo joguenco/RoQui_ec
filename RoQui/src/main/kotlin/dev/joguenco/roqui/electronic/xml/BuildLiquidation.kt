@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 class BuildLiquidation(
     val code: String,
@@ -21,6 +22,8 @@ class BuildLiquidation(
     private val baseDirectory: String,
     private val liquidationService: LiquidationService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildLiquidation::class.java)
 
     private val tributaryInformation = liquidationService.getLiquidationAndTaxpayer(code, number)
 
@@ -60,11 +63,11 @@ class BuildLiquidation(
                 )
 
             marshaller.marshal(liquidacionCompra, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, liquidacionCompra.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println("Error BuildLiquidation: ${e.message}")
+            log.error("Error BuildLiquidation: ${e.message}")
             return Pair("", "")
         }
     }

@@ -14,6 +14,7 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 /**
  * Arma el XML de la guia de remision (codDoc 06).
@@ -28,6 +29,8 @@ class BuildDeliveryNote(
     private val baseDirectory: String,
     private val deliveryNoteService: DeliveryNoteService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildDeliveryNote::class.java)
 
     private companion object {
         /** 06 = guia de remision */
@@ -74,11 +77,11 @@ class BuildDeliveryNote(
                 )
 
             marshaller.marshal(guiaRemision, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, guiaRemision.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println("Error BuildDeliveryNote: ${e.message}")
+            log.error("Error BuildDeliveryNote: ${e.message}")
             return Pair("", "")
         }
     }

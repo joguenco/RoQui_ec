@@ -4,9 +4,12 @@ import dev.joguenco.roqui.util.StringUtils.byte2hex
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class Hashcypher : PasswordEncoder {
+    private val log = LoggerFactory.getLogger(Hashcypher::class.java)
+
     override fun encode(rawPassword: CharSequence?): String {
         return hashString(rawPassword.toString())
     }
@@ -31,8 +34,10 @@ class Hashcypher : PasswordEncoder {
                 val res = md.digest()
                 return "sha1:" + byte2hex(res)
             } catch (e: NoSuchAlgorithmException) {
+                log.error("Error hashing the password: ${e.message}")
                 return "plain:$sPassword"
             } catch (e: UnsupportedEncodingException) {
+                log.error("Error hashing the password: ${e.message}")
                 return "plain:$sPassword"
             }
         }

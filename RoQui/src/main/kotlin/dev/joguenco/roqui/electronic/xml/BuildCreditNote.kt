@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 class BuildCreditNote(
     val code: String,
@@ -22,6 +23,8 @@ class BuildCreditNote(
     private val baseDirectory: String,
     private val creditNoteService: CreditNoteService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildCreditNote::class.java)
 
     private val tributaryInformation = creditNoteService.getCreditNoteAndTaxpayer(code, number)
 
@@ -61,11 +64,11 @@ class BuildCreditNote(
                 )
 
             marshaller.marshal(notaCredito, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, notaCredito.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println(e.message)
+            log.error("Error BuildCreditNote: ${e.message}")
             return Pair("", "")
         }
     }
