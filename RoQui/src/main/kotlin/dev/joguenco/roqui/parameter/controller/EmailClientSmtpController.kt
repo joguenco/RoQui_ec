@@ -3,6 +3,7 @@ package dev.joguenco.roqui.parameter.controller
 import dev.joguenco.roqui.parameter.dto.EmailServerSmtpDto
 import dev.joguenco.roqui.parameter.service.EmailClientSmtpService
 import dev.joguenco.roqui.shared.dto.Message
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/roqui/v1")
 class EmailClientSmtpController {
+
+    private val log = LoggerFactory.getLogger(EmailClientSmtpController::class.java)
 
     @Autowired lateinit var emailClientSmtpService: EmailClientSmtpService
 
@@ -39,8 +42,9 @@ class EmailClientSmtpController {
 
             ResponseEntity(message, HttpStatus.OK)
         } catch (ex: Exception) {
+            log.error("Error updating the email configuration: ${ex.message}")
             message.message = ex.message.toString()
-            ResponseEntity(message, HttpStatus.BAD_REQUEST)
+            ResponseEntity(message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 }

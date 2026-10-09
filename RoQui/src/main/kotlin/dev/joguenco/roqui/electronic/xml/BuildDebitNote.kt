@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 class BuildDebitNote(
     val code: String,
@@ -22,6 +23,8 @@ class BuildDebitNote(
     private val baseDirectory: String,
     private val debitNoteService: DebitNoteService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildDebitNote::class.java)
 
     private val tributaryInformation = debitNoteService.getDebitNoteAndTaxpayer(code, number)
 
@@ -61,11 +64,11 @@ class BuildDebitNote(
                 )
 
             marshaller.marshal(notaDebito, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, notaDebito.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println("Error BuildDebitNote: ${e.message}")
+            log.error("Error BuildDebitNote: ${e.message}")
             return Pair("", "")
         }
     }

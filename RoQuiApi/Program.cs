@@ -43,6 +43,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddMessageConfig();
 builder.Services.AddOpenApiConfig();
+builder.Services.AddRateLimit(builder.Configuration);
 
 var app = builder.Build();
 
@@ -59,6 +60,8 @@ if (app.Environment.IsDevelopment())
 PrepareDb.Prepare(app, clearData: app.Environment.IsEnvironment("Testing"));
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
 
 app.UseAuthorization();
 

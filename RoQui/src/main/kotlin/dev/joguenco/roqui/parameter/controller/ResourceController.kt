@@ -6,6 +6,7 @@ import dev.joguenco.roqui.parameter.service.ResourceService
 import dev.joguenco.roqui.shared.dto.Message
 import java.nio.file.Path
 import java.nio.file.Paths
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
@@ -24,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 @RequestMapping("/roqui/v1")
 class ResourceController {
+    private val log = LoggerFactory.getLogger(ResourceController::class.java)
+
     @Autowired lateinit var resourceService: ResourceService
 
     @GetMapping("/resource/name")
@@ -32,6 +35,7 @@ class ResourceController {
             val value = resourceService.getResource(name)
             ResponseEntity.ok(ParameterDto(name, value))
         } catch (ex: Exception) {
+            log.warn("Error getting the resource $name: ${ex.message}")
             ResponseEntity(Message(ex.message.toString()), HttpStatus.BAD_REQUEST)
         }
     }
@@ -77,12 +81,12 @@ class ResourceController {
                     .header(HttpHeaders.CONTENT_TYPE, headers)
                     .body(resource)
             } else {
-                println("Error al obtener la imagen")
+                log.warn("Image not found: $logoPath")
                 return ResponseEntity.notFound().build()
             }
         } catch (e: Exception) {
-            println("Error al obtener la imagen: ${e.message}")
-            return ResponseEntity.badRequest().build()
+            log.error("Error getting the image: ${e.message}")
+            return ResponseEntity.internalServerError().build()
         }
     }
 

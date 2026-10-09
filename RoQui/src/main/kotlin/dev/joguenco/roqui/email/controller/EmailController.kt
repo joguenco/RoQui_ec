@@ -6,6 +6,7 @@ import dev.joguenco.roqui.email.Validate
 import dev.joguenco.roqui.email.dto.EmailDto
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.service.ParameterService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/roqui/v1")
 class EmailController {
+
+    private val log = LoggerFactory.getLogger(EmailController::class.java)
 
     @Autowired lateinit var parameterService: ParameterService
     @Autowired lateinit var informationService: InformationService
@@ -37,10 +40,11 @@ class EmailController {
         }
         val emailSmtp = EmailSmtp(parameterService, informationService)
         val (status, message) = emailSmtp.sendTest(email.address)
-        print(message)
         if (status) {
+            log.info(message)
             return ResponseEntity.ok().body(message)
         }
+        log.error(message)
         return ResponseEntity.internalServerError().body(message)
     }
 }

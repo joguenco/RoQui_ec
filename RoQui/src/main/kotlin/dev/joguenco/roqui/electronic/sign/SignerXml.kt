@@ -4,6 +4,7 @@ import dev.joguenco.roqui.signer.Signer
 import dev.joguenco.roqui.util.DateUtil
 import dev.joguenco.roqui.util.FilesUtil
 import java.io.File
+import org.slf4j.LoggerFactory
 
 class SignerXml(
     private val accessKey: String,
@@ -11,6 +12,8 @@ class SignerXml(
     private val certificatePath: String,
     private val certificatePassword: String,
 ) {
+
+    private val log = LoggerFactory.getLogger(SignerXml::class.java)
 
     fun sign(): Pair<Boolean, String> {
         val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
@@ -30,6 +33,7 @@ class SignerXml(
             )
             return true to "Successfully signed"
         } catch (e: Exception) {
+            log.error("Error signing the XML: ${e.message}")
             return false to e.message.toString().substring(e.message.toString().indexOf(":") + 1)
         }
     }

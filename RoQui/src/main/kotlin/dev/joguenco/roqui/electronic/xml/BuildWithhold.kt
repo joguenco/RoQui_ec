@@ -20,6 +20,7 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
 
 class BuildWithhold(
     val code: String,
@@ -27,6 +28,8 @@ class BuildWithhold(
     private val baseDirectory: String,
     private val withholdService: WithholdService,
 ) {
+
+    private val log = LoggerFactory.getLogger(BuildWithhold::class.java)
 
     private companion object {
 
@@ -75,11 +78,11 @@ class BuildWithhold(
                 )
 
             marshaller.marshal(comprobanteRetencion, out)
-            println(stringWriter)
+            log.debug("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, comprobanteRetencion.infoTributaria.claveAcceso)
         } catch (e: Exception) {
-            println("Error BuildWithhold: ${e.message}")
+            log.error("Error BuildWithhold: ${e.message}")
             return Pair("", "")
         }
     }

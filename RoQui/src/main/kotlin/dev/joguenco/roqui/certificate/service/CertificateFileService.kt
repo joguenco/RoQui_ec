@@ -9,12 +9,15 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import org.apache.coyote.BadRequestException
 import org.joda.time.DateTime
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
 class CertificateFileService(private val parameterService: ParameterService) {
+
+    private val log = LoggerFactory.getLogger(CertificateFileService::class.java)
 
     @Value("\${key.property}") lateinit var keyProperty: String
 
@@ -35,7 +38,7 @@ class CertificateFileService(private val parameterService: ParameterService) {
 
             return "Load file complete"
         } catch (ex: Exception) {
-            println(ex.message)
+            log.warn("Error loading the certificate: ${ex.message}")
             throw FileImportException("Error to load the file")
         }
     }

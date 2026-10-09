@@ -3,10 +3,13 @@ package dev.joguenco.roqui.parameter.service
 import dev.joguenco.roqui.parameter.dto.EmailEncryption
 import dev.joguenco.roqui.parameter.dto.EmailServerSmtpDto
 import dev.joguenco.roqui.util.OwnEncryption
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class EmailClientSmtpService(private val parameterService: ParameterService) {
+
+    private val log = LoggerFactory.getLogger(EmailClientSmtpService::class.java)
 
     fun getEmailServerConfiguration(): EmailServerSmtpDto {
 
@@ -62,6 +65,7 @@ class EmailClientSmtpService(private val parameterService: ParameterService) {
 
             true
         } catch (e: Exception) {
+            log.error("Error updating the email configuration: ${e.message}")
             false
         }
     }

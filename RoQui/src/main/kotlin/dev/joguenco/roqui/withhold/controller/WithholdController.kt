@@ -14,6 +14,7 @@ import dev.joguenco.roqui.util.Validate
 import dev.joguenco.roqui.withhold.service.ReportWithholdService
 import dev.joguenco.roqui.withhold.service.WithholdService
 import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/roqui")
 class WithholdController {
+
+    private val log = LoggerFactory.getLogger(WithholdController::class.java)
 
     @Autowired lateinit var withholdService: WithholdService
 
@@ -86,8 +89,9 @@ class WithholdController {
 
             return ResponseEntity.ok(stateCheck)
         } catch (e: Exception) {
-            println("Error Authorize Withhold ${e.message}")
-            return ResponseEntity.badRequest().body(Message(e.message!!))
+            log.error("Error Authorize Withhold ${e.message}")
+            return ResponseEntity.internalServerError()
+                .body(Message(e.message ?: "Unexpected error"))
         }
     }
 
@@ -133,8 +137,9 @@ class WithholdController {
             try {
                 StatusDto(buildWithhold.process(TypeDocument.RETENCION))
             } catch (e: Exception) {
-                println("Error AuthorizeAll Withhold ${e.message}")
-                return ResponseEntity.badRequest().body(Message(e.message!!))
+                log.error("Error AuthorizeAll Withhold ${e.message}")
+                return ResponseEntity.internalServerError()
+                    .body(Message(e.message ?: "Unexpected error"))
             }
         }
 
@@ -175,8 +180,9 @@ class WithholdController {
             try {
                 StatusDto(buildWithhold.check(informationService))
             } catch (e: Exception) {
-                println("Error checkAll Withhold ${e.message}")
-                return ResponseEntity.badRequest().body(Message(e.message!!))
+                log.error("Error checkAll Withhold ${e.message}")
+                return ResponseEntity.internalServerError()
+                    .body(Message(e.message ?: "Unexpected error"))
             }
         }
 

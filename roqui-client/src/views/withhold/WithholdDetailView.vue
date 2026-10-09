@@ -203,7 +203,7 @@ export default {
             if (error.response.status === 400) {
               alert('Bad Request: ' + error.response.data.message)
             } else {
-              alert('Error: ' + error.response.data)
+              alert('Error: ' + (error.response.data?.message ?? error.response.data))
             }
           } else {
             console.error('Error message:', error.message)
