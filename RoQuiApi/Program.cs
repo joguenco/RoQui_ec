@@ -5,7 +5,6 @@ using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Security;
-using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Version.Repository;
 using RoQuiApi.Util;
 using Scalar.AspNetCore;

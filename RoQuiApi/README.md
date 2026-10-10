@@ -107,10 +107,14 @@ dotnet ef database update
 ```
 ASPNETCORE_ENVIRONMENT=Testing dotnet ef database update
 ```
-3. Go to RoQuiApi.Test and run
+3. Run this profile
 ```
 dotnet run --launch-profile test
 ```
-
+stop the process and,
+4. Go to RoQuiApi.Test and run
+```
+dotnet test
+```
 ## Instalación de RoQui API en IIS
 Ver la guía: [doc/iis/README.md](doc/iis/README.md)
