@@ -1,15 +1,15 @@
-namespace RoQuiApi.RoQui.Invoice.Controller;
+namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using RoQuiApi.RoQui.Invoice.Repository;
+using RoQuiApi.RoQui.Document.Repository;
 using AutoMapper;
+using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Shared;
-using RoQuiApi.RoQui.Invoice.Model;
-using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Security;
 using System.Text.Json;
+using RoQuiApi.RoQui.Document.Invoice.Dto;
 
 [ApiController]
 [Route("[controller]")]

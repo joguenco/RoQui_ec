@@ -1,4 +1,4 @@
-namespace RoQuiApi.RoQui.Invoice.Model;
+namespace RoQuiApi.RoQui.Document.Model;
 
 using System.ComponentModel.DataAnnotations.Schema;
 

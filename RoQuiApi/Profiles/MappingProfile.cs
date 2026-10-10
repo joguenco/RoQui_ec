@@ -6,8 +6,8 @@ using RoQuiApi.RoQui.Document.DeliveryNote.Dto;
 using RoQuiApi.RoQui.Invoice.Dto;
 using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
-
-using RoQuiApi.RoQui.Invoice.Model;
+using RoQuiApi.RoQui.CreditNote.Dto;
+using RoQuiApi.RoQui.Document.Model;
 
 namespace RoQuiApi.Profiles;
 

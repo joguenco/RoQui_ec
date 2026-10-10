@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
+namespace RoQuiApi.RoQui.Document.Model;
 
-namespace RoQuiApi.RoQui.Invoice.Model;
+using System.ComponentModel.DataAnnotations.Schema;
 
 // El detalle de una nota de debito no son productos, son motivos: un texto y
 // un valor. Por eso no cabe en documents_detail y va en su propia tabla.

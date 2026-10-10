@@ -55,4 +55,5 @@ appsettings.Development.json
 ## Frontend dependencies (for ASP.NET Core Web apps with JS frameworks)
 node_modules/
 /wwwroot/lib/
-Migrations/
+TestResults/
+coveragereport/

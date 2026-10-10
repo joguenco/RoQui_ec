@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
+namespace RoQuiApi.RoQui.Document.Model;
 
-namespace RoQuiApi.RoQui.Invoice.Model;
+using System.ComponentModel.DataAnnotations.Schema;
 
 // Los impuestos de la nota de debito van en la cabecera, no en cada linea.
 // Por eso cuelgan del documento y no de documents_detail como en la factura.

@@ -15,7 +15,7 @@ public class DeliveryNoteDto : IValidatableObject
     public required DateTime Date { get; set; }
 
     [Required]
-    [StringLength(300, ErrorMessage = "AddressStart cannot exceed 300 characters.")]
+    [StringLength(300, ErrorMessage = "AddressStart cannot exceed 300 characters")]
     public required string AddressStart { get; set; }
 
     [Required]
@@ -29,7 +29,7 @@ public class DeliveryNoteDto : IValidatableObject
     public required string CarrierLegalName { get; set; }
 
     [Required]
-    [StringLength(20, ErrorMessage = "Plate cannot exceed 20 characters.")]
+    [StringLength(20, ErrorMessage = "Plate cannot exceed 20 characters")]
     public required string Plate { get; set; }
 
     [Required]
@@ -38,7 +38,7 @@ public class DeliveryNoteDto : IValidatableObject
     [Required]
     public required DateTime DateEndTransport { get; set; }
 
-    [StringLength(300, ErrorMessage = "Observation cannot exceed 300 characters.")]
+    [StringLength(300, ErrorMessage = "Observation cannot exceed 300 characters")]
     public string? Observation { get; set; }
 
     [Required]
@@ -46,7 +46,7 @@ public class DeliveryNoteDto : IValidatableObject
     public required string AccessKey { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The delivery note must contain at least one receiver.")]
+    [MinLength(1, ErrorMessage = "The delivery note must contain at least one receiver")]
     public virtual required ICollection<DeliveryNoteReceiverDto> DeliveryNoteReceivers { get; set; }
 
     // La fecha, el codigo y el numero se usan para construir la clave de acceso,

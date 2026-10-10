@@ -1,7 +1,7 @@
-namespace RoQuiApi.RoQui.Invoice.Repository;
+namespace RoQuiApi.RoQui.Document.Repository;
 
 using RoQuiApi.Data;
-using RoQuiApi.RoQui.Invoice.Model;
+using RoQuiApi.RoQui.Document.Model;
 
 public class WithholdRepo : IWithholdRepo
 {

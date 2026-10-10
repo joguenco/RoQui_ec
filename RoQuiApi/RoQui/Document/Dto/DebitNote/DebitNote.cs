@@ -30,26 +30,26 @@ public class DebitNoteDto : IValidatableObject
     public required string AccessKey { get; set; }
 
     [Required]
-    [RegularExpression(@"^\d{2}$", ErrorMessage = "ModifiedDocumentType must contain exactly 2 digits.")]
+    [RegularExpression(@"^\d{2}$", ErrorMessage = "ModifiedDocumentType must contain exactly 2 digits")]
     public required string ModifiedDocumentType { get; set; }
 
     [Required]
-    [StringLength(20, ErrorMessage = "ModifiedDocument cannot exceed 20 characters.")]
+    [StringLength(20, ErrorMessage = "ModifiedDocument cannot exceed 20 characters")]
     public required string ModifiedDocument { get; set; }
 
     [Required]
     public required DateTime ModifiedDate { get; set; }
 
     [Required]
-    [Range(0, double.MaxValue, ErrorMessage = "TotalWithoutTaxes cannot be negative.")]
+    [Range(0, double.MaxValue, ErrorMessage = "TotalWithoutTaxes cannot be negative")]
     public required decimal TotalWithoutTaxes { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The debit note must contain at least one reason.")]
+    [MinLength(1, ErrorMessage = "The debit note must contain at least one reason")]
     public virtual required ICollection<DebitNoteDetailDto> DebitNoteDetails { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The debit note must contain at least one tax.")]
+    [MinLength(1, ErrorMessage = "The debit note must contain at least one tax")]
     public virtual required ICollection<TaxDto> DebitNoteTaxes { get; set; }
 
     // El XML del SRI los admite opcionales, pero sin ellos el generador del PDF

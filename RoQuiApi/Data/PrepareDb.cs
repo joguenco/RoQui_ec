@@ -26,6 +26,7 @@ public static class PrepareDb
     private static void ClearData(DatabaseFacade db)
     {
         db.ExecuteSqlRaw("delete from taxpayers");
+        db.ExecuteSqlRaw("delete from documents");
     }
 
     private static void ObjectDbCreator(AppDbContext context)

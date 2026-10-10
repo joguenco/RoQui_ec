@@ -3,9 +3,7 @@ namespace RoQuiApi.Data;
 using Microsoft.EntityFrameworkCore;
 using RoQuiApi.RoQui.Electronic.Model;
 using RoQuiApi.RoQui.Head.Model;
-using RoQuiApi.RoQui.Invoice.Model;
-
-
+using RoQuiApi.RoQui.Document.Model;
 
 public class AppDbContext : DbContext
 {

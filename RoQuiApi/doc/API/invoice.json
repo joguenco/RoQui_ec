@@ -1,0 +1,78 @@
+{
+  "code": "FV",
+  "number": "001003003016837",
+  "date": "2026-10-12T00:00:00Z",
+  "identificationType": "04",
+  "identification": "1760013210001",
+  "legalName": "Servicio de Rentas Internas",
+  "address": "Quito",
+  "accessKey": "1210202601012345678900110010030030168371234567813",
+  "invoiceDetails": [
+    {
+      "line": 1,
+      "productCode": "4365",
+      "productName": "Producto tarifa diferente de 0% ",
+      "quantity": 3,
+      "unit": "UN",
+      "unitPrice": 2.6087,
+      "taxCode": "4",
+      "taxIva": 15,
+      "valueIva": 1.17,
+      "discount": 0,
+      "totalWithoutTax": 7.83,
+      "total": 9,
+      "invoiceDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "4",
+          "taxValue": 15,
+          "base": 7.83,
+          "value": 1.17
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "productCode": "4366",
+      "productName": "Producto tarifa 0% ",
+      "quantity": 3,
+      "unit": "UN",
+      "unitPrice": 3,
+      "taxCode": "0",
+      "taxIva": 0,
+      "valueIva": 0,
+      "discount": 0,
+      "totalWithoutTax": 9,
+      "total": 9,
+      "invoiceDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "0",
+          "taxValue": 0,
+          "base": 9,
+          "value": 0
+        }
+      ]
+    }
+  ],
+  "payments": [
+    {
+      "code": "01",
+      "total": 9
+    },
+    {
+      "code": "20",
+      "total": 9
+    }
+  ],
+  "informations": [
+    {
+      "name": "Dirección",
+      "value": "Quito"
+    },
+    {
+      "name": "Email",
+      "value": "comprobantes@sri.gob.ec"
+    }
+  ]
+}

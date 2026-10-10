@@ -36,13 +36,13 @@ public static class MessageConfig
                 var document = (context as ActionExecutingContext)?.ActionArguments.Values.FirstOrDefault();
                 var code = document?.GetType().GetProperty("Code")?.GetValue(document);
                 var number = document?.GetType().GetProperty("Number")?.GetValue(document);
-                logger.LogWarning("Datos no válidos {code} {number} en {path}: {messages} {body}",
+                logger.LogWarning("Invalid data {code} {number} en {path}: {messages} {body}",
                     code, number, context.HttpContext.Request.Path, string.Join(" | ", messages),
                     JsonSerializer.Serialize(document));
 
                 return new BadRequestObjectResult(new MessageDto
                 {
-                    Title = "Datos no válidos",
+                    Title = "Invalid data",
                     Errors = new Error { Message = messages }
                 });
             };

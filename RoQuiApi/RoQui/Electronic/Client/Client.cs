@@ -21,7 +21,7 @@ public class Client<T>
 
             if (string.IsNullOrWhiteSpace(url?.Value) || string.IsNullOrWhiteSpace(apiKey?.Value))
             {
-                throw new InvalidOperationException("Invalid configuration for electronic document authorization.");
+                throw new InvalidOperationException("Invalid configuration for electronic document authorization");
             }
 
             var authorizeUrl = url.Value.TrimEnd('/') + documentUrl;

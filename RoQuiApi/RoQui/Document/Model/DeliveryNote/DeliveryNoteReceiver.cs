@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
+namespace RoQuiApi.RoQui.Document.Model;
 
-namespace RoQuiApi.RoQui.Invoice.Model;
+using System.ComponentModel.DataAnnotations.Schema;
 
 [Table("delivery_notes_receiver")]
 public class DeliveryNoteReceiver

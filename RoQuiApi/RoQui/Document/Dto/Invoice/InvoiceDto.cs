@@ -28,11 +28,11 @@ public class InvoiceDto : IValidatableObject
     public required string AccessKey { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The invoice must contain at least one detail.")]
+    [MinLength(1, ErrorMessage = "The invoice must contain at least one detail")]
     public virtual required ICollection<InvoiceDetailDto> InvoiceDetails { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The invoice must contain at least one payment.")]
+    [MinLength(1, ErrorMessage = "The invoice must contain at least one payment")]
     public virtual required ICollection<PaymentDto> Payments { get; set; }
 
     public virtual ICollection<InformationDto>? Informations { get; set; }

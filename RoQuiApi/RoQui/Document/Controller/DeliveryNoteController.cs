@@ -1,10 +1,10 @@
-namespace RoQuiApi.RoQui.Invoice.Controller;
+namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using RoQuiApi.RoQui.Document.DeliveryNote.Dto;
-using RoQuiApi.RoQui.Invoice.Model;
-using RoQuiApi.RoQui.Invoice.Repository;
+using RoQuiApi.RoQui.Document.Model;
+using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;

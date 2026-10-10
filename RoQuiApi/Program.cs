@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using RoQuiApi.Data;
 using RoQuiApi.Profiles;
+using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
-using RoQuiApi.RoQui.Invoice.Repository;
 using RoQuiApi.RoQui.Security;
-using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Version.Repository;
 using RoQuiApi.Util;
 using Scalar.AspNetCore;

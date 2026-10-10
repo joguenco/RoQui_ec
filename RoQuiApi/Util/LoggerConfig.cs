@@ -1,6 +1,6 @@
 namespace RoQuiApi.Util;
 
-using RoQuiApi.RoQui.Invoice.Controller;
+using RoQuiApi.RoQui.Document.Controller;
 using Serilog;
 using Serilog.Filters;
 
