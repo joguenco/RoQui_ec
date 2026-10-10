@@ -64,6 +64,7 @@ class EmailSmtp(
             htmlEmail.attach(pdf)
             htmlEmail.addTo(receiverEmail)
             htmlEmail.send()
+            log.info("Send to ${receiverEmail}")
 
             return true
         }

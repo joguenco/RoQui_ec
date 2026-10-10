@@ -64,7 +64,7 @@ class BuildCreditNote(
                 )
 
             marshaller.marshal(notaCredito, out)
-            log.debug("XML generated: {}", stringWriter)
+            log.info("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, notaCredito.infoTributaria.claveAcceso)
         } catch (e: Exception) {

@@ -7,7 +7,7 @@
     <div class="message-body">
       <div class="container has-text-centered mt-4 mb-4">
         <strong>
-          <a href="https://resolvedor.dev" target="_blank">https://resolvedor.dev</a>
+          <a href="https://joguenco.dev" target="_blank">https://joguenco.dev</a>
         </strong>
       </div>
       <div class="container has-text-centered mt-4 mb-4">

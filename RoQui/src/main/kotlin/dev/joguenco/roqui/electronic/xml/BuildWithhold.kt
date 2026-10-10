@@ -78,7 +78,7 @@ class BuildWithhold(
                 )
 
             marshaller.marshal(comprobanteRetencion, out)
-            log.debug("XML generated: {}", stringWriter)
+            log.info("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, comprobanteRetencion.infoTributaria.claveAcceso)
         } catch (e: Exception) {

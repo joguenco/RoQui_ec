@@ -77,7 +77,7 @@ class BuildDeliveryNote(
                 )
 
             marshaller.marshal(guiaRemision, out)
-            log.debug("XML generated: {}", stringWriter)
+            log.info("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, guiaRemision.infoTributaria.claveAcceso)
         } catch (e: Exception) {

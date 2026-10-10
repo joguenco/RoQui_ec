@@ -60,7 +60,7 @@ class BuildInvoice(
                 )
 
             marshaller.marshal(factura, out)
-            log.debug("XML generated: {}", stringWriter)
+            log.info("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, factura.infoTributaria.claveAcceso)
         } catch (e: Exception) {

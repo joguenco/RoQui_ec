@@ -63,7 +63,7 @@ class BuildLiquidation(
                 )
 
             marshaller.marshal(liquidacionCompra, out)
-            log.debug("XML generated: {}", stringWriter)
+            log.info("XML generated: {}", stringWriter)
 
             return Pair(pathGenerated, liquidacionCompra.infoTributaria.claveAcceso)
         } catch (e: Exception) {
