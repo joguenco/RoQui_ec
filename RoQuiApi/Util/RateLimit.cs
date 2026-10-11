@@ -42,8 +42,8 @@ public static class RateLimit
                     http.Response.Headers.RetryAfter = Math.Ceiling(retryAfter.TotalSeconds).ToString();
                 }
                 http.RequestServices.GetRequiredService<ILogger<Program>>().LogWarning(
-                    "Demasiadas peticiones desde {ip} en {path}", http.Connection.RemoteIpAddress, http.Request.Path);
-                await http.Response.WriteAsJsonAsync(new MessageDto { Title = "Demasiadas peticiones" }, cancellationToken);
+                    "Too Many Requests from {ip} of {path}", http.Connection.RemoteIpAddress, http.Request.Path);
+                await http.Response.WriteAsJsonAsync(new MessageDto { Title = "Too Many Requests" }, cancellationToken);
             };
         });
 

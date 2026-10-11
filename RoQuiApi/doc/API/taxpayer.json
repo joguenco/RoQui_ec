@@ -1,0 +1,20 @@
+{
+  "identification": "0123456789001",
+  "legalName": "Me",
+  "forcedAccounting": "SI",
+  "retentionAgent": "1",
+  "establishments": [
+    {
+      "code": "001",
+      "businessName": "Yo",
+      "address": "Mi Negocio",
+      "isPrincipal": true
+    },
+    {
+      "code": "002",
+      "businessName": "I am",
+      "address": "My Business",
+      "isPrincipal": false
+    }
+  ]
+}
