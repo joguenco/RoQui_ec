@@ -169,8 +169,18 @@ public class InvoiceUnitTest : IClassFixture<CustomWebApplicationFactory<Program
         Assert.True(apiResponse.IsSuccessStatusCode);
 
         var invoice = InitInvoiceData();
-        Console.WriteLine($"GoodInvoiceTest: {JsonConvert.SerializeObject(invoice)}");
+
+        var validAccessKey = invoice.AccessKey;
+        invoice.AccessKey = invoice.AccessKey[..^1] + "4";
+
+        Console.WriteLine($"BadAccessKeyInvoiceTest: {JsonConvert.SerializeObject(invoice)}");
         var invoiceResponse = await SendInvoiceAsync(invoice);
+        Assert.False(invoiceResponse.IsSuccessStatusCode);
+        Console.WriteLine($"BadAccessKeyInvoiceTest Response: {await invoiceResponse.Content.ReadAsStringAsync()}");
+
+        invoice.AccessKey = validAccessKey;
+        Console.WriteLine($"GoodInvoiceTest: {JsonConvert.SerializeObject(invoice)}");
+        invoiceResponse = await SendInvoiceAsync(invoice);
         Assert.True(invoiceResponse.IsSuccessStatusCode);
     }
 }

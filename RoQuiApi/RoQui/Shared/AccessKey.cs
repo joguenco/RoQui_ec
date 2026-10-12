@@ -86,14 +86,14 @@ public static class AccessKey
     {
         if (string.IsNullOrEmpty(accessKey) || accessKey.Length != Length)
         {
-            return "The access Key must contain exactly 49 digits.";
+            return "The access key must contain exactly 49 digits";
         }
 
         foreach (var character in accessKey)
         {
             if (!char.IsAsciiDigit(character))
             {
-                return "The accesskey must contain only digits.";
+                return "The access key must contain only digits";
             }
         }
 
@@ -106,13 +106,13 @@ public static class AccessKey
                 DateTimeStyles.None,
                 out _))
         {
-            return "The issue date in the accessKey is not a valid date.";
+            return "The issue date in the access key is not a valid date";
         }
 
         // 2. Tipo de comprobante.
         if (!DocumentCodes.Contains(accessKey[8..10]))
         {
-            return "The document type in the accessKey is not valid.";
+            return "The document type in the access key is not valid";
         }
 
         // 3. RUC del emisor. El digito verificador no se comprueba aqui: son 13
@@ -120,30 +120,30 @@ public static class AccessKey
         var province = int.Parse(accessKey[10..12]);
         if (province is not (>= 1 and <= 24) and not 30)
         {
-            return "The province in the accessKey RUC is not valid.";
+            return "The province in the access key RUC is not valid";
         }
 
         if (accessKey[20..23] == "000")
         {
-            return "The establishment in the accessKey RUC cannot be 000.";
+            return "The establishment in the access key RUC cannot be 000";
         }
 
         // 4. Tipo de ambiente.
         if (!Environments.Contains(accessKey[23..24]))
         {
-            return "The environment in the accessKey must be 1 or 2.";
+            return "The environment in the access key must be 1 or 2";
         }
 
         // 5. Serie del establecimiento y punto de emision.
         if (accessKey[24..30] == "000000")
         {
-            return "The series in the accessKey cannot be zeros.";
+            return "The series in the access key cannot be zeros";
         }
 
         // 6. Secuencial.
         if (accessKey[30..39] == "000000000")
         {
-            return "The sequential in the accessKey cannot be zeros.";
+            return "The sequential in the access key cannot be zeros";
         }
 
         // 7. El codigo numerico son 8 digitos y ya quedaron comprobados arriba.
@@ -151,13 +151,13 @@ public static class AccessKey
         // 8. Tipo de emision.
         if (accessKey[47..48] != NormalEmission)
         {
-            return "The emission type in the accessKey must be 1.";
+            return "The emission type in the access key must be 1";
         }
 
         // 9. Digito verificador.
         if (Module11.CheckDigit(accessKey[..48]) != accessKey[48] - '0')
         {
-            return "The accessKey check digit is not valid.";
+            return "The access key check digit is not valid";
         }
 
         return null;
