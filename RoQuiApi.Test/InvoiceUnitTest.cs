@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using RoQuiApi.RoQui.Document.Dto;
 using RoQuiApi.RoQui.Document.Invoice.Dto;
 using RoQuiApi.RoQui.Head.Dto;
+using RoQuiApi.RoQui.Shared;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -176,11 +177,31 @@ public class InvoiceUnitTest : IClassFixture<CustomWebApplicationFactory<Program
         Console.WriteLine($"BadAccessKeyInvoiceTest: {JsonConvert.SerializeObject(invoice)}");
         var invoiceResponse = await SendInvoiceAsync(invoice);
         Assert.False(invoiceResponse.IsSuccessStatusCode);
-        Console.WriteLine($"BadAccessKeyInvoiceTest Response: {await invoiceResponse.Content.ReadAsStringAsync()}");
+        var message = JsonConvert.DeserializeObject<MessageDto>(
+            await invoiceResponse.Content.ReadAsStringAsync()
+        );
+
+        Assert.Equal("Invalid data", message.Title);
+        var errorMessage = message.Errors?.Message.FirstOrDefault();        
+        Console.WriteLine($"BadAccessKeyInvoiceTest Response: {errorMessage}");
+        Assert.Equal("The access key check digit is not valid", errorMessage);
+
+        var invoiceWithNegative = InitInvoiceData();
+        foreach (var invoiceDetail in invoiceWithNegative.InvoiceDetails)
+        {
+            invoiceDetail.Quantity = -1m;
+        }
+        invoiceResponse = await SendInvoiceAsync(invoiceWithNegative);
+        message = JsonConvert.DeserializeObject<MessageDto>(
+            await invoiceResponse.Content.ReadAsStringAsync()
+        );
+        errorMessage = message.Errors?.Message.FirstOrDefault();
+        Console.WriteLine($"NegativeQuantityInvoiceTest: {errorMessage}");
+        Assert.Equal("Quantity cannot be negative", errorMessage);
 
         invoice.AccessKey = validAccessKey;
         Console.WriteLine($"GoodInvoiceTest: {JsonConvert.SerializeObject(invoice)}");
         invoiceResponse = await SendInvoiceAsync(invoice);
-        Assert.True(invoiceResponse.IsSuccessStatusCode);
+        Assert.True(invoiceResponse.IsSuccessStatusCode);        
     }
 }
