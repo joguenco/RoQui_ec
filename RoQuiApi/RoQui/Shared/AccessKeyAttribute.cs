@@ -35,7 +35,7 @@ public class AccessKeyAttribute : ValidationAttribute
 
         if (taxpayerRepo.CountTaxpayers() == 0)
         {
-            return "There is no taxpayer registered.";
+            return "There is no taxpayer registered";
         }
 
         return taxpayerRepo.GetTaxpayerByIdentification(ruc) is null

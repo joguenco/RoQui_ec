@@ -32,7 +32,7 @@ public class LiquidationDto : IValidatableObject
     public required string AccessKey { get; set; }
 
     [Required]
-    [MinLength(1, ErrorMessage = "The liquidation must contain at least one detail.")]
+    [MinLength(1, ErrorMessage = "The liquidation must contain at least one detail")]
     public virtual required ICollection<LiquidationDetailDto> LiquidationDetails { get; set; }
 
     // La fecha, el codigo y el numero se usan para construir la clave de acceso,

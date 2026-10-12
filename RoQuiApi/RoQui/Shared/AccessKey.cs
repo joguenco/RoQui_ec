@@ -49,7 +49,7 @@ public static class AccessKey
 
         if (accessKey![..8] != date.ToString("ddMMyyyy", CultureInfo.InvariantCulture))
         {
-            yield return "The date does not match the one in the accessKey.";
+            yield return "The date does not match the one in the accessKey";
         }
 
         // Cada endpoint acepta solo sus codigos: la factura FV, la nota de credito
@@ -60,16 +60,16 @@ public static class AccessKey
             .ToList();
         if (code is null || !allowedCodes.Contains(code))
         {
-            yield return $"The code {code} is not valid, it must be {string.Join(" or ", allowedCodes)}.";
+            yield return $"The code {code} is not valid, it must be {string.Join(" or ", allowedCodes)}";
         }
         else if (accessKey[8..10] != documentCode)
         {
-            yield return $"The code {code} must be {documentCode} in the accessKey.";
+            yield return $"The code {code} must be {documentCode} in the accessKey";
         }
 
         if (accessKey[24..39] != number)
         {
-            yield return "The number does not match the one in the accessKey.";
+            yield return "The number does not match the one in the accessKey";
         }
     }
 

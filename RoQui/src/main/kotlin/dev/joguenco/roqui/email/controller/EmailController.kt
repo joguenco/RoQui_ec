@@ -36,7 +36,7 @@ class EmailController {
     @PostMapping("/email/send/test")
     fun postSendEmailTest(@RequestBody email: EmailDto): ResponseEntity<Any> {
         if (!Validate.isEmailValid(email.address)) {
-            return ResponseEntity.badRequest().body("Invalid email address format.")
+            return ResponseEntity.badRequest().body("Invalid email address format")
         }
         val emailSmtp = EmailSmtp(parameterService, informationService)
         val (status, message) = emailSmtp.sendTest(email.address)

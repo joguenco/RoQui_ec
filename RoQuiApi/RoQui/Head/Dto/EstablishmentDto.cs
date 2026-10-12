@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 public class EstablishmentDto
 {
     [Required]
-    [RegularExpression(@"^\d{3}$", ErrorMessage = "Code must contain exactly 3 digits.")]
+    [RegularExpression(@"^\d{3}$", ErrorMessage = "Code must contain exactly 3 digits")]
     public required string Code { get; set; }
 
     public string? BusinessName { get; set; }
