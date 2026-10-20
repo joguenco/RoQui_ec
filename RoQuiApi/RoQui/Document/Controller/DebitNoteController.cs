@@ -1,8 +1,8 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using RoQuiApi.RoQui.Document.Model;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
@@ -17,10 +17,10 @@ public class DebitNoteController : ControllerBase
 {
     private readonly IInvoiceRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<DebitNoteController> _logger;
 
-    public DebitNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<DebitNoteController> logger)
+    public DebitNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<DebitNoteController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
@@ -46,20 +46,20 @@ public class DebitNoteController : ControllerBase
                 _invoiceRepo.DeleteDocument(existingDocument);
             }
 
-            var debitNoteModel = _mapper.Map<Document>(debitNoteBody);
+            var debitNoteModel = _mapper.ToDebitNoteDocument(debitNoteBody);
 
             // El dto no trae numero de linea, se lo pongo yo en el orden que vino
             var line = 0;
             debitNoteModel.DebitNoteReasons = debitNoteBody.DebitNoteDetails
                 .Select(detail =>
                 {
-                    var reason = _mapper.Map<DebitNoteReason>(detail);
+                    var reason = _mapper.ToDebitNoteReason(detail);
                     reason.Line = ++line;
                     return reason;
                 })
                 .ToList();
 
-            debitNoteModel.DebitNoteTaxes = _mapper.Map<List<DebitNoteTax>>(debitNoteBody.DebitNoteTaxes);
+            debitNoteModel.DebitNoteTaxes = _mapper.ToDebitNoteTaxes(debitNoteBody.DebitNoteTaxes);
 
             // El XML de nota de debito del SRI no lleva direccion del comprador,
             // pero documents.address es NOT NULL
@@ -67,7 +67,7 @@ public class DebitNoteController : ControllerBase
             // Los motivos no son lineas de detalle, van en debit_notes_reason
             debitNoteModel.DocumentDetails = [];
             debitNoteModel.DocumentPayments =
-                _mapper.Map<List<DocumentPayment>>(debitNoteBody.Payments ?? []);
+                _mapper.ToDocumentPayments(debitNoteBody.Payments ?? []);
             _invoiceRepo.CreateInvoice(debitNoteModel);
             _invoiceRepo.SaveChanges();
 

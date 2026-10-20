@@ -1,10 +1,10 @@
-﻿namespace RoQuiApi.RoQui.Head.Controller;
+namespace RoQuiApi.RoQui.Head.Controller;
 
 using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Shared;
-using AutoMapper;
+using RoQuiApi.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Security;
 
@@ -15,10 +15,10 @@ public class TaxpayerController : ControllerBase
 {
 
     private readonly ITaxpayerRepo _taxpayerRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<TaxpayerController> _logger;
 
-    public TaxpayerController(ITaxpayerRepo taxpayerRepo, IMapper mapper, ILogger<TaxpayerController> logger)
+    public TaxpayerController(ITaxpayerRepo taxpayerRepo, RoQuiMapper mapper, ILogger<TaxpayerController> logger)
     {
         _taxpayerRepo = taxpayerRepo;
         _mapper = mapper;
@@ -31,7 +31,7 @@ public class TaxpayerController : ControllerBase
     {
         if (_taxpayerRepo.CountTaxpayers() == 0)
         {
-            var taxpayerModel = _mapper.Map<Taxpayer>(taxpayerBody);
+            var taxpayerModel = _mapper.ToTaxpayer(taxpayerBody);
             _taxpayerRepo.CreateTaxpayer(taxpayerModel);
             _taxpayerRepo.SaveChanges();
 
@@ -67,7 +67,7 @@ public class TaxpayerController : ControllerBase
             else
             {
                 _taxpayerRepo.DeleteEstablishments(existingTaxpayer.Establishments);
-                var establishments = _mapper.Map<ICollection<Establishment>>(taxpayerBody.Establishments);
+                var establishments = _mapper.ToEstablishments(taxpayerBody.Establishments);
                 existingTaxpayer.Establishments = establishments;
                 existingTaxpayer.LegalName = taxpayerBody.LegalName;
                 existingTaxpayer.ForcedAccounting = taxpayerBody.ForcedAccounting;

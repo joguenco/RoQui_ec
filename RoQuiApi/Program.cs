@@ -34,10 +34,8 @@ builder.Services.AddScoped<IDeliveryNoteRepo, DeliveryNoteRepo>();
 builder.Services.AddScoped<IApiKeyValidator, ApiKeyValidator>();
 builder.Services.AddScoped<ApiKeyAuthorizationFilter>();
 
-// Added Auto Mapper
-builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
-
-// builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+// Mapper generado por Mapperly
+builder.Services.AddSingleton<RoQuiMapper>();
 
 builder.Services.AddControllers()
     .ConfigureApplicationPartManager(manager =>

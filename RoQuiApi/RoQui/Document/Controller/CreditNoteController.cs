@@ -1,8 +1,8 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using RoQuiApi.RoQui.Document.Model;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
@@ -17,10 +17,10 @@ public class CreditNoteController : ControllerBase
 {
     private readonly IInvoiceRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<CreditNoteController> _logger;
 
-    public CreditNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<CreditNoteController> logger)
+    public CreditNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<CreditNoteController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
@@ -46,8 +46,8 @@ public class CreditNoteController : ControllerBase
                 _invoiceRepo.DeleteDocument(existingDocument);
             }
 
-            var creditNoteModel = _mapper.Map<Document>(creditNoteBody);
-            var creditNoteDetailsModel = _mapper.Map<List<DocumentDetail>>(creditNoteBody.CreditNoteDetails);
+            var creditNoteModel = _mapper.ToCreditNoteDocument(creditNoteBody);
+            var creditNoteDetailsModel = _mapper.ToCreditNoteDocumentDetails(creditNoteBody.CreditNoteDetails);
             creditNoteModel.DocumentDetails = creditNoteDetailsModel;
             // El XML de nota de credito del SRI no tiene direccion del comprador,
             // asi que Oracle no la manda, pero documents.address es NOT NULL

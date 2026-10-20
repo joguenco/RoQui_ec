@@ -1,8 +1,8 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using RoQuiApi.RoQui.Document.Withhold.Dto;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Document.Model;
@@ -17,10 +17,10 @@ public class WithholdController : ControllerBase
 {
     private readonly IWithholdRepo _withholdRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<WithholdController> _logger;
 
-    public WithholdController(IWithholdRepo withholdRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<WithholdController> logger)
+    public WithholdController(IWithholdRepo withholdRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<WithholdController> logger)
     {
         _withholdRepo = withholdRepo;
         _electronicRepo = electronicRepo;
@@ -46,8 +46,8 @@ public class WithholdController : ControllerBase
                 _withholdRepo.DeleteWithhold(existingWithhold);
             }
 
-            var withholdModel = _mapper.Map<Model.Withhold>(withholdBody);
-            var supportsModel = _mapper.Map<List<WithholdSupport>>(withholdBody.WithholdSupports);
+            var withholdModel = _mapper.ToWithhold(withholdBody);
+            var supportsModel = _mapper.ToWithholdSupports(withholdBody.WithholdSupports);
             withholdModel.WithholdSupports = supportsModel;
             _withholdRepo.CreateWithhold(withholdModel);
             _withholdRepo.SaveChanges();

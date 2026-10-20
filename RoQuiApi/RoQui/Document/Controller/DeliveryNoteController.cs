@@ -1,8 +1,8 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using RoQuiApi.RoQui.Document.DeliveryNote.Dto;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
@@ -17,10 +17,10 @@ public class DeliveryNoteController : ControllerBase
 {
     private readonly IDeliveryNoteRepo _deliveryNoteRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<DeliveryNoteController> _logger;
 
-    public DeliveryNoteController(IDeliveryNoteRepo deliveryNoteRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<DeliveryNoteController> logger)
+    public DeliveryNoteController(IDeliveryNoteRepo deliveryNoteRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<DeliveryNoteController> logger)
     {
         _deliveryNoteRepo = deliveryNoteRepo;
         _electronicRepo = electronicRepo;
@@ -46,8 +46,8 @@ public class DeliveryNoteController : ControllerBase
                 _deliveryNoteRepo.DeleteDeliveryNote(existingDeliveryNote);
             }
 
-            var deliveryNoteModel = _mapper.Map<DeliveryNote>(deliveryNoteBody);
-            var receiversModel = _mapper.Map<List<DeliveryNoteReceiver>>(deliveryNoteBody.DeliveryNoteReceivers);
+            var deliveryNoteModel = _mapper.ToDeliveryNote(deliveryNoteBody);
+            var receiversModel = _mapper.ToDeliveryNoteReceivers(deliveryNoteBody.DeliveryNoteReceivers);
             deliveryNoteModel.DeliveryNoteReceivers = receiversModel;
             _deliveryNoteRepo.CreateDeliveryNote(deliveryNoteModel);
             _deliveryNoteRepo.SaveChanges();

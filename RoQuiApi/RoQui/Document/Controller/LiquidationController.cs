@@ -1,8 +1,8 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 using RoQuiApi.RoQui.Document.Model;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
@@ -17,10 +17,10 @@ public class LiquidationController : ControllerBase
 {
     private readonly IInvoiceRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<LiquidationController> _logger;
 
-    public LiquidationController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<LiquidationController> logger)
+    public LiquidationController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<LiquidationController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
@@ -46,8 +46,8 @@ public class LiquidationController : ControllerBase
                 _invoiceRepo.DeleteDocument(existingDocument);
             }
 
-            var liquidationModel = _mapper.Map<Document>(liquidationBody);
-            var liquidationDetailsModel = _mapper.Map<List<DocumentDetail>>(liquidationBody.LiquidationDetails);
+            var liquidationModel = _mapper.ToLiquidationDocument(liquidationBody);
+            var liquidationDetailsModel = _mapper.ToLiquidationDocumentDetails(liquidationBody.LiquidationDetails);
             liquidationModel.DocumentDetails = liquidationDetailsModel;
             // La liquidacion de compras no lleva formas de pago en el XML del SRI
             liquidationModel.DocumentPayments = [];

@@ -2,7 +2,7 @@ namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Document.Repository;
-using AutoMapper;
+using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Electronic.Repository;
@@ -18,10 +18,10 @@ public class InvoiceController : ControllerBase
 
     private readonly IInvoiceRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
-    private readonly IMapper _mapper;
+    private readonly RoQuiMapper _mapper;
     private readonly ILogger<InvoiceController> _logger;
 
-    public InvoiceController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, IMapper mapper, ILogger<InvoiceController> logger)
+    public InvoiceController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<InvoiceController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
@@ -47,10 +47,10 @@ public class InvoiceController : ControllerBase
                 _invoiceRepo.DeleteDocument(existingDocument);
             }
 
-            var invoiceModel = _mapper.Map<Document>(invoiceBody);
-            var invoiceDetailsModel = _mapper.Map<List<DocumentDetail>>(invoiceBody.InvoiceDetails);
-            var invoicePaymentsModel = _mapper.Map<List<DocumentPayment>>(invoiceBody.Payments);
-            var invoiceInformationsModel = _mapper.Map<List<DocumentInformation>>(invoiceBody.Informations);
+            var invoiceModel = _mapper.ToInvoiceDocument(invoiceBody);
+            var invoiceDetailsModel = _mapper.ToInvoiceDocumentDetails(invoiceBody.InvoiceDetails);
+            var invoicePaymentsModel = _mapper.ToDocumentPayments(invoiceBody.Payments);
+            var invoiceInformationsModel = _mapper.ToDocumentInformations(invoiceBody.Informations);
 
             invoiceModel.DocumentDetails = invoiceDetailsModel;
             invoiceModel.DocumentPayments = invoicePaymentsModel;
