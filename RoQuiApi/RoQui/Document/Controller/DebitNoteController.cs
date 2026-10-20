@@ -29,7 +29,7 @@ public class DebitNoteController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/debitnote/send", Name = "CreateDebitNote")]
+    [HttpPost("rest/v1/send", Name = "CreateDebitNote")]
     public async Task<ActionResult<MessageDto>> CreateDebitNote(DebitNoteDto debitNoteBody)
     {
         try

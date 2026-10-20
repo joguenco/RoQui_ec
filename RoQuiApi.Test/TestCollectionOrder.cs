@@ -1,4 +1,3 @@
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -41,3 +40,6 @@ public class LiquidationCollection;
 
 [CollectionDefinition("06_Withhold")]
 public class WithholdCollection;
+
+[CollectionDefinition("07_Delivery_Note")]
+public class DeliveryNoteCollection;

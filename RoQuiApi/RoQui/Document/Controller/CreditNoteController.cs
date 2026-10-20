@@ -29,7 +29,7 @@ public class CreditNoteController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/creditnote/send", Name = "CreateCreditNote")]
+    [HttpPost("rest/v1/send", Name = "CreateCreditNote")]
     public async Task<ActionResult<MessageDto>> CreateCreditNote(CreditNoteDto creditNoteBody)
     {
         try

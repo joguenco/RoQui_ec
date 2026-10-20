@@ -11,7 +11,7 @@
     {
       "line": 1,
       "productCode": "4365",
-      "productName": "Producto tarifa diferente de 0% ",
+      "productName": "Producto tarifa diferente de 0%",
       "quantity": 3,
       "unit": "UN",
       "unitPrice": 2.6087,
@@ -34,7 +34,7 @@
     {
       "line": 2,
       "productCode": "4366",
-      "productName": "Producto tarifa 0% ",
+      "productName": "Producto tarifa 0%",
       "quantity": 3,
       "unit": "UN",
       "unitPrice": 3,

@@ -30,7 +30,7 @@ public class InvoiceController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/invoice/send", Name = "CreateInvoice")]
+    [HttpPost("rest/v1/send", Name = "CreateInvoice")]
     public async Task<ActionResult<MessageDto>> CreateInvoice(InvoiceDto invoiceBody)
     {
         try

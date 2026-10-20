@@ -1,0 +1,58 @@
+{
+  "code": "LQ",
+  "number": "001002000000149",
+  "date": "2026-10-20T00:00:00Z",
+  "identificationType": "05",
+  "identification": "1009999901",
+  "legalName": "GONZALO",
+  "address": "Calle AGUSTIN 8",
+  "accessKey": "2010202603012345678900110010020000001491234567811",
+  "liquidationDetails": [
+    {
+      "line": 1,
+      "productCode": "4370",
+      "productName": "Producto tarifa diferente de 0%",
+      "quantity": 3,
+      "unit": "UN",
+      "unitPrice": 1,
+      "taxCode": "4",
+      "taxIva": 15,
+      "valueIva": 0.45,
+      "discount": 0,
+      "totalWithoutTax": 3,
+      "total": 3.45,
+      "liquidationDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "4",
+          "taxValue": 15,
+          "base": 3,
+          "value": 0.45
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "productCode": "4371",
+      "productName": "Producto tarifa 0%",
+      "quantity": 3,
+      "unit": "UN",
+      "unitPrice": 1,
+      "taxCode": "-1",
+      "taxIva": 0,
+      "valueIva": 0,
+      "discount": 0,
+      "totalWithoutTax": 3,
+      "total": 3,
+      "liquidationDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "0",
+          "taxValue": 0,
+          "base": 3,
+          "value": 0
+        }
+      ]
+    }
+  ]
+}

@@ -90,7 +90,7 @@ public class LiquidationUnitTest : IClassFixture<CustomWebApplicationFactory<Pro
     private async Task<HttpResponseMessage> SendLiquidationAsync(LiquidationDto Liquidation)
     {
         var LiquidationJson = JsonConvert.SerializeObject(Liquidation, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/liquidation/rest/v1/liquidation/send")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/liquidation/rest/v1/send")
         {
             Content = new StringContent(LiquidationJson, Encoding.UTF8, "application/json")
         };

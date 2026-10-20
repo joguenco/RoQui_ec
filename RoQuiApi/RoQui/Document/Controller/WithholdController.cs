@@ -29,7 +29,7 @@ public class WithholdController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/withhold/send", Name = "CreateWithhold")]
+    [HttpPost("rest/v1/send", Name = "CreateWithhold")]
     public async Task<ActionResult<MessageDto>> CreateWithhold(WithholdDto withholdBody)
     {
         try

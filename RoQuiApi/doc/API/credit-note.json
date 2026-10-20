@@ -1,0 +1,61 @@
+{
+  "code": "DV",
+  "number": "001002000001812",
+  "date": "2026-10-19T00:00:00Z",
+  "identificationType": "04",
+  "identification": "1760013210001",
+  "legalName": "Servicio de Rentas Internas",
+  "accessKey": "1910202604012345678900110010020000018121234567815",
+  "modifiedDocumentType": "01",
+  "modifiedDocument": "001-003-003016875",
+  "modifiedDate": "2026-10-19T00:00:00Z",
+  "reason": "Cliente devuelve",
+  "totalWithoutTaxes": 16.83,
+  "modifiedTotal": 18,
+  "creditNoteDetails": [
+    {
+      "line": 1,
+      "productCode": "4371",
+      "productName": "Producto tarifa 0%",
+      "quantity": 3,
+      "unitPrice": 3,
+      "taxCode": "0",
+      "taxIva": 0,
+      "valueIva": 0,
+      "discount": 0,
+      "totalWithoutTax": 9,
+      "total": 9,
+      "creditNoteDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "0",
+          "taxValue": 0,
+          "base": 9,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "productCode": "4370",
+      "productName": "Producto tarifa diferente de 0%",
+      "quantity": 3,
+      "unitPrice": 2.61,
+      "taxCode": "4",
+      "taxIva": 15,
+      "valueIva": 1.17,
+      "discount": 0,
+      "totalWithoutTax": 7.83,
+      "total": 9,
+      "creditNoteDetailTaxes": [
+        {
+          "taxCode": "2",
+          "taxCodePercentage": "4",
+          "taxValue": 15,
+          "base": 7.83,
+          "value": 1.17
+        }
+      ]
+    }
+  ]
+}

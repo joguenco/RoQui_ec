@@ -1,10 +1,9 @@
-﻿using RoQuiApi.RoQui.Head.Dto;
+﻿namespace RoQuiApi.RoQui.Head.Controller;
+
+using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Head.Model;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Shared;
-
-namespace RoQuiApi.RoQui.Head.Controller;
-
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Security;
@@ -27,7 +26,7 @@ public class TaxpayerController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/taxpayer", Name = "CreateTaxpayer")]
+    [HttpPost("rest/v1/create", Name = "CreateTaxpayer")]
     public ActionResult<MessageDto> CreateTaxpayer(TaxpayerDto taxpayerBody)
     {
         if (_taxpayerRepo.CountTaxpayers() == 0)

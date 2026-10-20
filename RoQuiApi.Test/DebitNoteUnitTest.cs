@@ -72,7 +72,7 @@ public class DebitNoteUnitTest : IClassFixture<CustomWebApplicationFactory<Progr
     private async Task<HttpResponseMessage> SendDebitNoteAsync(DebitNoteDto debitNote)
     {
         var debitNoteJson = JsonConvert.SerializeObject(debitNote, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/debitnote/rest/v1/debitnote/send")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/debitnote/rest/v1/send")
         {
             Content = new StringContent(debitNoteJson, Encoding.UTF8, "application/json")
         };

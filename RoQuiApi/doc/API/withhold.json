@@ -1,0 +1,49 @@
+{
+  "code": "RT",
+  "number": "001002000014754",
+  "date": "2026-10-20T00:00:00Z",
+  "identificationType": "04",
+  "identification": "1760013210001",
+  "legalName": "Servicio de Rentas Internas",
+  "accessKey": "2010202607012345678900110010020000147541234567814",
+  "fiscalPeriod": "10/2026",
+  "related": "NO",
+  "withholdSupports": [
+    {
+      "codeSupport": "02",
+      "codeDocumentSupport": "01",
+      "numberDocumentSupport": "001001000000123",
+      "dateDocumentSupport": "2026-10-19T00:00:00Z",
+      "authorizationDocumentSupport": "1234567890",
+      "totalWithoutTaxes": 100,
+      "total": 115,
+      "withholdDetails": [
+        {
+          "line": 1,
+          "taxCode": "2",
+          "withholdCode": "3",
+          "baseValue": 15,
+          "percentage": 100,
+          "withholdedValue": 15
+        },
+        {
+          "line": 2,
+          "taxCode": "1",
+          "withholdCode": "303",
+          "baseValue": 100,
+          "percentage": 10,
+          "withholdedValue": 10
+        }
+      ],
+      "withholdDocumentTaxes": [
+        {
+          "taxCode": "2",
+          "percentageCode": "4",
+          "taxBase": 100,
+          "taxIva": 15,
+          "value": 15
+        }
+      ]
+    }
+  ]
+}

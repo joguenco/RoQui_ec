@@ -87,7 +87,7 @@ public class WithholdUnitTest : IClassFixture<CustomWebApplicationFactory<Progra
     private async Task<HttpResponseMessage> SendWithholdAsync(WithholdDto withhold)
     {
         var withholdJson = JsonConvert.SerializeObject(withhold, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/withhold/rest/v1/withhold/send")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/withhold/rest/v1/send")
         {
             Content = new StringContent(withholdJson, Encoding.UTF8, "application/json")
         };

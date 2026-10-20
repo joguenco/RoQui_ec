@@ -18,7 +18,7 @@ public class DocumentController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/document/authorize", Name = "AuthorizeDocument")]
+    [HttpPost("rest/v1/authorize", Name = "AuthorizeDocument")]
     public ActionResult<DocumentStatusDto> AuthorizeDocument(DocumentStatusDto document)
     {
         try

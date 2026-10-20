@@ -1,0 +1,78 @@
+{
+  "code": "GUI",
+  "number": "001002000002179",
+  "date": "2026-10-20T00:00:00Z",
+  "addressStart": "SUCUA 1-20 Y GENERAL URDANETA",
+  "carrierIdentificationType": "05",
+  "carrierIdentification": "0501797559",
+  "carrierLegalName": "EDISON",
+  "plate": "PBI-0001",
+  "dateStartTransport": "2026-10-20T00:00:00Z",
+  "dateEndTransport": "2026-10-25T00:00:00Z",
+  "accessKey": "2010202606012345678900110010020000021791234567819",
+  "deliveryNoteReceivers": [
+    {
+      "line": 1,
+      "identificationType": "04",
+      "identification": "1760013210001",
+      "legalName": "Servicio de Rentas Internas",
+      "address": "Quito",
+      "transferReason": "Venta de productos",
+      "codeDocumentSupport": "01",
+      "numberDocumentSupport": "001-003-003016875",
+      "dateDocumentSupport": "2026-10-19T16:13:02Z",
+      "deliveryNoteReceiverDetails": [
+        {
+          "line": 1,
+          "principalCode": "4370",
+          "name": "Producto tarifa diferente de 0%",
+          "quantity": 3
+        },
+        {
+          "line": 2,
+          "principalCode": "4371",
+          "name": "Producto tarifa 0%",
+          "quantity": 3
+        }
+      ]
+    },
+    {
+      "line": 2,
+      "identificationType": "04",
+      "identification": "1004718290001",
+      "legalName": "JIMMY ERNESTO",
+      "address": "VACAS 2-21",
+      "transferReason": "Venta de productos",
+      "codeDocumentSupport": "01",
+      "numberDocumentSupport": "001-004-000002932",
+      "dateDocumentSupport": "2026-10-16T17:19:27Z",
+      "deliveryNoteReceiverDetails": [
+        {
+          "line": 1,
+          "principalCode": "1298",
+          "name": "LUBRISTONE REFRIGEREANTE 50 GL.",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "line": 3,
+      "identificationType": "04",
+      "identification": "1002376444001",
+      "legalName": "SIXTO VINICIO",
+      "address": "COTACACHI",
+      "transferReason": "Venta de productos",
+      "codeDocumentSupport": "01",
+      "numberDocumentSupport": "001-004-000002931",
+      "dateDocumentSupport": "2026-10-16T13:13:03Z",
+      "deliveryNoteReceiverDetails": [
+        {
+          "line": 1,
+          "principalCode": "4318",
+          "name": "GOLDEN CROWN LLANTA",
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}

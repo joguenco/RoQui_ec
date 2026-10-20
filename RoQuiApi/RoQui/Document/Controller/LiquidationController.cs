@@ -29,7 +29,7 @@ public class LiquidationController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/liquidation/send", Name = "CreateLiquidation")]
+    [HttpPost("rest/v1/send", Name = "CreateLiquidation")]
     public async Task<ActionResult<MessageDto>> CreateLiquidation(LiquidationDto liquidationBody)
     {
         try

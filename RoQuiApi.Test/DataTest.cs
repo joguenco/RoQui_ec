@@ -16,7 +16,7 @@ public static class DataTest
     )
     {
         var taxpayerJson = JsonConvert.SerializeObject(taxpayer, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/taxpayer/rest/v1/taxpayer")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/taxpayer/rest/v1/create")
         {
             Content = new StringContent(taxpayerJson, Encoding.UTF8, "application/json")
         };

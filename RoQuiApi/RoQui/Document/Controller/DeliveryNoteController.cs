@@ -29,7 +29,7 @@ public class DeliveryNoteController : ControllerBase
     }
 
     [ApiKey]
-    [HttpPost("rest/v1/deliverynote/send", Name = "CreateDeliveryNote")]
+    [HttpPost("rest/v1/send", Name = "CreateDeliveryNote")]
     public async Task<ActionResult<MessageDto>> CreateDeliveryNote(DeliveryNoteDto deliveryNoteBody)
     {
         try

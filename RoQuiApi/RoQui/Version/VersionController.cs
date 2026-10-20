@@ -25,7 +25,7 @@ public class VersionController : ControllerBase
         {
             Name = "RoQui API",
             Author = "Jorge Luis",
-            Release = "0.0.1",
+            Release = "0.9.0",
             VersionOS = Environment.OSVersion.VersionString,
             VersionLanguage = ".NET Runtime " + Environment.Version.ToString(),
             VersionDatabase = _versionRepo.GetVersion()

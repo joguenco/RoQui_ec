@@ -99,7 +99,7 @@ public class CreditNoteUnitTest : IClassFixture<CustomWebApplicationFactory<Prog
     private async Task<HttpResponseMessage> SendCreditNoteAsync(CreditNoteDto creditNote)
     {
         var creditNoteJson = JsonConvert.SerializeObject(creditNote, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/creditnote/rest/v1/creditnote/send")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/creditnote/rest/v1/send")
         {
             Content = new StringContent(creditNoteJson, Encoding.UTF8, "application/json")
         };

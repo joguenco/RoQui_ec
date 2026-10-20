@@ -1,0 +1,36 @@
+{
+  "code": "ND",
+  "number": "001002000000001",
+  "date": "2026-10-20T00:00:00Z",
+  "identificationType": "04",
+  "identification": "1760013210001",
+  "legalName": "Servicio de Rentas Internas",
+  "accessKey": "2010202605012345678900110010020000000011234567817",
+  "modifiedDocumentType": "01",
+  "modifiedDocument": "001-003-003016875",
+  "modifiedDate": "2026-10-19T16:13:02Z",
+  "totalWithoutTaxes": 86.09,
+  "debitNoteDetails": [
+    {
+      "reason": "Multa",
+      "value": 86.09
+    }
+  ],
+  "debitNoteTaxes": [
+    {
+      "taxCode": "2",
+      "taxCodePercentage": "4",
+      "taxValue": 15,
+      "base": 86.09,
+      "value": 12.91
+    }
+  ],
+  "payments": [
+    {
+      "code": "20",
+      "total": 99,
+      "deadline": "8",
+      "unitTime": "Día"
+    }
+  ]
+}

@@ -106,7 +106,7 @@ public class InvoiceUnitTest : IClassFixture<CustomWebApplicationFactory<Program
     private async Task<HttpResponseMessage> SendInvoiceAsync(InvoiceDto invoice)
     {
         var invoiceJson = JsonConvert.SerializeObject(invoice, Formatting.Indented);
-        using var request = new HttpRequestMessage(HttpMethod.Post, "/invoice/rest/v1/invoice/send")
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/invoice/rest/v1/send")
         {
             Content = new StringContent(invoiceJson, Encoding.UTF8, "application/json")
         };
