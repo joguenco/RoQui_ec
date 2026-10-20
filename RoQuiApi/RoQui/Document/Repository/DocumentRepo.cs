@@ -3,11 +3,11 @@ namespace RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.Data;
 using RoQuiApi.RoQui.Document.Model;
 
-public class InvoiceRepo : IInvoiceRepo
+public class DocumentRepo : IDocumentRepo
 {
     private readonly AppDbContext _context;
 
-    public InvoiceRepo(AppDbContext context)
+    public DocumentRepo(AppDbContext context)
     {
         _context = context;
     }

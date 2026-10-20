@@ -2,7 +2,7 @@ namespace RoQuiApi.RoQui.Document.Repository;
 
 using RoQuiApi.RoQui.Document.Model;
 
-public interface IInvoiceRepo
+public interface IDocumentRepo
 {
     Document? GetDocumentByCodeAndNumber(string code, string number);
 

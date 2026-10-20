@@ -5,7 +5,6 @@ using RoQuiApi.RoQui.Document.Withhold.Dto;
 using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
-using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;

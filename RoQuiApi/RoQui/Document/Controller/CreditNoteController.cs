@@ -1,7 +1,6 @@
 namespace RoQuiApi.RoQui.Document.Controller;
 
 using Microsoft.AspNetCore.Mvc;
-using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.Profiles;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
@@ -15,12 +14,12 @@ using RoQuiApi.RoQui.CreditNote.Dto;
 [Route("[controller]")]
 public class CreditNoteController : ControllerBase
 {
-    private readonly IInvoiceRepo _invoiceRepo;
+    private readonly IDocumentRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
     private readonly RoQuiMapper _mapper;
     private readonly ILogger<CreditNoteController> _logger;
 
-    public CreditNoteController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<CreditNoteController> logger)
+    public CreditNoteController(IDocumentRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<CreditNoteController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;

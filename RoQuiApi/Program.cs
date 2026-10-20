@@ -24,7 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(
 
 builder.Services.AddScoped<IVersionRepo, VersionRepo>();
 builder.Services.AddScoped<ITaxpayerRepo, TaxpayerRepo>();
-builder.Services.AddScoped<IInvoiceRepo, InvoiceRepo>();
+builder.Services.AddScoped<IDocumentRepo, DocumentRepo>();
 builder.Services.AddScoped<IElectronicRepo, ElectronicRepo>();
 builder.Services.AddScoped<IWithholdRepo, WithholdRepo>();
 builder.Services.AddScoped<IDeliveryNoteRepo, DeliveryNoteRepo>();

@@ -40,19 +40,4 @@ public class Client<T>
             logger.LogError(ex, "Error authorizing invoice {code}-{number}", code, number);
         }
     }
-
-    public static async Task Version(string versionUrl, string apiKey)
-    {
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, versionUrl);
-            request.Headers.Add("X-API-KEY", apiKey);
-            var response = await HttpClient.SendAsync(request);
-            Console.WriteLine($"Version check: {(int)response.StatusCode}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error checking version: {ex.Message}");
-        }
-    }
 }

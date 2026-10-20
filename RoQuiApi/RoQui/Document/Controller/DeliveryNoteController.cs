@@ -3,7 +3,6 @@ namespace RoQuiApi.RoQui.Document.Controller;
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Document.DeliveryNote.Dto;
 using RoQuiApi.Profiles;
-using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;

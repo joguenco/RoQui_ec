@@ -3,7 +3,6 @@ namespace RoQuiApi.RoQui.Document.Controller;
 using Microsoft.AspNetCore.Mvc;
 using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.Profiles;
-using RoQuiApi.RoQui.Document.Model;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Electronic.Client;
@@ -16,12 +15,12 @@ using RoQuiApi.RoQui.Document.Invoice.Dto;
 public class InvoiceController : ControllerBase
 {
 
-    private readonly IInvoiceRepo _invoiceRepo;
+    private readonly IDocumentRepo _invoiceRepo;
     private readonly IElectronicRepo _electronicRepo;
     private readonly RoQuiMapper _mapper;
     private readonly ILogger<InvoiceController> _logger;
 
-    public InvoiceController(IInvoiceRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<InvoiceController> logger)
+    public InvoiceController(IDocumentRepo invoiceRepo, IElectronicRepo electronicRepo, RoQuiMapper mapper, ILogger<InvoiceController> logger)
     {
         _invoiceRepo = invoiceRepo;
         _electronicRepo = electronicRepo;
