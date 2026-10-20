@@ -32,3 +32,12 @@ public class InvoiceCollection;
 
 [CollectionDefinition("03_CreditNote")]
 public class CreditNoteCollection;
+
+[CollectionDefinition("04_DebitNote")]
+public class DebitNoteCollection;
+
+[CollectionDefinition("05_Liquidation")]
+public class LiquidationCollection;
+
+[CollectionDefinition("06_Withhold")]
+public class WithholdCollection;

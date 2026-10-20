@@ -3,7 +3,6 @@ namespace RoQuiApi.Test;
 using Newtonsoft.Json;
 using RoQuiApi.RoQui.CreditNote.Dto;
 using RoQuiApi.RoQui.Document.Dto;
-using RoQuiApi.RoQui.Head.Dto;
 using RoQuiApi.RoQui.Shared;
 using System.Net.Http;
 using System.Text;
@@ -116,6 +115,23 @@ public class CreditNoteUnitTest : IClassFixture<CustomWebApplicationFactory<Prog
         Console.WriteLine($"GoodTaxpayerTest: {JsonConvert.SerializeObject(taxpayer)}");
         var apiResponse = await DataTest.SendTaxpayerAsync(_client, taxpayer);
         Assert.True(apiResponse.IsSuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task BCreditNoteWithoutModifiedTest()
+    {
+        var creditNote = InitCreditNoteData();
+        creditNote.ModifiedDocument = "";
+
+        Console.WriteLine($"CreditNoteWithoutModifiedTest: {JsonConvert.SerializeObject(creditNote)}");
+        var creditNoteResponse = await SendCreditNoteAsync(creditNote);
+        Assert.False(creditNoteResponse.IsSuccessStatusCode);
+
+        var message = JsonConvert.DeserializeObject<MessageDto>(
+            await creditNoteResponse.Content.ReadAsStringAsync()
+        );
+        var errorMessage = message.Errors?.Message.FirstOrDefault();
+        Assert.Equal("The ModifiedDocument field is required.", errorMessage);
     }
 
     [Fact]

@@ -1,6 +1,8 @@
 namespace RoQuiApi.RoQui.Version;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using RoQuiApi.RoQui.Version.Repository;
 
 [ApiController]
@@ -28,5 +30,23 @@ public class VersionController : ControllerBase
             VersionLanguage = ".NET Runtime " + Environment.Version.ToString(),
             VersionDatabase = _versionRepo.GetVersion()
         };
+    }
+}
+
+internal sealed class VersionControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
+{
+    public void PopulateFeature(
+        IEnumerable<ApplicationPart> parts,
+        ControllerFeature feature
+    )
+    {
+        var controllers = feature.Controllers
+            .Where(type => type.AsType() == typeof(VersionController))
+            .ToList();
+
+        foreach (var controller in controllers)
+        {
+            feature.Controllers.Remove(controller);
+        }
     }
 }

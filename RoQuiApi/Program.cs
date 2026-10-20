@@ -5,6 +5,7 @@ using RoQuiApi.RoQui.Document.Repository;
 using RoQuiApi.RoQui.Electronic.Repository;
 using RoQuiApi.RoQui.Head.Repository;
 using RoQuiApi.RoQui.Security;
+using RoQuiApi.RoQui.Version;
 using RoQuiApi.RoQui.Version.Repository;
 using RoQuiApi.Util;
 using Scalar.AspNetCore;
@@ -38,7 +39,14 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 // builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApplicationPartManager(manager =>
+    {
+        if (builder.Environment.IsProduction())
+        {
+            manager.FeatureProviders.Add(new VersionControllerFeatureProvider());
+        }
+    });
 
 builder.Services.AddMessageConfig();
 builder.Services.AddOpenApiConfig();

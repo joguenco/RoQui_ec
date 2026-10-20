@@ -9,7 +9,7 @@ using RoQuiApi.RoQui.Electronic.Client;
 using RoQuiApi.RoQui.Shared;
 using RoQuiApi.RoQui.Security;
 using System.Text.Json;
-using RoQuiApi.RoQui.Invoice.Dto;
+using RoQuiApi.RoQui.Document.Dto;
 
 [ApiController]
 [Route("[controller]")]
