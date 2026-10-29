@@ -298,7 +298,13 @@ class ElectronicDocument(
                 document.authorizationDate =
                     DateUtil.extractDate(response.autorizacion.fechaAutorizacion)
             }
-            document.status = response.autorizacion.estado
+            if ("ERROR" == response.autorizacion.estado) {
+                if ("RECIBIDA" != document.status) {
+                    document.status = response.autorizacion.estado
+                }
+            } else {
+                document.status = response.autorizacion.estado
+            }
 
             documentService.saveDocument(document)
         } catch (e: NoSuchElementException) {
