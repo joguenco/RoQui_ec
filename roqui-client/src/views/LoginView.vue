@@ -18,6 +18,7 @@
                 placeholder="Usuario"
                 v-model="username"
                 ref="username"
+                @keyup.enter="login"
               />
             </div>
             <div class="field">
