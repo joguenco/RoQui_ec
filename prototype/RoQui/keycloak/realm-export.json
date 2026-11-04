@@ -1,0 +1,53 @@
+{
+  "realm": "roqui-realm",
+  "enabled": true,
+  "requiredActions": [
+    {
+      "alias": "VERIFY_PROFILE",
+      "name": "Verify Profile",
+      "providerId": "VERIFY_PROFILE",
+      "enabled": false,
+      "defaultAction": false
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "task-api-client",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["*"],
+      "webOrigins": ["*"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "admin" },
+      { "name": "user" }
+    ]
+  },
+  "users": [
+    {
+      "username": "maria",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Maria",
+      "lastName": "José",
+      "email": "maria@joguenco.dev",
+      "requiredActions": [],
+      "credentials": [{ "type": "password", "value": "m", "temporary": false }],
+      "realmRoles": ["user"]
+    },
+    {
+      "username": "manager",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Me",
+      "lastName": "Manager",
+      "email": "manager@joguenco.dev",
+      "requiredActions": [],
+      "credentials": [{ "type": "password", "value": "m", "temporary": false }],
+      "realmRoles": ["admin", "user"]
+    }
+  ]
+}
