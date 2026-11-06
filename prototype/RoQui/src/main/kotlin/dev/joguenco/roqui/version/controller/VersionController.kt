@@ -4,10 +4,12 @@ import dev.joguenco.roqui.version.service.VersionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN')")
 class VersionController {
 
     @Autowired lateinit var versionService: VersionService
