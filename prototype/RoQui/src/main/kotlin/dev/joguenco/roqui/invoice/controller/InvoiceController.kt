@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.invoice.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
@@ -11,7 +12,6 @@ import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.security.isValidApiKey
-import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
@@ -98,7 +98,7 @@ class InvoiceController {
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         if (!isValidApiKey(requestApiKey, parameterService)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
@@ -111,7 +111,7 @@ class InvoiceController {
     fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -149,7 +149,7 @@ class InvoiceController {
     fun postCheckAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -159,7 +159,7 @@ class InvoiceController {
         return checkAll(startDate, endDate)
     }
 
-    fun checkAll(startDate: String, endDate: String): ResponseEntity<out Any?> {
+    fun checkAll(startDate: String, endDate: String): ResponseEntity<Any> {
         val reportInvoice =
             reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, "Unauthorized")
 

@@ -1,8 +1,7 @@
 package dev.joguenco.roqui.invoice.controller
 
-import dev.joguenco.roqui.common.dto.ReportReciptDto
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
-import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.Validate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -31,7 +30,7 @@ class ReportInvoiceController {
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
         @PathVariable(value = "status") status: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (statusValidation, message) = Validate.rangeOfDates(startDate, endDate)
         if (!statusValidation) {
@@ -39,6 +38,6 @@ class ReportInvoiceController {
         }
         val reportInvoice =
             reportInvoiceService.getInvoiceByDatesAndStatus(startDate, endDate, status)
-        return ResponseEntity<MutableList<ReportReciptDto>>(reportInvoice, HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.OK).body(reportInvoice as Any)
     }
 }

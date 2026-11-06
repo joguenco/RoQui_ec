@@ -1,8 +1,8 @@
 package dev.joguenco.roqui.parameter.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.parameter.dto.EmailServerHttpDto
 import dev.joguenco.roqui.parameter.service.EmailClientHttpService
-import dev.joguenco.roqui.shared.dto.Message
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

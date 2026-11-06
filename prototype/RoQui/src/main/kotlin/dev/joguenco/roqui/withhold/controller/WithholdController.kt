@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.withhold.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
@@ -8,8 +9,7 @@ import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.service.ParameterService
-import dev.joguenco.roqui.security.util.isValidApiKey
-import dev.joguenco.roqui.shared.dto.Message
+import dev.joguenco.roqui.security.isValidApiKey
 import dev.joguenco.roqui.util.Validate
 import dev.joguenco.roqui.withhold.service.ReportWithholdService
 import dev.joguenco.roqui.withhold.service.WithholdService
@@ -18,14 +18,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-
 
 @RestController
 @RequestMapping("/roqui")
@@ -100,7 +98,7 @@ class WithholdController {
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         if (!isValidApiKey(requestApiKey, parameterService)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
@@ -113,7 +111,7 @@ class WithholdController {
     fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -151,7 +149,7 @@ class WithholdController {
     fun postCheckAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -161,7 +159,7 @@ class WithholdController {
         return checkAll(startDate, endDate)
     }
 
-    fun checkAll(startDate: String, endDate: String): ResponseEntity<out Any?> {
+    fun checkAll(startDate: String, endDate: String): ResponseEntity<Any> {
         val reportWithhold =
             reportWithholdService.getWithholdByDatesAndStatus(startDate, endDate, "Unauthorized")
 

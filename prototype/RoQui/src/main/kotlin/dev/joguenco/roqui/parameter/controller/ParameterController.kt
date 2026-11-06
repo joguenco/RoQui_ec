@@ -1,8 +1,8 @@
 package dev.joguenco.roqui.parameter.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.parameter.dto.BaseDirectoryDto
 import dev.joguenco.roqui.parameter.service.ParameterService
-import dev.joguenco.roqui.shared.dto.Message
 import dev.joguenco.roqui.util.FilesUtil.Companion.createDirectory
 import dev.joguenco.roqui.util.FilesUtil.Companion.isDirectoryExists
 import java.io.File

@@ -1,4 +1,4 @@
-package dev.joguenco.roqui.shared.dto
+package dev.joguenco.roqui.common.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import jakarta.validation.constraints.NotEmpty

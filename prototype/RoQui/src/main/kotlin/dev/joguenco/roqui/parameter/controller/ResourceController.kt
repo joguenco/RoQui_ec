@@ -1,9 +1,9 @@
 package dev.joguenco.roqui.parameter.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.exception.FileImportException
 import dev.joguenco.roqui.parameter.dto.ParameterDto
 import dev.joguenco.roqui.parameter.service.ResourceService
-import dev.joguenco.roqui.shared.dto.Message
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.slf4j.LoggerFactory

@@ -1,0 +1,66 @@
+package dev.joguenco.roqui.certificate.controller
+
+import dev.joguenco.roqui.certificate.dto.DayDto
+import dev.joguenco.roqui.certificate.service.CertificateService
+import dev.joguenco.roqui.common.dto.Message
+import dev.joguenco.roqui.exception.FileImportException
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
+
+@RestController
+@RequestMapping("/roqui/v1")
+class CertificateController {
+
+    private val log = LoggerFactory.getLogger(CertificateController::class.java)
+
+    @Autowired lateinit var certificateService: CertificateService
+
+    @GetMapping("/certificate")
+    fun getCertificate(): ResponseEntity<Any> {
+        if (!certificateService.checkCertificateFile()) {
+            log.error("Certificate file not found")
+            return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
+        }
+
+        val certificate = certificateService.getCertificateInformation()
+        return ResponseEntity.ok(certificate)
+    }
+
+    @GetMapping("/certificate/days-to-expiry")
+    fun getDaysToExpiry(): ResponseEntity<Any> {
+        if (!certificateService.checkCertificateFile()) {
+            log.error("Certificate file not found")
+            return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
+        }
+
+        val days = certificateService.getCertificateInformation().daysToExpiry
+        return ResponseEntity.ok(DayDto(daysToExpiry = days))
+    }
+
+    @PostMapping("/certificate/load")
+    fun loadCertificate(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("password") password: String,
+    ): ResponseEntity<Any> {
+        val message = Message()
+        return try {
+            val status = certificateService.uploadFile(file, password)
+
+            if (status) message.message = "The certificate has been updated successfully"
+            else message.message = "Failed to update the certificate"
+
+            ResponseEntity(message, HttpStatus.OK)
+        } catch (ex: FileImportException) {
+            log.error("Error loading certificate: ${ex.message}")
+            ResponseEntity(Message("Failed to load certificate"), HttpStatus.BAD_REQUEST)
+        }
+    }
+}

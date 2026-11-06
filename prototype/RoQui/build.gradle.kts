@@ -21,13 +21,13 @@ repositories {
 }
 
 dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("tools.jackson.module:jackson-module-kotlin")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat-runtime")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
@@ -82,6 +82,16 @@ allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.MappedSuperclass")
     annotation("jakarta.persistence.Embeddable")
+}
+
+kapt {
+    arguments {
+        // Set Mapstruct Configuration options here
+        // https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
+        // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
+        arg("mapstruct.defaultComponentModel", "spring")
+    }
+    keepJavacAnnotationProcessors = true
 }
 
 ktfmt { kotlinLangStyle() }
