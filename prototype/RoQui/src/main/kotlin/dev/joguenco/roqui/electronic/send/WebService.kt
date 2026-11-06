@@ -1,0 +1,50 @@
+package dev.joguenco.roqui.electronic.send
+
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URI
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+
+@Component
+class WebService {
+
+    @Value("\${sri.url.ws.developer.reception}") lateinit var developmentReception: String
+
+    @Value("\${sri.url.ws.developer.authorization}") lateinit var developmentAuthorization: String
+
+    @Value("\${sri.url.ws.production.reception}") lateinit var productionReception: String
+
+    @Value("\${sri.url.ws.production.authorization}") lateinit var productionAuthorization: String
+
+    // Nadie la llama. Se deja comentada por si hace falta ver las URLs del SRI.
+    // fun printPropertyValues() {
+    //     println("Developer reception: $developmentReception")
+    //     println("Developer authorization: $developmentAuthorization")
+    //     println("Production reception: $productionReception")
+    //     println("Production authorization: $productionAuthorization")
+    // }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(WebService::class.java)
+
+        fun isAlive(urlWebServices: String): Pair<Boolean, String> {
+            var c: HttpURLConnection? = null
+            try {
+                val u = URI(urlWebServices).toURL()
+                c = u.openConnection() as HttpURLConnection
+                c.requestMethod = "GET"
+                c.inputStream
+                if (c.responseCode == 200) {
+                    return true to "Successful connection"
+                }
+            } catch (e: IOException) {
+                log.warn("Error SRI web service connection: ${e.message}")
+            } finally {
+                c?.disconnect()
+            }
+            return false to "Error de conexión con el servicio web $urlWebServices"
+        }
+    }
+}

@@ -1,0 +1,279 @@
+package dev.joguenco.roqui.electronic.xml
+
+import dev.joguenco.roqui.util.FilesUtil
+import dev.joguenco.roqui.withhold.service.WithholdService
+import ec.gob.sri.withhold.v200.ComprobanteRetencion
+import ec.gob.sri.withhold.v200.DocSustento
+import ec.gob.sri.withhold.v200.ImpuestoDocSustento
+import ec.gob.sri.withhold.v200.ImpuestosDocSustento
+import ec.gob.sri.withhold.v200.InfoTributaria
+import ec.gob.sri.withhold.v200.ObligadoContabilidad
+import ec.gob.sri.withhold.v200.Pago
+import ec.gob.sri.withhold.v200.Pagos
+import ec.gob.sri.withhold.v200.Retencion
+import ec.gob.sri.withhold.v200.Retenciones
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.Marshaller
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
+import java.io.StringWriter
+import java.math.BigDecimal
+import java.text.SimpleDateFormat
+import org.slf4j.LoggerFactory
+
+class BuildWithhold(
+    val code: String,
+    val number: String,
+    private val baseDirectory: String,
+    private val withholdService: WithholdService,
+) {
+
+    private val log = LoggerFactory.getLogger(BuildWithhold::class.java)
+
+    private companion object {
+
+        /** Pago local. DonPos no registra pagos al exterior en compras. */
+        const val PAGO_LOCAL = "01"
+
+        const val FORMA_PAGO = "01"
+    }
+
+    private val tributaryInformation = withholdService.getWithholdAndTaxpayer(code, number)
+
+    fun xml(): Pair<String, String> {
+        val comprobanteRetencion = ComprobanteRetencion()
+
+        try {
+            comprobanteRetencion.id = "comprobante"
+            comprobanteRetencion.version = "2.0.0"
+            comprobanteRetencion.infoTributaria = buildInfoTributaria()
+            comprobanteRetencion.infoCompRetencion = buildInfoCompRetencion()
+            comprobanteRetencion.docsSustento = buildDocsSustento()
+            buildAdditionalInformation(tributaryInformation.withhold.identification!!)?.let {
+                comprobanteRetencion.infoAdicional = it
+            }
+
+            val jaxbContext = JAXBContext.newInstance(ComprobanteRetencion::class.java)
+            val marshaller = jaxbContext.createMarshaller()
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+            marshaller.setProperty("jaxb.encoding", "UTF-8")
+
+            val stringWriter = StringWriter()
+            stringWriter.use { marshaller.marshal(comprobanteRetencion, stringWriter) }
+
+            val pathGenerated =
+                FilesUtil.directory(
+                    baseDirectory + "${File.separatorChar}generated",
+                    tributaryInformation.withhold.date!!,
+                )
+
+            val out =
+                OutputStreamWriter(
+                    FileOutputStream(
+                        "$pathGenerated${File.separatorChar}" +
+                            "${comprobanteRetencion.infoTributaria.claveAcceso}.xml"
+                    ),
+                    "UTF-8",
+                )
+
+            marshaller.marshal(comprobanteRetencion, out)
+            log.info("XML generated: {}", stringWriter)
+
+            return Pair(pathGenerated, comprobanteRetencion.infoTributaria.claveAcceso)
+        } catch (e: Exception) {
+            log.error("Error BuildWithhold: ${e.message}")
+            return Pair("", "")
+        }
+    }
+
+    private fun buildInfoTributaria(): InfoTributaria {
+        val infoTributaria = InfoTributaria()
+
+        infoTributaria.ruc = tributaryInformation.taxpayer.identification
+        infoTributaria.razonSocial = tributaryInformation.taxpayer.legalName
+        infoTributaria.nombreComercial = tributaryInformation.establishmentBusinessName
+
+        if (tributaryInformation.withhold.accessKey!!.length == 49) {
+            infoTributaria.claveAcceso = tributaryInformation.withhold.accessKey
+            infoTributaria.ambiente = infoTributaria.claveAcceso.substring(23, 24)
+            infoTributaria.tipoEmision = infoTributaria.claveAcceso.substring(47, 48)
+        }
+
+        infoTributaria.codDoc = tributaryInformation.withhold.codeDocument
+        infoTributaria.estab = tributaryInformation.withhold.establishment
+        infoTributaria.ptoEmi = tributaryInformation.withhold.emissionPoint
+        infoTributaria.secuencial = tributaryInformation.withhold.sequence
+        infoTributaria.dirMatriz = tributaryInformation.principalEstablishmentAddress
+        infoTributaria.contribuyenteRimpe = tributaryInformation.taxpayer.regime
+        infoTributaria.agenteRetencion = tributaryInformation.taxpayer.retentionAgent
+
+        return infoTributaria
+    }
+
+    private fun buildInfoCompRetencion(): ComprobanteRetencion.InfoCompRetencion {
+        val infoCompRetencion = ComprobanteRetencion.InfoCompRetencion()
+
+        infoCompRetencion.fechaEmision =
+            SimpleDateFormat("dd/MM/yyyy").format(tributaryInformation.withhold.date)
+        infoCompRetencion.dirEstablecimiento = tributaryInformation.establishmentAddress
+        infoCompRetencion.contribuyenteEspecial = tributaryInformation.taxpayer.specialTaxpayer
+
+        if (tributaryInformation.taxpayer.forcedAccounting == "SI") {
+            infoCompRetencion.obligadoContabilidad = ObligadoContabilidad.SI
+        } else {
+            infoCompRetencion.obligadoContabilidad = ObligadoContabilidad.NO
+        }
+
+        // El sujeto retenido es el PROVEEDOR de la compra
+        infoCompRetencion.tipoIdentificacionSujetoRetenido =
+            tributaryInformation.withhold.identificationType
+        infoCompRetencion.razonSocialSujetoRetenido = tributaryInformation.withhold.legalName
+        infoCompRetencion.identificacionSujetoRetenido =
+            tributaryInformation.withhold.identification
+        infoCompRetencion.parteRel = tributaryInformation.withhold.related
+        infoCompRetencion.periodoFiscal = tributaryInformation.withhold.fiscalPeriod
+
+        return infoCompRetencion
+    }
+
+    /**
+     * Un bloque docSustento por cada sustento tributario de la compra.
+     *
+     * El SRI admite varios: cada uno lleva un solo codSustento, sus propios totales y sus propias
+     * retenciones. Si la compra mezcla mercaderia y servicios salen dos bloques apuntando a la
+     * misma factura.
+     */
+    private fun buildDocsSustento(): ComprobanteRetencion.DocsSustento {
+        val docsSustento = ComprobanteRetencion.DocsSustento()
+
+        for (support in withholdService.getWithholdSupport(code, number)) {
+            val docSustento = DocSustento()
+
+            docSustento.codSustento = support.codeSupport
+            docSustento.codDocSustento = support.codeDocumentSupport
+            docSustento.numDocSustento = support.numberDocumentSupport?.replace("-", "")
+            docSustento.fechaEmisionDocSustento =
+                SimpleDateFormat("dd/MM/yyyy").format(support.dateDocumentSupport)
+            docSustento.numAutDocSustento = support.authorizationDocumentSupport
+            docSustento.pagoLocExt = PAGO_LOCAL
+
+            docSustento.totalSinImpuestos =
+                support.totalWithoutTaxes!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            docSustento.importeTotal = support.total!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            docSustento.impuestosDocSustento = buildImpuestosDocSustento(support.codeSupport)
+            docSustento.retenciones = buildRetenciones(support.codeSupport)
+            docSustento.pagos = buildPagos(docSustento.importeTotal)
+
+            docsSustento.docSustento.add(docSustento)
+        }
+
+        return docsSustento
+    }
+
+    /**
+     * Los impuestos que ya traia la compra, solo los de este sustento.
+     *
+     * Si no se filtrara, con dos bloques docSustento el IVA saldria contado dos veces y los totales
+     * no cuadrarian contra la factura.
+     */
+    private fun buildImpuestosDocSustento(codeSupport: String?): ImpuestosDocSustento {
+        val impuestos = ImpuestosDocSustento()
+        val documentTaxes =
+            withholdService.getWithholdDocumentTax(code, number).filter {
+                it.codeSupport == codeSupport || it.codeSupport == null
+            }
+
+        for (tax in documentTaxes) {
+            val impuesto = ImpuestoDocSustento()
+            impuesto.codImpuestoDocSustento = tax.taxCode
+            impuesto.codigoPorcentaje = tax.percentageCode
+            impuesto.baseImponible = tax.taxBase!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            impuesto.tarifa = tax.taxIva!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            impuesto.valorImpuesto = tax.value!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            impuestos.impuestoDocSustento.add(impuesto)
+        }
+
+        return impuestos
+    }
+
+    /**
+     * Las retenciones de un sustento: lo que se le retuvo al proveedor por esa parte de la compra.
+     *
+     * Las lineas sin sustento entran en el primer bloque, para no perderlas: son retenciones hechas
+     * antes de que DonPos pidiera el dato.
+     */
+    private fun buildRetenciones(codeSupport: String?): Retenciones {
+        val retenciones = Retenciones()
+        val details =
+            withholdService.getWithholdDetail(code, number).filter {
+                it.codeSupport == codeSupport || it.codeSupport == null
+            }
+
+        for (detail in details) {
+            val retencion = Retencion()
+            retencion.codigo = detail.taxCode
+            retencion.codigoRetencion = detail.withholdCode
+            retencion.baseImponible = detail.baseValue!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            retencion.porcentajeRetener = detail.percentage!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+            retencion.valorRetenido = detail.withholdedValue!!.setScale(2, BigDecimal.ROUND_HALF_UP)
+
+            retenciones.retencion.add(retencion)
+        }
+
+        return retenciones
+    }
+
+    private fun buildPagos(importeTotal: BigDecimal): Pagos {
+        val pagos = Pagos()
+
+        val pago = Pago()
+        pago.formaPago = FORMA_PAGO
+        pago.total = importeTotal
+
+        pagos.pago.add(pago)
+
+        return pagos
+    }
+
+    private fun buildAdditionalInformation(
+        identification: String
+    ): ComprobanteRetencion.InfoAdicional? {
+        var infoAdditional = ComprobanteRetencion.InfoAdicional()
+        val additionalInformation = withholdService.getWithholdInformation(identification)
+
+        for (information in additionalInformation) {
+            val fieldAdditional = ComprobanteRetencion.InfoAdicional.CampoAdicional()
+            fieldAdditional.nombre = information.name
+            fieldAdditional.value = information.value
+
+            infoAdditional.campoAdicional.add(fieldAdditional)
+        }
+
+        infoAdditional = buildGeneralInformation(infoAdditional)
+
+        if (infoAdditional.campoAdicional.isEmpty()) {
+            return null
+        }
+
+        return infoAdditional
+    }
+
+    private fun buildGeneralInformation(
+        infoAdicional: ComprobanteRetencion.InfoAdicional
+    ): ComprobanteRetencion.InfoAdicional {
+        val generalInformation = withholdService.getGeneralInformation()
+
+        for (observation in generalInformation) {
+            val campoAdicional = ComprobanteRetencion.InfoAdicional.CampoAdicional()
+            campoAdicional.nombre = observation.name
+            campoAdicional.value = observation.value
+
+            infoAdicional.campoAdicional.add(campoAdicional)
+        }
+
+        return infoAdicional
+    }
+}

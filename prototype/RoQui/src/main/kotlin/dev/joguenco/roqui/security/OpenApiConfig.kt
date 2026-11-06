@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 /**
- * Publishes the Keycloak OAuth2 authorization-code scheme in the OpenAPI document, so the Swagger UI
- * "Authorize" button can sign in against Keycloak and send the issued access token with each call.
+ * Publishes the Keycloak OAuth2 authorization-code scheme in the OpenAPI document, so the Swagger
+ * UI "Authorize" button can sign in against Keycloak and send the issued access token with each
+ * call.
  */
 @Configuration
 class OpenApiConfig(
-    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") private val issuerUri: String,
+    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private val issuerUri: String,
     @Value("\${app.version}") private val appVersion: String,
 ) {
 

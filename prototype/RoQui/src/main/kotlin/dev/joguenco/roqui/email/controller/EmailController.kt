@@ -1,0 +1,50 @@
+package dev.joguenco.roqui.email.controller
+
+import dev.joguenco.roqui.electronic.dto.DocumentDto
+import dev.joguenco.roqui.email.EmailSmtp
+import dev.joguenco.roqui.email.Validate
+import dev.joguenco.roqui.email.dto.EmailDto
+import dev.joguenco.roqui.information.service.InformationService
+import dev.joguenco.roqui.parameter.service.ParameterService
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+
+@RestController
+@RequestMapping("/roqui/v1")
+class EmailController {
+
+    private val log = LoggerFactory.getLogger(EmailController::class.java)
+
+    @Autowired lateinit var parameterService: ParameterService
+    @Autowired lateinit var informationService: InformationService
+
+    @PostMapping("/email/send")
+    fun postSendEmail(@RequestBody document: DocumentDto): ResponseEntity<Any> {
+        val emailSmtp =
+            EmailSmtp(document.code, document.number, parameterService, informationService)
+        emailSmtp.send()
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/email/send/test")
+    fun postSendEmailTest(@RequestBody email: EmailDto): ResponseEntity<Any> {
+        if (!Validate.isEmailValid(email.address)) {
+            return ResponseEntity.badRequest().body("Invalid email address format")
+        }
+        val emailSmtp = EmailSmtp(parameterService, informationService)
+        val (status, message) = emailSmtp.sendTest(email.address)
+        if (status) {
+            log.info(message)
+            return ResponseEntity.ok().body(message)
+        }
+        log.error(message)
+        return ResponseEntity.internalServerError().body(message)
+    }
+}

@@ -1,0 +1,83 @@
+package dev.joguenco.roqui.parameter.service
+
+import dev.joguenco.roqui.exception.FileImportException
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import org.apache.coyote.BadRequestException
+import org.joda.time.DateTime
+import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+
+@Service
+class FileService(private val parameterService: ParameterService) {
+
+    fun uploadFile(file: MultipartFile): String {
+        throwIfFileEmpty(file)
+        try {
+            val extension = file.originalFilename!!.substringAfterLast('.', "")
+            val path = renameCurrentFile(extension)
+            val root = Paths.get(path)
+
+            Files.copy(
+                file.inputStream,
+                root.resolve(file.originalFilename),
+                StandardCopyOption.REPLACE_EXISTING,
+            )
+
+            if (extension.lowercase() == "jpeg") {
+                updateFile(file.originalFilename!!, "Logo JPEG")
+            } else if (extension.lowercase() == "png") {
+                updateFile(file.originalFilename!!, "Logo PNG")
+            } else if (extension.lowercase() == "html") {
+                updateFile(file.originalFilename!!, "Template Email")
+            } else {
+                throw BadRequestException("Unsupported file type")
+            }
+
+            return "Load file complete"
+        } catch (ex: Exception) {
+            throw FileImportException("Error to load the file")
+        }
+    }
+
+    fun updateFile(file: String, parameterName: String) {
+        val parameter = parameterService.findByName(parameterName)
+
+        parameter.value = file
+        parameterService.update(parameter)
+    }
+
+    fun renameCurrentFile(extension: String): String {
+
+        val resource =
+            if (extension.lowercase() == "jpeg") {
+                parameterService.getLogoJpegPath()
+            } else if (extension.lowercase() == "png") {
+                parameterService.getLogoPngPath()
+            } else if (extension.lowercase() == "html") {
+                parameterService.getEmailTemplate()
+            } else {
+                throw BadRequestException("Unsupported file type")
+            }
+
+        val fileAndPath = File(resource)
+        if (fileAndPath.exists()) {
+            val renameFile = File(resource + "." + DateTime.now())
+            fileAndPath.renameTo(renameFile)
+        }
+
+        return fileAndPath.parentFile.absolutePath
+    }
+
+    private fun throwIfFileEmpty(file: MultipartFile) {
+        if (file.isEmpty) throw BadRequestException("Empty file")
+    }
+
+    fun existResource(name: String): Boolean {
+        val directory = parameterService.getResourceDirectory()
+        val fileAndPath = File(directory + File.separator + name)
+        return fileAndPath.exists()
+    }
+}

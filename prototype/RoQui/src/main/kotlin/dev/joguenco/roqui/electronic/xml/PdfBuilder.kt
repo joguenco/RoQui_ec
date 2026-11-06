@@ -1,0 +1,88 @@
+package dev.joguenco.roqui.electronic.xml
+
+import dev.joguenco.pdf.invoice.InvoiceReport
+import dev.joguenco.pdf.liquidation.LiquidationReport
+import dev.joguenco.pdf.note.credit.CreditNoteReport
+import dev.joguenco.pdf.note.debit.DebitNoteReport
+import dev.joguenco.pdf.note.delivery.DeliveryReport
+import dev.joguenco.pdf.withhold.WithholdReport
+import dev.joguenco.roqui.electronic.TypeDocument
+import dev.joguenco.roqui.util.DateUtil
+import dev.joguenco.roqui.util.FilesUtil
+import java.io.File
+import org.slf4j.LoggerFactory
+
+class PdfBuilder(
+    private val accessKey: String,
+    private val baseDirectory: String,
+    private val pathLogo: String,
+) {
+    private val log = LoggerFactory.getLogger(PdfBuilder::class.java)
+
+    private var authorization: String = ""
+    private var authorizationDate: String = ""
+
+    constructor(
+        accessKey: String,
+        baseDirectory: String,
+        pathLogo: String,
+        authorization: String,
+        authorizationDate: String,
+    ) : this(accessKey, baseDirectory, pathLogo) {
+        this.authorization = authorization
+        this.authorizationDate = authorizationDate
+    }
+
+    fun pdf(): Boolean {
+        val classLoader = PdfBuilder::class.java.classLoader
+        val dateAccessKey = DateUtil.accessKeyToDate(accessKey)
+        val reportFolder = classLoader.getResource("./report").path
+
+        val pathXmlFile =
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}generated", dateAccessKey)
+
+        val pdfOutFolder =
+            FilesUtil.directory(baseDirectory + "${File.separatorChar}pdf", dateAccessKey)
+
+        val typeDocument = getTypeDocument(accessKey)
+
+        val xmlGenerated = "$pathXmlFile${File.separatorChar}$accessKey.xml"
+        if (!FilesUtil.isFileExists(xmlGenerated)) {
+            log.error("XML file does not exist: $xmlGenerated")
+            return false
+        }
+
+        if (typeDocument == TypeDocument.FACTURA) {
+            val report = InvoiceReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+            return report.pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.NOTA_CREDITO) {
+            return CreditNoteReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.NOTA_DEBITO) {
+            return DebitNoteReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.LIQUIDACION) {
+            return LiquidationReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.RETENCION) {
+            return WithholdReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+                .pdf(authorization, authorizationDate)
+        } else if (typeDocument == TypeDocument.GUIA) {
+            return DeliveryReport(xmlGenerated, reportFolder, pathLogo, pdfOutFolder)
+                .pdf(authorization, authorizationDate)
+        }
+        return false
+    }
+
+    private fun getTypeDocument(accessKey: String): TypeDocument {
+        return when (accessKey.substring(8, 10)) {
+            "01" -> TypeDocument.FACTURA
+            "03" -> TypeDocument.LIQUIDACION
+            "04" -> TypeDocument.NOTA_CREDITO
+            "05" -> TypeDocument.NOTA_DEBITO
+            "06" -> TypeDocument.GUIA
+            "07" -> TypeDocument.RETENCION
+            else -> throw IllegalArgumentException("Invalid type document code in accessKey")
+        }
+    }
+}
