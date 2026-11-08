@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const creditNoteService = {}
 
@@ -27,7 +26,7 @@ creditNoteService.checkAll = async (token, startDate, endDate) => {
 }
 
 creditNoteService.authorize = async (token, code, number) => {
-  return await client.post(`/credit/note/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/credit/note/authorize`, { code, number })
 }
 
 export default creditNoteService

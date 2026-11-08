@@ -1,10 +1,9 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const assetService = {}
 
-assetService.getEnvironment = async (token) => {
-  return await client.get('/asset/environment', headerAuthorization(token))
+assetService.getEnvironment = async () => {
+  return await http.get('/roqui/v1/asset/environment')
 }
 
 export default assetService

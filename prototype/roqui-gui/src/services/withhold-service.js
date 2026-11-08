@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const withholdService = {}
 
@@ -27,7 +26,7 @@ withholdService.checkAll = async (token, startDate, endDate) => {
 }
 
 withholdService.authorize = async (token, code, number) => {
-  return await client.post(`/withhold/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/withhold/authorize`, { code, number })
 }
 
 export default withholdService

@@ -1,11 +1,10 @@
 import { BASE_URL } from '@/services/config'
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const documentService = {}
 
 documentService.find = async (token, code, number) => {
-  return await client.get(`/document/code/${code}/number/${number}`, headerAuthorization(token))
+  return await client.get(`/document/code/${code}/number/${number}`)
 }
 
 documentService.pdf = function () {

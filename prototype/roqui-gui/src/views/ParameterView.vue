@@ -45,12 +45,5 @@ export default {
   components: {
     AppHeader,
   },
-
-  beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
-    }
-  },
 }
 </script>

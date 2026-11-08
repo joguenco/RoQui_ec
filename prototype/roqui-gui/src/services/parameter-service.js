@@ -1,44 +1,38 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const parameterService = {}
 
-parameterService.getBaseDirectory = async (token) => {
-  return await client.get('/parameter/base/directory', headerAuthorization(token))
+parameterService.getBaseDirectory = async () => {
+  return await http.get('/roqui/v1/parameter/base/directory')
 }
 
-parameterService.setBaseDirectory = async (token, baseDirectory) => {
-  return await client.post(
-    '/parameter/base/directory',
-    {
-      baseDirectory,
-    },
-    headerAuthorization(token),
-  )
+parameterService.setBaseDirectory = async (baseDirectory) => {
+  return await http.post('/roqui/v1/parameter/base/directory', {
+    baseDirectory,
+  })
 }
 
-parameterService.getLogoJpeg = async (token) => {
+parameterService.getLogoJpeg = async () => {
   const config = {
-    headers: { Authorization: `Bearer ${token}` },
     responseType: 'blob',
   }
-  return await client.get('/resource/logo/jpeg', config)
+  return await http.get('/roqui/v1/resource/logo/jpeg', config)
 }
 
-parameterService.uploadLogoJpeg = async (token, formData) => {
-  return await client.post('/resource/logo/jpeg/load', formData, headerAuthorization(token))
+parameterService.uploadLogoJpeg = async (formData) => {
+  return await http.post('/roqui/v1/resource/logo/jpeg/load', formData)
 }
 
-parameterService.uploadLogoPng = async (token, formData) => {
-  return await client.post('/resource/logo/png/load', formData, headerAuthorization(token))
+parameterService.uploadLogoPng = async (formData) => {
+  return await http.post('/roqui/v1/resource/logo/png/load', formData)
 }
 
-parameterService.uploadEmailTemplateHtml = async (token, formData) => {
-  return await client.post('/resource/template/html/load', formData, headerAuthorization(token))
+parameterService.uploadEmailTemplateHtml = async (formData) => {
+  return await http.post('/roqui/v1/resource/template/html/load', formData)
 }
 
-parameterService.getResource = async (token, name) => {
-  return await client.get(`/resource/name?name=${name}`, headerAuthorization(token))
+parameterService.getResource = async (name) => {
+  return await http.get(`/roqui/v1/resource/name?name=${name}`)
 }
 
 export default parameterService

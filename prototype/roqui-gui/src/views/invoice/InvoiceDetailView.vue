@@ -154,8 +154,8 @@ export default {
   }),
 
   mounted() {
-    if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
+
+
       document.addEventListener('keyup', this.handleEscapeKey)
     } else {
       this.$router.push('/')

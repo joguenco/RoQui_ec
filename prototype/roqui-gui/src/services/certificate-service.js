@@ -1,18 +1,17 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const certificateService = {}
 
-certificateService.getCertificate = async (token) => {
-  return await client.get('/certificate', headerAuthorization(token))
+certificateService.getCertificate = async () => {
+  return await http.get('/roqui/v1/certificate')
 }
 
-certificateService.getDaysToExpire = async (token) => {
-  return await client.get('/certificate/days-to-expiry', headerAuthorization(token))
+certificateService.getDaysToExpire = async () => {
+  return await http.get('/roqui/v1/certificate/days-to-expiry')
 }
 
-certificateService.uploadCertificate = async (token, formData) => {
-  return await client.post('/certificate/load', formData, headerAuthorization(token))
+certificateService.uploadCertificate = async (formData) => {
+  return await http.post('/roqui/v1/certificate/load', formData)
 }
 
 export default certificateService

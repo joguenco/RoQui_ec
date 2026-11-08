@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const deliveryNoteService = {}
 
@@ -27,7 +26,7 @@ deliveryNoteService.checkAll = async (token, startDate, endDate) => {
 }
 
 deliveryNoteService.authorize = async (token, code, number) => {
-  return await client.post(`/delivery-note/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/delivery-note/authorize`, { code, number })
 }
 
 export default deliveryNoteService

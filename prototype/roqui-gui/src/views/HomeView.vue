@@ -109,12 +109,12 @@ export default {
   }),
 
   methods: {
-    getDaysToExpireCertificate(token) {
+    getDaysToExpireCertificate() {
       certificateService
-        .getDaysToExpire(token)
+        .getDaysToExpire()
         .then((response) => {
           this.daysToExpiry = response.data.daysToExpiry
-          if (this.daysToExpiry !== null && this.daysToExpiry <= 30) {
+          if (this.daysToExpiry !== null && this.daysToExpiry <= 15) {
             if (this.daysToExpiry > 0) {
               this.notification.message = `Su certificado digital expirará en ${this.daysToExpiry} días.`
             } else if (this.daysToExpiry === 0) {
@@ -126,33 +126,30 @@ export default {
             this.showNotification = true
           }
         })
-        .catch(() => {
-          this.daysToExpire = null
+        .catch((error) => {
+          if (error.response?.status === 404) {
+            this.notification.message = 'Certificado digital no encontrado.'
+            this.notification.type = 'is-warning'
+            this.showNotification = true
+          }
+          this.daysToExpiry = null
         })
     },
   },
 
   beforeMount() {
-    if (localStorage.getItem('user')) {
-      const user = JSON.parse(localStorage.getItem('user'))
-      this.getDaysToExpireCertificate(user.accessToken)
-    } else {
-      this.$router.push('/')
-    }
+    this.getDaysToExpireCertificate()
   },
 
   mounted() {
-    if (localStorage.getItem('user')) {
-      const user = JSON.parse(localStorage.getItem('user'))
-      assetService
-        .getEnvironment(user.accessToken)
-        .then((response) => {
-          this.environment = response.data.value
-        })
-        .catch(() => {
-          this.environment = ''
-        })
-    }
+    assetService
+      .getEnvironment()
+      .then((response) => {
+        this.environment = response.data.value
+      })
+      .catch(() => {
+        this.environment = ''
+      })
   },
 }
 </script>

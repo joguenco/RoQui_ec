@@ -74,8 +74,8 @@ export default {
   },
 
   mounted() {
-    if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
+
+
       this.getLogo(this.user.accessToken)
     } else {
       this.$router.push('/')

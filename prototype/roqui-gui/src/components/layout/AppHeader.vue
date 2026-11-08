@@ -8,7 +8,7 @@
     </div>
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <router-link to="/home" class="navbar-item" active-class="is-active">
+        <router-link to="/" class="navbar-item" active-class="is-active">
           <img src="@/assets/home.svg" alt="home" />
           <strong class="has-text-grey-dark"> Inicio</strong></router-link
         >

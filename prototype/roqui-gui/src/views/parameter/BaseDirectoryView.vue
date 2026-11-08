@@ -38,7 +38,6 @@ export default {
 
   data: () => ({
     parameter: {},
-    user: {},
     notification: {
       message: '',
       type: 'is-link',
@@ -46,20 +45,8 @@ export default {
     showNotification: false,
   }),
 
-  beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
-    }
-  },
-
   mounted() {
-    if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
-      this.getBaseDirectory(this.user.accessToken)
-    } else {
-      this.$router.push('/')
-    }
+    this.getBaseDirectory()
   },
 
   watch: {
@@ -74,7 +61,7 @@ export default {
 
   methods: {
     getBaseDirectory() {
-      parameterService.getBaseDirectory(this.user.accessToken).then((response) => {
+      parameterService.getBaseDirectory().then((response) => {
         this.parameter = response.data
       })
     },
@@ -87,7 +74,7 @@ export default {
       }
 
       parameterService
-        .setBaseDirectory(this.user.accessToken, this.parameter.baseDirectory)
+        .setBaseDirectory(this.parameter.baseDirectory)
         .then((response) => {
           if (response.status === 200) {
             this.notification.message = response.data.message

@@ -88,8 +88,8 @@ export default {
   },
 
   mounted() {
-    if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
+
+
       this.getCertificate(this.user.accessToken)
       document.addEventListener('keyup', this.handleEscapeKey)
     } else {

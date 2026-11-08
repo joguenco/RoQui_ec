@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const invoiceService = {}
 
@@ -27,7 +26,7 @@ invoiceService.checkAll = async (token, startDate, endDate) => {
 }
 
 invoiceService.authorize = async (token, code, number) => {
-  return await client.post(`/invoice/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/invoice/authorize`, { code, number })
 }
 
 export default invoiceService

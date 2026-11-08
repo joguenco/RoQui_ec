@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const liquidationService = {}
 
@@ -27,7 +26,7 @@ liquidationService.checkAll = async (token, startDate, endDate) => {
 }
 
 liquidationService.authorize = async (token, code, number) => {
-  return await client.post(`/liquidation/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/liquidation/authorize`, { code, number })
 }
 
 export default liquidationService

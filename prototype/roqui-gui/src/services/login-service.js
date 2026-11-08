@@ -1,4 +1,4 @@
-import client from '@/services/client'
+import http from '@/services/http'
 import configService from '@/services/config'
 import axios from 'axios'
 

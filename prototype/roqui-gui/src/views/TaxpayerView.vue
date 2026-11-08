@@ -49,7 +49,6 @@
 </template>
 <script>
 import taxpayerService from '@/services/taxpayer-service'
-import establishmentService from '@/services/establishment-service'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
 export default {
@@ -60,27 +59,21 @@ export default {
   data: () => ({
     taxpayer: {},
     establishments: [],
-    user: {},
   }),
 
   mounted() {
-    if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
-      this.getTaxpayer(this.user.accessToken)
-      this.getEstablishments(this.user.accessToken)
-    } else {
-      this.$router.push('/')
-    }
+    this.getTaxpayer()
+    this.getEstablishments()
   },
   methods: {
-    getTaxpayer(token) {
-      taxpayerService.getTaxpayer(token).then((response) => {
+    getTaxpayer() {
+      taxpayerService.getTaxpayer().then((response) => {
         this.taxpayer = response.data
       })
     },
 
-    getEstablishments(token) {
-      establishmentService.getEstablishments(token).then((response) => {
+    getEstablishments() {
+      taxpayerService.getEstablishments().then((response) => {
         this.establishments = response.data
       })
     },

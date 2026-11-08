@@ -1,12 +1,11 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const emailClientHttpService = {}
 const emailClientSmtpService = {}
 const emailService = {}
 
 emailClientHttpService.getConfiguration = async (token) => {
-  return await client.get('/email/client/http', headerAuthorization(token))
+  return await client.get('/email/client/http')
 }
 
 emailClientHttpService.update = async (token, url, securityToken) => {
@@ -21,7 +20,7 @@ emailClientHttpService.update = async (token, url, securityToken) => {
 }
 
 emailClientSmtpService.getConfiguration = async (token) => {
-  return await client.get('/email/client/smtp', headerAuthorization(token))
+  return await client.get('/email/client/smtp')
 }
 
 emailClientSmtpService.update = async (token, url, port, account, password, encryption) => {
@@ -39,11 +38,11 @@ emailClientSmtpService.update = async (token, url, port, account, password, encr
 }
 
 emailService.send = async (token, code, number) => {
-  return await client.post(`/email/send`, { code, number }, headerAuthorization(token))
+  return await client.post(`/email/send`, { code, number })
 }
 
 emailService.sendTest = async (token, address) => {
-  return await client.post(`/email/send/test`, { address }, headerAuthorization(token))
+  return await client.post(`/email/send/test`, { address })
 }
 
 export { emailClientHttpService, emailClientSmtpService, emailService }

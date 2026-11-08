@@ -20,6 +20,9 @@ importers:
       bulma:
         specifier: 1.0.4
         version: 1.0.4
+      keycloak-js:
+        specifier: 26.2.5
+        version: 26.2.5
       moment:
         specifier: 2.31.0
         version: 2.31.0
@@ -1445,6 +1448,9 @@ packages:
 
   jsonc-parser@3.3.1:
     resolution: {integrity: sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==}
+
+  keycloak-js@26.2.5:
+    resolution: {integrity: sha512-iTR3hmYXlGZbBTskgr2PrGIfIzLrts8nwja2+D1gW6Q/S83C487rhM+WvPV9dxqXv81N0QwNG9BJAM60eDQ1Yw==}
 
   keyv@5.6.0:
     resolution: {integrity: sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw==}
@@ -3571,6 +3577,8 @@ snapshots:
   json5@2.2.3: {}
 
   jsonc-parser@3.3.1: {}
+
+  keycloak-js@26.2.5: {}
 
   keyv@5.6.0:
     dependencies:

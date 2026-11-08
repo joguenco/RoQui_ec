@@ -1,5 +1,4 @@
-import client from '@/services/client'
-import headerAuthorization from '@/services/header-authorization'
+import http from '@/services/http'
 
 const debitNoteService = {}
 
@@ -27,7 +26,7 @@ debitNoteService.checkAll = async (token, startDate, endDate) => {
 }
 
 debitNoteService.authorize = async (token, code, number) => {
-  return await client.post(`/debit/note/authorize`, { code, number }, headerAuthorization(token))
+  return await client.post(`/debit/note/authorize`, { code, number })
 }
 
 export default debitNoteService
