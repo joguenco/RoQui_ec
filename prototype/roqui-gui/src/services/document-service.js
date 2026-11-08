@@ -1,10 +1,10 @@
-import { BASE_URL } from '@/services/config'
 import http from '@/services/http'
 
+const BASE_URL = import.meta.env.VITE_API_URL
 const documentService = {}
 
-documentService.find = async (token, code, number) => {
-  return await client.get(`/document/code/${code}/number/${number}`)
+documentService.find = async (code, number) => {
+  return await http.get(`/roqui/v1/document/code/${code}/number/${number}`)
 }
 
 documentService.pdf = function () {

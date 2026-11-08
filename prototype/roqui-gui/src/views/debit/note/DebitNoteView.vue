@@ -115,7 +115,7 @@ export default {
     debitNote: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',

@@ -120,7 +120,7 @@ export default {
     liquidation: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',

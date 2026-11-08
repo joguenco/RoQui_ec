@@ -2,31 +2,20 @@ import http from '@/services/http'
 
 const invoiceService = {}
 
-invoiceService.find = async (token, startDate, endDate, status) => {
-  return await client.get(
-    `/invoice/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(),
-  )
+invoiceService.find = async (startDate, endDate, status) => {
+  return await http.get(`/roqui/v1/invoice/report/dates/${startDate}/${endDate}/status/${status}`)
 }
 
-invoiceService.authorizeAll = async (token, startDate, endDate) => {
-  return await client.post(
-    `/invoice/authorize/dates/${startDate}/${endDate}`,
-    {},
-    headerAuthorization(),
-  )
+invoiceService.authorizeAll = async (startDate, endDate) => {
+  return await http.post(`/roqui/v1/invoice/authorize/dates/${startDate}/${endDate}`, {})
 }
 
-invoiceService.checkAll = async (token, startDate, endDate) => {
-  return await client.post(
-    `/invoice/check/dates/${startDate}/${endDate}`,
-    {},
-    headerAuthorization(),
-  )
+invoiceService.checkAll = async (startDate, endDate) => {
+  return await http.post(`/roqui/v1/invoice/check/dates/${startDate}/${endDate}`, {})
 }
 
-invoiceService.authorize = async (token, code, number) => {
-  return await client.post(`/invoice/authorize`, { code, number })
+invoiceService.authorize = async (code, number) => {
+  return await http.post(`/roqui/v1/invoice/authorize`, { code, number })
 }
 
 export default invoiceService

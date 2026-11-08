@@ -139,7 +139,6 @@ import AppObservation from '@/components/shared/AppObservation.vue'
 export default {
   components: { AppObservation },
   data: () => ({
-    user: {},
     isActive: false,
     document: {
       code: '',
@@ -154,12 +153,7 @@ export default {
   }),
 
   mounted() {
-
-
-      document.addEventListener('keyup', this.handleEscapeKey)
-    } else {
-      this.$router.push('/')
-    }
+    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
@@ -194,7 +188,7 @@ export default {
     authorize(code, number, index) {
       this.localDetails[index].isLoading = true
       invoiceService
-        .authorize( code, number)
+        .authorize(code, number)
         .then((response) => {
           this.localDetails[index].status = response.data.status
           this.localDetails[index].isLoading = false
@@ -216,7 +210,7 @@ export default {
     sendEmail(code, number, index) {
       this.localDetails[index].isSending = true
       emailService
-        .send( code, number)
+        .send(code, number)
         .then(() => {
           this.localDetails[index].isSending = false
         })
@@ -232,7 +226,7 @@ export default {
 
     showDocument(code, number) {
       documentService
-        .find( code, number)
+        .find(code, number)
         .then((response) => {
           this.isActive = true
           this.document.code = response.data.code

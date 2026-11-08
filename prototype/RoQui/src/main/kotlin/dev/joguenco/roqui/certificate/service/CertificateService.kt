@@ -1,6 +1,7 @@
 package dev.joguenco.roqui.certificate.service
 
 import dev.joguenco.roqui.certificate.dto.CertificateDto
+import dev.joguenco.roqui.exception.FileImportException
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.util.FilesUtil.Companion.isDirectoryExists
 import dev.joguenco.roqui.util.FilesUtil.Companion.isFileExists
@@ -23,8 +24,13 @@ class CertificateService(
         val certificatePassword = parameterService.getCertificatePassword()
 
         val keyStore = KeyStore.getInstance("PKCS12")
-        FileInputStream(certificateFile).use { fis ->
-            keyStore.load(fis, certificatePassword.toCharArray())
+
+        try {
+            FileInputStream(certificateFile).use { fis ->
+                keyStore.load(fis, certificatePassword.toCharArray())
+            }
+        } catch (e: java.io.IOException) {
+            throw FileImportException("Error loading certificate file: ${e.message}")
         }
 
         val aliases = keyStore.aliases()

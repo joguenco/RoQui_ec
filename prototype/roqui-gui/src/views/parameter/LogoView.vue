@@ -45,11 +45,17 @@
   </article>
 </template>
 <script>
+import { useAuth } from '@/composables/useAuth'
 import parameterService from '@/services/parameter-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
 export default {
+  setup() {
+    const { isAdmin } = useAuth()
+    return { isAdmin }
+  },
+
   components: {
     AppHeader,
     AppNotification,
@@ -57,7 +63,6 @@ export default {
 
   data: () => ({
     blobUrl: null,
-    user: {},
     notification: {
       message: '',
       type: 'is-link',
@@ -67,19 +72,13 @@ export default {
   }),
 
   beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
+    if (!this.isAdmin) {
+      this.$router.push('/')
     }
   },
 
   mounted() {
-
-
-      this.getLogo()
-    } else {
-      this.$router.push('/')
-    }
+    this.getLogo()
   },
 
   watch: {
@@ -117,7 +116,7 @@ export default {
       if (this.selectedFile) {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
-        parameterService.uploadLogoJpeg( formData).then((res) => {
+        parameterService.uploadLogoJpeg(formData).then((res) => {
           if (res.status === 200) {
             this.getLogo()
           }

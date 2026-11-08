@@ -148,12 +148,18 @@
   </div>
 </template>
 <script>
+import { useAuth } from '@/composables/useAuth'
 import { emailService, emailClientSmtpService } from '@/services/email-client-service'
 import parameterService from '@/services/parameter-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
 export default {
+  setup() {
+    const { isAdmin } = useAuth()
+    return { isAdmin }
+  },
+
   components: {
     AppHeader,
     AppNotification,
@@ -161,7 +167,6 @@ export default {
 
   data: () => ({
     emailConfiguration: {},
-    user: {},
     notification: {
       message: '',
       type: 'is-link',
@@ -175,20 +180,14 @@ export default {
   }),
 
   beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
+    if (!this.isAdmin) {
+      this.$router.push('/')
     }
   },
 
   mounted() {
-
-
-      this.getConfiguration()
-      document.addEventListener('keyup', this.handleEscapeKey)
-    } else {
-      this.$router.push('/')
-    }
+    this.getConfiguration()
+    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
@@ -219,7 +218,7 @@ export default {
         })
 
       await parameterService
-        .getResource(token, 'Logo PNG')
+        .getResource('Logo PNG')
         .then((response) => {
           this.emailConfiguration.logo = response.data.value
         })
@@ -228,7 +227,7 @@ export default {
         })
 
       await parameterService
-        .getResource(token, 'Template Email')
+        .getResource('Template Email')
         .then((response) => {
           this.emailConfiguration.template = response.data.value
         })
@@ -240,7 +239,6 @@ export default {
     updateConfiguration() {
       emailClientSmtpService
         .update(
-
           this.emailConfiguration.url,
           this.emailConfiguration.port,
           this.emailConfiguration.account,
@@ -267,10 +265,10 @@ export default {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
         if (fileExtension === 'png') {
-          parameterService.uploadLogoPng( formData).then((res) => {
+          parameterService.uploadLogoPng(formData).then((res) => {
             if (res.status === 200) {
               parameterService
-                .getResource( 'Logo PNG')
+                .getResource('Logo PNG')
                 .then((response) => {
                   this.emailConfiguration.logo = response.data.value
                 })
@@ -281,10 +279,10 @@ export default {
             this.isActive = false
           })
         } else if (fileExtension === 'html') {
-          parameterService.uploadEmailTemplateHtml( formData).then((res) => {
+          parameterService.uploadEmailTemplateHtml(formData).then((res) => {
             if (res.status === 200) {
               parameterService
-                .getResource( 'Template Email')
+                .getResource('Template Email')
                 .then((response) => {
                   this.emailConfiguration.template = response.data.value
                 })
@@ -312,7 +310,7 @@ export default {
       }
       this.isSending = true
       emailService
-        .sendTest( this.emailAddress)
+        .sendTest(this.emailAddress)
         .then((res) => {
           if (res.status === 200) {
             this.isActiveSend = false

@@ -115,7 +115,7 @@ export default {
     withhold: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',

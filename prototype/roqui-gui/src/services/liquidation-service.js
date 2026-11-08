@@ -2,30 +2,19 @@ import http from '@/services/http'
 
 const liquidationService = {}
 
-liquidationService.find = async (token, startDate, endDate, status) => {
-  return await client.get(
-    `/liquidation/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(),
-  )
+liquidationService.find = async (startDate, endDate, status) => {
+  return await client.get(`/liquidation/report/dates/${startDate}/${endDate}/status/${status}`)
 }
 
-liquidationService.authorizeAll = async (token, startDate, endDate) => {
-  return await client.post(
-    `/liquidation/authorize/dates/${startDate}/${endDate}`,
-    {},
-    headerAuthorization(),
-  )
+liquidationService.authorizeAll = async (startDate, endDate) => {
+  return await client.post(`/liquidation/authorize/dates/${startDate}/${endDate}`, {})
 }
 
-liquidationService.checkAll = async (token, startDate, endDate) => {
-  return await client.post(
-    `/liquidation/check/dates/${startDate}/${endDate}`,
-    {},
-    headerAuthorization(),
-  )
+liquidationService.checkAll = async (startDate, endDate) => {
+  return await client.post(`/liquidation/check/dates/${startDate}/${endDate}`, {})
 }
 
-liquidationService.authorize = async (token, code, number) => {
+liquidationService.authorize = async (code, number) => {
   return await client.post(`/liquidation/authorize`, { code, number })
 }
 

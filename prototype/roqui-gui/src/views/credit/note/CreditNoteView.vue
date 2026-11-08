@@ -120,7 +120,7 @@ export default {
     creditNote: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',

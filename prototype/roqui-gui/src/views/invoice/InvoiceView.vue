@@ -110,7 +110,7 @@ export default {
     invoice: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',
@@ -120,12 +120,7 @@ export default {
   }),
 
   mounted() {
-
-
-      this.$refs.startDate.focus()
-    } else {
-      this.$router.push('/')
-    }
+    this.$refs.startDate.focus()
   },
 
   computed: {
@@ -154,7 +149,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .find( this.startDate, this.endDate, this.status)
+        .find(this.startDate, this.endDate, this.status)
         .then((response) => {
           this.invoice.details = response.data.map((detail) => ({
             ...detail,
@@ -175,7 +170,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .authorizeAll( this.startDate, this.endDate)
+        .authorizeAll(this.startDate, this.endDate)
         .then(() => {
           this.findInvoices()
         })
@@ -190,7 +185,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .checkAll( this.startDate, this.endDate)
+        .checkAll(this.startDate, this.endDate)
         .then(() => {
           this.findInvoices()
         })

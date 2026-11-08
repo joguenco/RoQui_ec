@@ -120,7 +120,7 @@ export default {
     deliveryNote: {
       details: [],
     },
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',

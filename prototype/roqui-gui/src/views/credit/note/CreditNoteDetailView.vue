@@ -138,7 +138,7 @@ import AppObservation from '@/components/shared/AppObservation.vue'
 export default {
   components: { AppObservation },
   data: () => ({
-    user: {},
+
     isActive: false,
     document: {
       code: '',

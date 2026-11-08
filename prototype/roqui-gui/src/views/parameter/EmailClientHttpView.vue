@@ -61,7 +61,7 @@ export default {
 
   data: () => ({
     email: {},
-    user: {},
+
     notification: {
       message: '',
       type: 'is-link',
@@ -70,21 +70,9 @@ export default {
     isActive: false,
   }),
 
-  beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
-    }
-  },
-
   mounted() {
-
-
-      this.getConfiguration()
-      document.addEventListener('keyup', this.handleEscapeKey)
-    } else {
-      this.$router.push('/')
-    }
+    this.getConfiguration()
+    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
@@ -116,14 +104,12 @@ export default {
     },
 
     updateConfiguration() {
-      emailClientHttpService
-        .update( this.email.url, this.email.token)
-        .then((res) => {
-          if (res.status === 200) {
-            this.getConfiguration()
-          }
-          this.isActive = false
-        })
+      emailClientHttpService.update(this.email.url, this.email.token).then((res) => {
+        if (res.status === 200) {
+          this.getConfiguration()
+        }
+        this.isActive = false
+      })
     },
 
     showModal() {

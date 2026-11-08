@@ -56,12 +56,18 @@
   </div>
 </template>
 <script>
+import { useAuth } from '@/composables/useAuth'
 import certificateService from '@/services/certificate-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import { format } from '@formkit/tempo'
 
 export default {
+  setup() {
+    const { isAdmin } = useAuth()
+    return { isAdmin }
+  },
+
   components: {
     AppHeader,
     AppNotification,
@@ -80,9 +86,8 @@ export default {
   }),
 
   beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      this.$router.push('/home')
+    if (!this.isAdmin) {
+      this.$router.push('/')
     }
   },
 
@@ -117,6 +122,9 @@ export default {
         .catch((error) => {
           if (error.response.data.message === 'Certificate file not found') {
             this.notification.message = 'No se ha cargado ningún certificado'
+          } else if (error.response.data.message === 'Failed to retrieve certificate information') {
+            this.notification.message =
+              'Error al obtener la información del certificado, verificar la contraseña'
           } else {
             this.notification.message = error.response.data.message
           }

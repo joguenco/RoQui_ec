@@ -32,10 +32,19 @@ class CertificateController {
             return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
         }
 
-        val certificate = certificateService.getCertificateInformation()
-        return ResponseEntity.ok(certificate)
+        try {
+            val certificate = certificateService.getCertificateInformation()
+            return ResponseEntity.ok(certificate)
+        } catch (ex: FileImportException) {
+            log.error("Error retrieving certificate information: ${ex.message}")
+            return ResponseEntity(
+                Message("Failed to retrieve certificate information"),
+                HttpStatus.NOT_FOUND,
+            )
+        }
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/certificate/days-to-expiry")
     fun getDaysToExpiry(): ResponseEntity<Any> {
         if (!certificateService.checkCertificateFile()) {

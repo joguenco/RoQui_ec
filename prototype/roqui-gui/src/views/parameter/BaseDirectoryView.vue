@@ -26,11 +26,17 @@
   </article>
 </template>
 <script>
+import { useAuth } from '@/composables/useAuth'
 import parameterService from '@/services/parameter-service'
 import AppNotification from '@/components/shared/AppNotification.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
 export default {
+  setup() {
+    const { isAdmin } = useAuth()
+    return { isAdmin }
+  },
+
   components: {
     AppHeader,
     AppNotification,
@@ -44,6 +50,12 @@ export default {
     },
     showNotification: false,
   }),
+
+  beforeMount() {
+    if (!this.isAdmin) {
+      this.$router.push('/')
+    }
+  },
 
   mounted() {
     this.getBaseDirectory()
