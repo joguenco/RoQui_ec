@@ -3,7 +3,7 @@ package dev.joguenco.roqui.electronic.xml
 import dev.joguenco.roqui.note.debit.service.DebitNoteService
 import dev.joguenco.roqui.util.FilesUtil
 import ec.gob.sri.note.debit.v100.Impuesto
-import ec.gob.sri.note.debit.v100.InfoTributaria
+import ec.gob.sri.InfoTributaria
 import ec.gob.sri.note.debit.v100.NotaDebito
 import ec.gob.sri.note.debit.v100.ObligadoContabilidad
 import ec.gob.sri.note.debit.v100.Pago

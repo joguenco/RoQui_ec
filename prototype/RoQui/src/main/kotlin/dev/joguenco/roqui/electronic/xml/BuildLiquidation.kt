@@ -3,7 +3,7 @@ package dev.joguenco.roqui.electronic.xml
 import dev.joguenco.roqui.liquidation.service.LiquidationService
 import dev.joguenco.roqui.util.FilesUtil
 import ec.gob.sri.liquidation.v110.Impuesto
-import ec.gob.sri.liquidation.v110.InfoTributaria
+import ec.gob.sri.InfoTributaria
 import ec.gob.sri.liquidation.v110.LiquidacionCompra
 import ec.gob.sri.liquidation.v110.ObligadoContabilidad
 import jakarta.xml.bind.JAXBContext

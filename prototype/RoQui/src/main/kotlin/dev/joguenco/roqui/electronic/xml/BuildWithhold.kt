@@ -6,7 +6,7 @@ import ec.gob.sri.withhold.v200.ComprobanteRetencion
 import ec.gob.sri.withhold.v200.DocSustento
 import ec.gob.sri.withhold.v200.ImpuestoDocSustento
 import ec.gob.sri.withhold.v200.ImpuestosDocSustento
-import ec.gob.sri.withhold.v200.InfoTributaria
+import ec.gob.sri.InfoTributaria
 import ec.gob.sri.withhold.v200.ObligadoContabilidad
 import ec.gob.sri.withhold.v200.Pago
 import ec.gob.sri.withhold.v200.Pagos

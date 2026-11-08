@@ -18,6 +18,9 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        url = uri("https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/")
+    }
 }
 
 dependencies {
@@ -45,19 +48,11 @@ dependencies {
     implementation("com.googlecode.xades4j:xades4j:1.7.0")
     implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
     // Printer
-    implementation("dev.joguenco.printer:RoQuiPrinter:2.0.0")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
-    implementation("com.sun.xml.ws:jaxws-rt:4.0.1")
-    implementation("net.sf.jasperreports:jasperreports:6.21.5") {
-        exclude(group = "commons-logging", module = "commons-logging")
-    }
-    implementation("net.sf.barcode4j:barcode4j:2.1") {
-        exclude(group = "commons-logging", module = "commons-logging")
-    }
-    implementation("org.apache.xmlgraphics:batik-all:1.18") {
-        exclude(group = "commons-logging", module = "commons-logging")
-    }
-    implementation("com.github.librepdf:openpdf:1.3.30")
+    implementation("dev.joguenco.printer:RoQuiPrinter:3.0.0")
+    implementation("com.sun.xml.ws:jaxws-rt:4.0.5")
+    implementation("net.sf.jasperreports:jasperreports:7.1.1")
+    implementation("net.sf.jasperreports:jasperreports-pdf:7.1.1")
+    implementation("net.sf.jasperreports:jasperreports-barcode4j:7.1.1")
     // Client SRI
     implementation("dev.joguenco.client:RoQuiClientSri:1.2.0")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
