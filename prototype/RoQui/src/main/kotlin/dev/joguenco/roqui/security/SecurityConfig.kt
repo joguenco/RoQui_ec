@@ -64,6 +64,7 @@ class SecurityConfig(@Value("\${app.cors.allowed-origin}") private val allowedOr
         configuration.addAllowedMethod("PUT")
         configuration.addAllowedMethod("DELETE")
         configuration.addAllowedHeader("Authorization")
+        configuration.addAllowedHeader("Content-Type")
         return CorsConfigurationSource { configuration }
     }
 }
