@@ -58,26 +58,24 @@
             >
           </td>
           <td>
-            <a
-              v-bind:href="`${pdf}/${d.accessKey}`"
-              target="_blank"
+            <button
               class="button is-danger is-light"
               v-bind:class="'status_' + d.status.toLowerCase().replaceAll(' ', '_')"
-              title="Ver archivo PDF"
+              @click="downloadPdf(d.accessKey)"
+              title="Descargar archivo PDF"
             >
-              PDF</a
-            >
+              PDF
+            </button>
           </td>
           <td>
-            <a
-              v-bind:href="`${xml}/${d.accessKey}`"
-              target="_blank"
+            <button
               class="button is-success is-light"
               v-bind:class="'status_' + d.status.toLowerCase().replaceAll(' ', '_')"
-              title="Ver archivo XML"
+              @click="downloadXml(d.accessKey)"
+              title="Descargar archivo XML"
             >
-              XML</a
-            >
+              XML
+            </button>
           </td>
           <td>
             <a class="button is-info is-loading" v-show="d.isLoading">A</a>
@@ -126,7 +124,6 @@ import AppObservation from '@/components/shared/AppObservation.vue'
 export default {
   components: { AppObservation },
   data: () => ({
-
     isActive: false,
     document: {
       code: '',
@@ -141,12 +138,7 @@ export default {
   }),
 
   mounted() {
-
-
-      document.addEventListener('keyup', this.handleEscapeKey)
-    } else {
-      this.$router.push('/')
-    }
+    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
@@ -168,20 +160,23 @@ export default {
     },
   },
 
-  computed: {
-    pdf() {
-      return documentService.pdf()
-    },
-    xml() {
-      return documentService.xml()
-    },
-  },
-
   methods: {
+    downloadPdf(accessKey) {
+      documentService.downloadPdf(accessKey).catch((error) => {
+        console.error('Error downloading PDF:', error)
+      })
+    },
+
+    downloadXml(accessKey) {
+      documentService.downloadXml(accessKey).catch((error) => {
+        console.error('Error downloading XML:', error)
+      })
+    },
+
     authorize(code, number, index) {
       this.localDetails[index].isLoading = true
       deliveryNoteService
-        .authorize( code, number)
+        .authorize(code, number)
         .then((response) => {
           this.localDetails[index].status = response.data.status
           this.localDetails[index].isLoading = false
@@ -202,7 +197,7 @@ export default {
 
     showDocument(code, number) {
       documentService
-        .find( code, number)
+        .find(code, number)
         .then((response) => {
           this.isActive = true
           this.document.code = response.data.code

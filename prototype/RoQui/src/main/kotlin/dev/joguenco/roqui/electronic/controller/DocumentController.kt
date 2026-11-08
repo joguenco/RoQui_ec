@@ -3,6 +3,7 @@ package dev.joguenco.roqui.electronic.controller
 import dev.joguenco.roqui.electronic.service.DocumentService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/roqui/v1")
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 class DocumentController {
 
     @Autowired lateinit var documentService: DocumentService
