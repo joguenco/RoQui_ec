@@ -64,7 +64,7 @@ dependencies {
     implementation("org.apache.commons:commons-email2-jakarta:2.0.0-M1")
     implementation("com.sun.mail:jakarta.mail:2.0.2")
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 }
 
 kotlin {
