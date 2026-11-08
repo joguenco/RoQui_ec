@@ -5,7 +5,7 @@ const creditNoteService = {}
 creditNoteService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/credit/note/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ creditNoteService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/credit/note/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ creditNoteService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/credit/note/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

@@ -194,7 +194,7 @@ export default {
     authorize(code, number, index) {
       this.localDetails[index].isLoading = true
       invoiceService
-        .authorize(this.user.accessToken, code, number)
+        .authorize( code, number)
         .then((response) => {
           this.localDetails[index].status = response.data.status
           this.localDetails[index].isLoading = false
@@ -216,7 +216,7 @@ export default {
     sendEmail(code, number, index) {
       this.localDetails[index].isSending = true
       emailService
-        .send(this.user.accessToken, code, number)
+        .send( code, number)
         .then(() => {
           this.localDetails[index].isSending = false
         })
@@ -232,7 +232,7 @@ export default {
 
     showDocument(code, number) {
       documentService
-        .find(this.user.accessToken, code, number)
+        .find( code, number)
         .then((response) => {
           this.isActive = true
           this.document.code = response.data.code

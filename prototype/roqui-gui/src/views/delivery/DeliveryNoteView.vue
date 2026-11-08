@@ -164,7 +164,7 @@ export default {
       this.isLoading = true
 
       deliveryNoteService
-        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
+        .find( this.startDate, this.endDate, this.status)
         .then((response) => {
           this.deliveryNote.details = response.data.map((detail) => ({
             ...detail,
@@ -186,7 +186,7 @@ export default {
       this.isLoading = true
 
       deliveryNoteService
-        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .authorizeAll( this.startDate, this.endDate)
         .then(() => {
           this.findDeliveryNotes()
         })
@@ -201,7 +201,7 @@ export default {
       this.isLoading = true
 
       deliveryNoteService
-        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .checkAll( this.startDate, this.endDate)
         .then(() => {
           this.findDeliveryNotes()
         })

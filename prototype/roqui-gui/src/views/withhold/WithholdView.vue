@@ -159,7 +159,7 @@ export default {
       this.isLoading = true
 
       withholdService
-        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
+        .find( this.startDate, this.endDate, this.status)
         .then((response) => {
           this.withhold.details = response.data.map((detail) => ({
             ...detail,
@@ -181,7 +181,7 @@ export default {
       this.isLoading = true
 
       withholdService
-        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .authorizeAll( this.startDate, this.endDate)
         .then(() => {
           this.findWithholds()
         })
@@ -196,7 +196,7 @@ export default {
       this.isLoading = true
 
       withholdService
-        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .checkAll( this.startDate, this.endDate)
         .then(() => {
           this.findWithholds()
         })

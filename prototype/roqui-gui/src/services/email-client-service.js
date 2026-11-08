@@ -4,7 +4,7 @@ const emailClientHttpService = {}
 const emailClientSmtpService = {}
 const emailService = {}
 
-emailClientHttpService.getConfiguration = async (token) => {
+emailClientHttpService.getConfiguration = async () => {
   return await client.get('/email/client/http')
 }
 
@@ -15,11 +15,11 @@ emailClientHttpService.update = async (token, url, securityToken) => {
       url: url,
       token: securityToken,
     },
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
-emailClientSmtpService.getConfiguration = async (token) => {
+emailClientSmtpService.getConfiguration = async () => {
   return await client.get('/email/client/smtp')
 }
 
@@ -33,7 +33,7 @@ emailClientSmtpService.update = async (token, url, port, account, password, encr
       password: password,
       encryption: encryption,
     },
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

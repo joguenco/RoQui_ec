@@ -24,21 +24,9 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/subscription',
-      name: 'subscription',
-      component: () => import('@/views/SubscriptionView.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
       path: '/about',
       name: 'about',
       component: AboutView,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/exit',
-      name: 'exit',
-      component: () => import('@/views/ExitView.vue'),
       meta: { requiresAuth: true },
     },
     {

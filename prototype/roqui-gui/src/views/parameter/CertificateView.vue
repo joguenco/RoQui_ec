@@ -69,7 +69,6 @@ export default {
 
   data: () => ({
     certificate: {},
-    user: {},
     notification: {
       message: '',
       type: 'is-link',
@@ -88,13 +87,8 @@ export default {
   },
 
   mounted() {
-
-
-      this.getCertificate(this.user.accessToken)
-      document.addEventListener('keyup', this.handleEscapeKey)
-    } else {
-      this.$router.push('/')
-    }
+    this.getCertificate()
+    document.addEventListener('keyup', this.handleEscapeKey)
   },
 
   beforeUnmount() {
@@ -112,16 +106,20 @@ export default {
   },
 
   methods: {
-    getCertificate(token) {
+    getCertificate() {
       certificateService
-        .getCertificate(token)
+        .getCertificate()
         .then((response) => {
           this.certificate = response.data
           this.certificate.dateIssued = format(new Date(this.certificate.dateIssued), 'YYYY-MM-DD')
           this.certificate.dateExpiry = format(new Date(this.certificate.dateExpiry), 'YYYY-MM-DD')
         })
         .catch((error) => {
-          this.notification.message = error.response.data.message
+          if (error.response.data.message === 'Certificate file not found') {
+            this.notification.message = 'No se ha cargado ningún certificado'
+          } else {
+            this.notification.message = error.response.data.message
+          }
           this.notification.type = 'is-danger'
           this.showNotification = true
         })
@@ -136,9 +134,9 @@ export default {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
         formData.append('password', this.passwordFile)
-        certificateService.uploadCertificate(this.user.accessToken, formData).then((res) => {
+        certificateService.uploadCertificate(formData).then((res) => {
           if (res.status === 200) {
-            this.getCertificate(this.user.accessToken)
+            this.getCertificate()
           }
           this.isActive = false
         })

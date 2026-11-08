@@ -76,7 +76,7 @@ export default {
   mounted() {
 
 
-      this.getLogo(this.user.accessToken)
+      this.getLogo()
     } else {
       this.$router.push('/')
     }
@@ -95,7 +95,7 @@ export default {
   methods: {
     getLogo() {
       parameterService
-        .getLogoJpeg(this.user.accessToken)
+        .getLogoJpeg()
         .then((response) => {
           const blob = new Blob([response.data], { type: 'image/jpeg' })
           this.blobUrl = URL.createObjectURL(blob)
@@ -117,7 +117,7 @@ export default {
       if (this.selectedFile) {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
-        parameterService.uploadLogoJpeg(this.user.accessToken, formData).then((res) => {
+        parameterService.uploadLogoJpeg( formData).then((res) => {
           if (res.status === 200) {
             this.getLogo()
           }

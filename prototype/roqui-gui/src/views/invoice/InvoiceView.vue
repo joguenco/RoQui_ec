@@ -154,7 +154,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
+        .find( this.startDate, this.endDate, this.status)
         .then((response) => {
           this.invoice.details = response.data.map((detail) => ({
             ...detail,
@@ -175,7 +175,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .authorizeAll( this.startDate, this.endDate)
         .then(() => {
           this.findInvoices()
         })
@@ -190,7 +190,7 @@ export default {
       this.isLoading = true
 
       invoiceService
-        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .checkAll( this.startDate, this.endDate)
         .then(() => {
           this.findInvoices()
         })

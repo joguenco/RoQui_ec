@@ -159,7 +159,7 @@ export default {
       this.isLoading = true
 
       debitNoteService
-        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
+        .find( this.startDate, this.endDate, this.status)
         .then((response) => {
           this.debitNote.details = response.data.map((detail) => ({
             ...detail,
@@ -181,7 +181,7 @@ export default {
       this.isLoading = true
 
       debitNoteService
-        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .authorizeAll( this.startDate, this.endDate)
         .then(() => {
           this.findDebitNotes()
         })
@@ -196,7 +196,7 @@ export default {
       this.isLoading = true
 
       debitNoteService
-        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .checkAll( this.startDate, this.endDate)
         .then(() => {
           this.findDebitNotes()
         })

@@ -77,14 +77,18 @@ export default {
         .setBaseDirectory(this.parameter.baseDirectory)
         .then((response) => {
           if (response.status === 200) {
-            this.notification.message = response.data.message
+            this.notification.message = 'Directorio base guardado con éxito'
             this.notification.type = 'is-success'
             this.showNotification = true
           }
         })
         .catch((error) => {
           this.notification.type = 'is-danger'
-          this.notification.message = error.response.data.message
+          if (error.response.data.message === 'Directory does not exist') {
+            this.notification.message = 'El directorio base no existe'
+          } else {
+            this.notification.message = error.response.data.message
+          }
           this.showNotification = true
         })
     },

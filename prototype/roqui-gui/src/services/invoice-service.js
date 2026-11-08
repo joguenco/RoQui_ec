@@ -5,7 +5,7 @@ const invoiceService = {}
 invoiceService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/invoice/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ invoiceService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/invoice/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ invoiceService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/invoice/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

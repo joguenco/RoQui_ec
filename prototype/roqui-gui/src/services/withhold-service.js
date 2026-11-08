@@ -5,7 +5,7 @@ const withholdService = {}
 withholdService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/withhold/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ withholdService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/withhold/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ withholdService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/withhold/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

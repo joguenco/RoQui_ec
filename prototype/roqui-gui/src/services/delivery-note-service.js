@@ -5,7 +5,7 @@ const deliveryNoteService = {}
 deliveryNoteService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/delivery-note/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ deliveryNoteService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/delivery-note/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ deliveryNoteService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/delivery-note/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

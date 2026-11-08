@@ -184,7 +184,7 @@ export default {
   mounted() {
 
 
-      this.getConfiguration(this.user.accessToken)
+      this.getConfiguration()
       document.addEventListener('keyup', this.handleEscapeKey)
     } else {
       this.$router.push('/')
@@ -206,9 +206,9 @@ export default {
   },
 
   methods: {
-    async getConfiguration(token) {
+    async getConfiguration() {
       await emailClientSmtpService
-        .getConfiguration(token)
+        .getConfiguration()
         .then((response) => {
           this.emailConfiguration = response.data
         })
@@ -240,7 +240,7 @@ export default {
     updateConfiguration() {
       emailClientSmtpService
         .update(
-          this.user.accessToken,
+
           this.emailConfiguration.url,
           this.emailConfiguration.port,
           this.emailConfiguration.account,
@@ -249,7 +249,7 @@ export default {
         )
         .then((res) => {
           if (res.status === 200) {
-            this.getConfiguration(this.user.accessToken)
+            this.getConfiguration()
           }
           this.isActiveEdit = false
         })
@@ -267,10 +267,10 @@ export default {
         const formData = new FormData()
         formData.append('file', this.selectedFile, this.selectedFile.name)
         if (fileExtension === 'png') {
-          parameterService.uploadLogoPng(this.user.accessToken, formData).then((res) => {
+          parameterService.uploadLogoPng( formData).then((res) => {
             if (res.status === 200) {
               parameterService
-                .getResource(this.user.accessToken, 'Logo PNG')
+                .getResource( 'Logo PNG')
                 .then((response) => {
                   this.emailConfiguration.logo = response.data.value
                 })
@@ -281,10 +281,10 @@ export default {
             this.isActive = false
           })
         } else if (fileExtension === 'html') {
-          parameterService.uploadEmailTemplateHtml(this.user.accessToken, formData).then((res) => {
+          parameterService.uploadEmailTemplateHtml( formData).then((res) => {
             if (res.status === 200) {
               parameterService
-                .getResource(this.user.accessToken, 'Template Email')
+                .getResource( 'Template Email')
                 .then((response) => {
                   this.emailConfiguration.template = response.data.value
                 })
@@ -312,7 +312,7 @@ export default {
       }
       this.isSending = true
       emailService
-        .sendTest(this.user.accessToken, this.emailAddress)
+        .sendTest( this.emailAddress)
         .then((res) => {
           if (res.status === 200) {
             this.isActiveSend = false

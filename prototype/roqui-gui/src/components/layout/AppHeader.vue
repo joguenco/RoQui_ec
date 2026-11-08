@@ -15,26 +15,19 @@
         <router-link to="/taxpayer" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Empresa</strong></router-link
         >
-        <router-link
-          to="/parameter"
-          class="navbar-item"
-          active-class="is-active"
-          v-if="showParameterOption"
+        <router-link to="/parameter" class="navbar-item" active-class="is-active" v-if="isAdmin"
           ><strong class="has-text-grey-dark">Parámetros</strong></router-link
         >
-        <!-- Suscripcion oculta para todos los usuarios
-        <router-link to="/subscription" class="navbar-item" active-class="is-active"
-          ><strong class="has-text-grey-dark">Suscripción</strong></router-link
-        >
-        -->
+
         <router-link to="/about" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Acerca</strong></router-link
         >
-        <router-link to="/exit" class="navbar-item" active-class="is-active"
+        <router-link @click="logout" to="/" class="navbar-item" active-class="is-active"
           ><strong class="has-text-grey-dark">Salir</strong></router-link
         >
       </div>
       <div class="navbar-end">
+        <div class="navbar-item has-text-grey-dark">Usuario: {{ userName }}</div>
         <div class="navbar-item has-dropdown" :class="{ 'is-active': showThemes }">
           <a class="navbar-link is-arrowless" title="Tema" @click.stop="showThemes = !showThemes">
             <img :src="themeIcon" alt="tema" />
@@ -61,12 +54,17 @@
   </nav>
 </template>
 <script>
+import { useAuth } from '@/composables/useAuth'
 import sun from '@/assets/sun.svg'
 import moon from '@/assets/moon.svg'
 
 export default {
+  setup() {
+    const { isAuthenticated, userName, isAdmin, login, logout } = useAuth()
+    return { isAuthenticated, userName, isAdmin, login, logout }
+  },
+
   data: () => ({
-    showParameterOption: true,
     showThemes: false,
     // el index.html ya lo puso al cargar la pagina
     theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
@@ -76,14 +74,6 @@ export default {
     themeIcon() {
       return this.theme === 'dark' ? moon : sun
     },
-  },
-
-  beforeMount() {
-    let role = localStorage.getItem('role')
-    if (role !== 'Administrator') {
-      console.log('hide parameter menu')
-      this.showParameterOption = false
-    }
   },
 
   mounted() {

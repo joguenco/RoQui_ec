@@ -5,7 +5,7 @@ const liquidationService = {}
 liquidationService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/liquidation/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ liquidationService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/liquidation/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ liquidationService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/liquidation/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

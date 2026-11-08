@@ -80,7 +80,7 @@ export default {
   mounted() {
 
 
-      this.getConfiguration(this.user.accessToken)
+      this.getConfiguration()
       document.addEventListener('keyup', this.handleEscapeKey)
     } else {
       this.$router.push('/')
@@ -102,9 +102,9 @@ export default {
   },
 
   methods: {
-    getConfiguration(token) {
+    getConfiguration() {
       emailClientHttpService
-        .getConfiguration(token)
+        .getConfiguration()
         .then((response) => {
           this.email = response.data
         })
@@ -117,10 +117,10 @@ export default {
 
     updateConfiguration() {
       emailClientHttpService
-        .update(this.user.accessToken, this.email.url, this.email.token)
+        .update( this.email.url, this.email.token)
         .then((res) => {
           if (res.status === 200) {
-            this.getConfiguration(this.user.accessToken)
+            this.getConfiguration()
           }
           this.isActive = false
         })

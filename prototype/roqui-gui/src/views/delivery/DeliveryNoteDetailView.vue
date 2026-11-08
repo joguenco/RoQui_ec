@@ -181,7 +181,7 @@ export default {
     authorize(code, number, index) {
       this.localDetails[index].isLoading = true
       deliveryNoteService
-        .authorize(this.user.accessToken, code, number)
+        .authorize( code, number)
         .then((response) => {
           this.localDetails[index].status = response.data.status
           this.localDetails[index].isLoading = false
@@ -202,7 +202,7 @@ export default {
 
     showDocument(code, number) {
       documentService
-        .find(this.user.accessToken, code, number)
+        .find( code, number)
         .then((response) => {
           this.isActive = true
           this.document.code = response.data.code

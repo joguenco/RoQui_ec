@@ -5,7 +5,7 @@ const debitNoteService = {}
 debitNoteService.find = async (token, startDate, endDate, status) => {
   return await client.get(
     `/debit/note/report/dates/${startDate}/${endDate}/status/${status}`,
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -13,7 +13,7 @@ debitNoteService.authorizeAll = async (token, startDate, endDate) => {
   return await client.post(
     `/debit/note/authorize/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 
@@ -21,7 +21,7 @@ debitNoteService.checkAll = async (token, startDate, endDate) => {
   return await client.post(
     `/debit/note/check/dates/${startDate}/${endDate}`,
     {},
-    headerAuthorization(token),
+    headerAuthorization(),
   )
 }
 

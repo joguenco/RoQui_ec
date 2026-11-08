@@ -164,7 +164,7 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .find(this.user.accessToken, this.startDate, this.endDate, this.status)
+        .find( this.startDate, this.endDate, this.status)
         .then((response) => {
           this.liquidation.details = response.data.map((detail) => ({
             ...detail,
@@ -186,7 +186,7 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .authorizeAll(this.user.accessToken, this.startDate, this.endDate)
+        .authorizeAll( this.startDate, this.endDate)
         .then(() => {
           this.findLiquidations()
         })
@@ -201,7 +201,7 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .checkAll(this.user.accessToken, this.startDate, this.endDate)
+        .checkAll( this.startDate, this.endDate)
         .then(() => {
           this.findLiquidations()
         })
