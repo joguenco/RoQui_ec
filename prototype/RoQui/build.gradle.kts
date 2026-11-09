@@ -31,9 +31,10 @@ dependencies {
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat-runtime")
     implementation("org.springframework.boot:spring-boot-starter-security-oauth2-resource-server")
+    // Database
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client:4.0.0")
     // AutoMapper Entity to DTO
     implementation("org.mapstruct:mapstruct:1.6.3")
     kapt("org.mapstruct:mapstruct-processor:1.6.3")
@@ -54,10 +55,9 @@ dependencies {
     implementation("net.sf.jasperreports:jasperreports-pdf:7.1.1")
     implementation("net.sf.jasperreports:jasperreports-barcode4j:7.1.1")
     // Client SRI
-    implementation("dev.joguenco.client:RoQuiClientSri:1.2.0")
-    implementation("com.sun.xml.ws:jaxws-rt:4.0.0")
+    implementation("dev.joguenco.client:RoQuiClientSri:1.3.0")
     implementation("com.thoughtworks.xstream:xstream:1.4.21")
-    implementation("commons-io:commons-io:2.15.1")
+    implementation("commons-io:commons-io:2.22.0")
     // Utils
     implementation("joda-time:joda-time:2.15.1")
     // Email
