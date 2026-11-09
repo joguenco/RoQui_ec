@@ -45,9 +45,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // Signer
-    implementation("dev.joguenco.signer:RoQuiSigner:1.0.0")
-    implementation("com.googlecode.xades4j:xades4j:1.7.0")
-    implementation("com.sun.xml.bind:jaxb-impl:2.3.9")
+    implementation("dev.joguenco.signer:RoQuiSigner:2.0.0")
+    implementation("eu.europa.ec.joinup.sd-dss:dss-xades:6.5.1")
+    implementation("eu.europa.ec.joinup.sd-dss:dss-utils-apache-commons:6.5.1")
     // Printer
     implementation("dev.joguenco.printer:RoQuiPrinter:3.0.0")
     implementation("com.sun.xml.ws:jaxws-rt:4.0.5")
