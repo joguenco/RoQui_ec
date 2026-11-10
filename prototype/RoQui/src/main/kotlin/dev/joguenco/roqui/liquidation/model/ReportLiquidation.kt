@@ -23,8 +23,6 @@ class ReportLiquidation {
 
     @Column(name = "date", columnDefinition = "DATE") val date: Date? = null
 
-    @Column(name = "total") val total: BigDecimal? = null
-
     @Column(name = "identification") val identification: String? = null
 
     @Column(name = "legal_name") val legalName: String? = null

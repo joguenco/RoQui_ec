@@ -94,3 +94,13 @@ body {
 [data-theme='dark'] .navbar-start img {
   filter: invert(1);
 }
+
+td.date {
+  min-width: 6rem;
+  white-space: nowrap;
+}
+
+td.legal-name {
+  min-width: 6rem;
+  white-space: nowrap;
+}

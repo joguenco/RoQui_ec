@@ -9,8 +9,7 @@
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Total</th>
-          <th class="titulo">Documento</th>
+          <th class="titulo">Identificación</th>
           <th class="titulo">Razón Social</th>
           <th class="titulo">Correo</th>
           <th class="titulo">Estado</th>
@@ -29,8 +28,7 @@
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Total</th>
-          <th class="titulo">Documento</th>
+          <th class="titulo">Identificación</th>
           <th class="titulo">Razón Social</th>
           <th class="titulo">Correo</th>
           <th class="titulo">Estado</th>
@@ -47,10 +45,9 @@
             <p>{{ d.code }}</p>
             <p>{{ d.number }}</p>
           </td>
-          <td>{{ d.date }}</td>
-          <td class="numero">{{ d.total }}</td>
-          <td class="numero">{{ d.identification }}</td>
-          <td>{{ d.legalName }}</td>
+          <td class="date">{{ d.date }}</td>
+          <td>{{ d.identification }}</td>
+          <td class="legal-name">{{ d.legalName }}</td>
           <td>
             <a class="button is-fullwidth is-loading" v-show="d.isSending">{{ d.email }}</a>
             <a
@@ -274,6 +271,7 @@ a.status_no_enviado {
   cursor: default;
   opacity: 0.4;
 }
+
 .modal-card-head {
   /* el celeste no cambia con el tema, su texto va siempre oscuro */
   background-color: var(--bulma-info);
