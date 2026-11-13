@@ -2,10 +2,10 @@ package dev.joguenco.roqui.electronic.xml
 
 import dev.joguenco.roqui.note.delivery.service.DeliveryNoteService
 import dev.joguenco.roqui.util.FilesUtil
+import ec.gob.sri.InfoTributaria
 import ec.gob.sri.note.delivery.v110.Destinatario
 import ec.gob.sri.note.delivery.v110.Detalle
 import ec.gob.sri.note.delivery.v110.GuiaRemision
-import ec.gob.sri.InfoTributaria
 import ec.gob.sri.note.delivery.v110.ObligadoContabilidad
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller

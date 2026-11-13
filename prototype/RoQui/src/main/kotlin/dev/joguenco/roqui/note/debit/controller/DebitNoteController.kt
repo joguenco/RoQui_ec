@@ -7,6 +7,7 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.note.debit.service.DebitNoteService
 import dev.joguenco.roqui.note.debit.service.ReportDebitNoteService
@@ -87,6 +88,9 @@ class DebitNoteController {
             }
 
             return ResponseEntity.ok(stateCheck)
+        } catch (e: PasswordException) {
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
         } catch (e: Exception) {
             log.error("Error Authorize Debit Note ${e.message}")
             return ResponseEntity.internalServerError()
@@ -135,6 +139,9 @@ class DebitNoteController {
 
             try {
                 StatusDto(buildDebitNote.process(TypeDocument.NOTA_DEBITO))
+            } catch (e: PasswordException) {
+                log.error("Error Authorize ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
             } catch (e: Exception) {
                 log.error("Error AuthorizeAll Debit Note ${e.message}")
                 return ResponseEntity.internalServerError()

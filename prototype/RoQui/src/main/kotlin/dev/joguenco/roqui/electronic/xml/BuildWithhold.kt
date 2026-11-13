@@ -2,11 +2,11 @@ package dev.joguenco.roqui.electronic.xml
 
 import dev.joguenco.roqui.util.FilesUtil
 import dev.joguenco.roqui.withhold.service.WithholdService
+import ec.gob.sri.InfoTributaria
 import ec.gob.sri.withhold.v200.ComprobanteRetencion
 import ec.gob.sri.withhold.v200.DocSustento
 import ec.gob.sri.withhold.v200.ImpuestoDocSustento
 import ec.gob.sri.withhold.v200.ImpuestosDocSustento
-import ec.gob.sri.InfoTributaria
 import ec.gob.sri.withhold.v200.ObligadoContabilidad
 import ec.gob.sri.withhold.v200.Pago
 import ec.gob.sri.withhold.v200.Pagos

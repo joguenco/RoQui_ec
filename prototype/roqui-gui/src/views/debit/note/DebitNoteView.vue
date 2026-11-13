@@ -181,7 +181,18 @@ export default {
           this.findDebitNotes()
         })
         .catch((error) => {
-          console.error('Error to authorize all debit notes:', error)
+          if (error.response.status === 400) {
+            this.findDebitNotes()
+            if (error.response.data.message === 'The password certificate could not be decrypted') {
+              this.notification.message = 'Certificado de contraseña no puede ser descifrado'
+            } else {
+              this.notification.message = error.response.data.message
+            }
+            this.notification.type = 'is-danger'
+            this.showNotification = true
+          } else {
+            console.error('Error to authorize all debit notes:', error)
+          }
         })
     },
 

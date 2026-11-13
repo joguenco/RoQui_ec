@@ -7,6 +7,7 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.invoice.service.InvoiceService
 import dev.joguenco.roqui.invoice.service.ReportInvoiceService
@@ -88,6 +89,9 @@ class InvoiceController {
             }
 
             return ResponseEntity.ok(stateCheck)
+        } catch (e: PasswordException) {
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
         } catch (e: Exception) {
             log.error("Error Authorize ${e.message}")
             return ResponseEntity.internalServerError()
@@ -136,6 +140,9 @@ class InvoiceController {
 
             try {
                 StatusDto(buildInvoice.process(TypeDocument.FACTURA))
+            } catch (e: PasswordException) {
+                log.error("Error Authorize ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
             } catch (e: Exception) {
                 log.error("Error AuthorizeAll ${e.message}")
                 return ResponseEntity.internalServerError()

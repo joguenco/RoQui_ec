@@ -7,6 +7,7 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.credit.service.ReportCreditNoteService
@@ -86,6 +87,9 @@ class CreditNoteController {
             }
 
             return ResponseEntity.ok(stateCheck)
+        } catch (e: PasswordException) {
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
         } catch (e: Exception) {
             log.error("Error Authorize ${e.message}")
             return ResponseEntity.internalServerError()
@@ -138,6 +142,9 @@ class CreditNoteController {
 
             try {
                 StatusDto(buildCreditNote.process(TypeDocument.NOTA_CREDITO))
+            } catch (e: PasswordException) {
+                log.error("Error Authorize ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
             } catch (e: Exception) {
                 log.error("Error AuthorizeAll ${e.message}")
                 return ResponseEntity.internalServerError()

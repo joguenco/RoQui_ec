@@ -130,12 +130,7 @@ export default {
   }),
 
   mounted() {
-
-
-      this.$refs.startDate.focus()
-    } else {
-      this.$router.push('/')
-    }
+    this.$refs.startDate.focus()
   },
 
   computed: {
@@ -164,7 +159,7 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .find( this.startDate, this.endDate, this.status)
+        .find(this.startDate, this.endDate, this.status)
         .then((response) => {
           this.liquidation.details = response.data.map((detail) => ({
             ...detail,
@@ -186,12 +181,23 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .authorizeAll( this.startDate, this.endDate)
+        .authorizeAll(this.startDate, this.endDate)
         .then(() => {
           this.findLiquidations()
         })
         .catch((error) => {
-          console.error('Error to authorize all liquidations:', error)
+          if (error.response.status === 400) {
+            this.findLiquidations()
+            if (error.response.data.message === 'The password certificate could not be decrypted') {
+              this.notification.message = 'Certificado de contraseña no puede ser descifrado'
+            } else {
+              this.notification.message = error.response.data.message
+            }
+            this.notification.type = 'is-danger'
+            this.showNotification = true
+          } else {
+            console.error('Error to authorize all liquidations:', error)
+          }
         })
     },
 
@@ -201,7 +207,7 @@ export default {
       this.isLoading = true
 
       liquidationService
-        .checkAll( this.startDate, this.endDate)
+        .checkAll(this.startDate, this.endDate)
         .then(() => {
           this.findLiquidations()
         })

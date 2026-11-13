@@ -38,7 +38,12 @@ class EmailSmtp(
         if (!receiverEmail.isNullOrEmpty()) {
             val configuration = parameterService.getEmailSmtpConfiguration()
             val legalName = informationService.getLegalNameOfTaxpayer()
-            initializeSmtpEmail(configuration, legalName)
+            val isInitialized = initializeSmtpEmail(configuration, legalName)
+
+            if (!isInitialized) {
+                log.error("Failed to initialize SMTP email")
+                return false
+            }
 
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = getDocumentTypeName() + " $serieNumber"
@@ -71,7 +76,10 @@ class EmailSmtp(
         return false
     }
 
-    private fun initializeSmtpEmail(configuration: MutableList<Parameter>, sender: String) {
+    private fun initializeSmtpEmail(
+        configuration: MutableList<Parameter>,
+        sender: String,
+    ): Boolean {
         val server = configuration.first { it.name == "Email SMTP Server" }.value!!
         val port = configuration.first { it.name == "Port Email SMTP Server" }.value!!
         val account = configuration.first { it.name == "Email Account" }.value!!
@@ -88,7 +96,17 @@ class EmailSmtp(
         htmlEmail.setFrom(account, sender)
 
         OwnEncryption.setKey(parameterService.keyProperty)
-        htmlEmail.setAuthentication(account, OwnEncryption.decrypt(password))
+
+        val passwordDecrypted =
+            try {
+                OwnEncryption.decrypt(password)
+            } catch (e: Exception) {
+                log.error("Error decrypting email password")
+                return false
+            }
+
+        htmlEmail.setAuthentication(account, passwordDecrypted)
+        return true
     }
 
     private fun getHtmlMessage(templatePath: String): String {
@@ -184,7 +202,12 @@ class EmailSmtp(
     fun sendTest(emailAddress: String): Pair<Boolean, String> {
         val configuration = parameterService.getEmailSmtpConfiguration()
         val legalName = informationService.getLegalNameOfTaxpayer()
-        initializeSmtpEmail(configuration, legalName)
+        val isInitialized = initializeSmtpEmail(configuration, legalName)
+
+        if (!isInitialized) {
+            log.error("Failed to initialize SMTP email")
+            return Pair(false, "Failed to initialize SMTP email")
+        }
 
         htmlEmail.subject = "RoQui Ecuador"
 

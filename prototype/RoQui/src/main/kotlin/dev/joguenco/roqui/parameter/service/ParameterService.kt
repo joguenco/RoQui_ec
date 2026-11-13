@@ -1,5 +1,6 @@
 package dev.joguenco.roqui.parameter.service
 
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.parameter.model.Parameter
 import dev.joguenco.roqui.parameter.repository.CustomParameterRepository
 import dev.joguenco.roqui.util.OwnEncryption
@@ -41,7 +42,7 @@ class ParameterService(private val parameterRepository: CustomParameterRepositor
             OwnEncryption.setKey(keyProperty)
             return OwnEncryption.decrypt(password)
         } catch (e: Exception) {
-            throw NoSuchElementException("No se pudo obtener la contraseña del certificado")
+            throw PasswordException("The password certificate could not be decrypted")
         }
     }
 

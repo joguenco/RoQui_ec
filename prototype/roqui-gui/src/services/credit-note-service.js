@@ -3,7 +3,9 @@ import http from '@/services/http'
 const creditNoteService = {}
 
 creditNoteService.find = async (startDate, endDate, status) => {
-  return await http.get(`/roqui/v1/credit/note/report/dates/${startDate}/${endDate}/status/${status}`)
+  return await http.get(
+    `/roqui/v1/credit/note/report/dates/${startDate}/${endDate}/status/${status}`,
+  )
 }
 
 creditNoteService.authorizeAll = async (startDate, endDate) => {

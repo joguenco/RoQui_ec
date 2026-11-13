@@ -18,9 +18,7 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 repositories {
     mavenCentral()
     mavenLocal()
-    maven {
-        url = uri("https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/")
-    }
+    maven { url = uri("https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/") }
 }
 
 dependencies {

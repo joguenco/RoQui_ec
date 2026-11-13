@@ -7,6 +7,7 @@ import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.parameter.service.ParameterService
 import dev.joguenco.roqui.security.isValidApiKey
@@ -86,6 +87,9 @@ class WithholdController {
             }
 
             return ResponseEntity.ok(stateCheck)
+        } catch (e: PasswordException) {
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
         } catch (e: Exception) {
             log.error("Error Authorize Withhold ${e.message}")
             return ResponseEntity.internalServerError()
@@ -134,6 +138,9 @@ class WithholdController {
 
             try {
                 StatusDto(buildWithhold.process(TypeDocument.RETENCION))
+            } catch (e: PasswordException) {
+                log.error("Error Authorize ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
             } catch (e: Exception) {
                 log.error("Error AuthorizeAll Withhold ${e.message}")
                 return ResponseEntity.internalServerError()
