@@ -34,7 +34,6 @@ class ReportCreditNoteService(
                     number = it.number,
                     accessKey = it.accessKey,
                     date = it.date,
-                    total = it.total,
                     identification = it.identification,
                     legalName = it.legalName,
                     email = it.email,

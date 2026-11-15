@@ -38,7 +38,12 @@ class EmailSmtp(
         if (!receiverEmail.isNullOrEmpty()) {
             val configuration = parameterService.getEmailSmtpConfiguration()
             val legalName = informationService.getLegalNameOfTaxpayer()
-            initializeSmtpEmail(configuration, legalName)
+            val isInitialized = initializeSmtpEmail(configuration, legalName)
+
+            if (!isInitialized) {
+                log.error("Failed to initialize SMTP email")
+                return false
+            }
 
             val baseDirectory = parameterService.getBaseDirectory()
             htmlEmail.subject = getDocumentTypeName() + " $serieNumber"
@@ -71,7 +76,10 @@ class EmailSmtp(
         return false
     }
 
-    private fun initializeSmtpEmail(configuration: MutableList<Parameter>, sender: String) {
+    private fun initializeSmtpEmail(
+        configuration: MutableList<Parameter>,
+        sender: String,
+    ): Boolean {
         val server = configuration.first { it.name == "Email SMTP Server" }.value!!
         val port = configuration.first { it.name == "Port Email SMTP Server" }.value!!
         val account = configuration.first { it.name == "Email Account" }.value!!
@@ -88,7 +96,17 @@ class EmailSmtp(
         htmlEmail.setFrom(account, sender)
 
         OwnEncryption.setKey(parameterService.keyProperty)
-        htmlEmail.setAuthentication(account, OwnEncryption.decrypt(password))
+
+        val passwordDecrypted =
+            try {
+                OwnEncryption.decrypt(password)
+            } catch (e: Exception) {
+                log.error("Error decrypting email password")
+                return false
+            }
+
+        htmlEmail.setAuthentication(account, passwordDecrypted)
+        return true
     }
 
     private fun getHtmlMessage(templatePath: String): String {
@@ -166,6 +184,50 @@ class EmailSmtp(
                     accessKey,
                 )
             }
+            "ND" -> {
+                val debitNote = informationService.getDebitNote(code, number)
+                val serieNumber =
+                    debitNote.establishment +
+                        "-" +
+                        debitNote.emissionPoint +
+                        "-" +
+                        debitNote.sequence
+                val accessKey = debitNote.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getDebitNote(code, number).identification!!,
+                    accessKey,
+                )
+            }
+            "LQ" -> {
+                val liquidation = informationService.getLiquidation(code, number)
+                val serieNumber =
+                    liquidation.establishment +
+                        "-" +
+                        liquidation.emissionPoint +
+                        "-" +
+                        liquidation.sequence
+                val accessKey = liquidation.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getLiquidation(code, number).identification!!,
+                    accessKey,
+                )
+            }
+            "RT" -> {
+                val withhold = informationService.getWithhold(code, number)
+                val serieNumber =
+                    withhold.establishment + "-" + withhold.emissionPoint + "-" + withhold.sequence
+                val accessKey = withhold.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getWithhold(code, number).identification!!,
+                    accessKey,
+                )
+            }
         }
         return Triple("", "", "")
     }
@@ -177,6 +239,10 @@ class EmailSmtp(
         return when (code) {
             "FV" -> "Factura"
             "DV" -> if (type == "text") "Nota de Crédito" else "Nota de Cr&eacute;dito"
+            "ND" -> if (type == "text") "Nota de Débito" else "Nota de D&eacute;bito"
+            "LQ" -> if (type == "text") "Liquidación de Compra" else "Liquidaci&oacute;n de Compra"
+            "GUI" -> if (type == "text") "Guía de Remisión" else "Gu&iacute;a de Remisi&oacute;n"
+            "RT" -> if (type == "text") "Retención" else "Retenci&oacute;n"
             else -> ""
         }
     }
@@ -184,7 +250,12 @@ class EmailSmtp(
     fun sendTest(emailAddress: String): Pair<Boolean, String> {
         val configuration = parameterService.getEmailSmtpConfiguration()
         val legalName = informationService.getLegalNameOfTaxpayer()
-        initializeSmtpEmail(configuration, legalName)
+        val isInitialized = initializeSmtpEmail(configuration, legalName)
+
+        if (!isInitialized) {
+            log.error("Failed to initialize SMTP email")
+            return Pair(false, "Failed to initialize SMTP email")
+        }
 
         htmlEmail.subject = "RoQui Ecuador"
 

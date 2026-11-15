@@ -4,7 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.math.BigDecimal
 import java.util.*
 import org.hibernate.annotations.Immutable
 
@@ -22,8 +21,6 @@ class ReportInvoice {
     @Column(name = "access_key") val accessKey: String? = null
 
     @Column(name = "date", columnDefinition = "DATE") val date: Date? = null
-
-    @Column(name = "total") val total: BigDecimal? = null
 
     @Column(name = "identification") val identification: String? = null
 

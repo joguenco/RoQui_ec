@@ -1,24 +1,25 @@
 package dev.joguenco.roqui.note.credit.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.electronic.ElectronicDocument
 import dev.joguenco.roqui.electronic.TypeDocument
 import dev.joguenco.roqui.electronic.dto.DocumentDto
 import dev.joguenco.roqui.electronic.dto.StatusDto
 import dev.joguenco.roqui.electronic.send.WebService
 import dev.joguenco.roqui.electronic.service.DocumentService
+import dev.joguenco.roqui.exception.PasswordException
 import dev.joguenco.roqui.information.service.InformationService
 import dev.joguenco.roqui.note.credit.service.CreditNoteService
 import dev.joguenco.roqui.note.credit.service.ReportCreditNoteService
 import dev.joguenco.roqui.parameter.service.ParameterService
-import dev.joguenco.roqui.security.util.isValidApiKey
-import dev.joguenco.roqui.shared.dto.Message
+import dev.joguenco.roqui.security.isValidApiKey
 import dev.joguenco.roqui.util.Validate
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/roqui")
 class CreditNoteController {
@@ -50,7 +50,8 @@ class CreditNoteController {
         return authorize(document)
     }
 
-    @PostMapping("/v2/creditnote/authorize")
+    @PostMapping("/v2/credit/note/authorize")
+    @PreAuthorize("permitAll()")
     fun postAuthorizeV2(
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @RequestBody document: DocumentDto,
@@ -88,6 +89,9 @@ class CreditNoteController {
             }
 
             return ResponseEntity.ok(stateCheck)
+        } catch (e: PasswordException) {
+            log.error("Error Authorize ${e.message}")
+            return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
         } catch (e: Exception) {
             log.error("Error Authorize ${e.message}")
             return ResponseEntity.internalServerError()
@@ -100,7 +104,7 @@ class CreditNoteController {
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         if (!isValidApiKey(requestApiKey, parameterService)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
@@ -113,7 +117,7 @@ class CreditNoteController {
     fun postAuthorizeAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -140,6 +144,9 @@ class CreditNoteController {
 
             try {
                 StatusDto(buildCreditNote.process(TypeDocument.NOTA_CREDITO))
+            } catch (e: PasswordException) {
+                log.error("Error Authorize ${e.message}")
+                return ResponseEntity.badRequest().body(Message(e.message ?: "Unexpected error"))
             } catch (e: Exception) {
                 log.error("Error AuthorizeAll ${e.message}")
                 return ResponseEntity.internalServerError()
@@ -155,7 +162,7 @@ class CreditNoteController {
     fun postCheckAll(
         @PathVariable(value = "startDate") startDate: String,
         @PathVariable(value = "endDate") endDate: String,
-    ): ResponseEntity<out Any?> {
+    ): ResponseEntity<Any> {
 
         val (status, message) = Validate.rangeOfDates(startDate, endDate)
         if (!status) {
@@ -165,7 +172,7 @@ class CreditNoteController {
         return checkAll(startDate, endDate)
     }
 
-    fun checkAll(startDate: String, endDate: String): ResponseEntity<out Any?> {
+    fun checkAll(startDate: String, endDate: String): ResponseEntity<Any> {
         val reportCreditNote =
             reportCreditNoteService.getCreditNoteByDatesAndStatus(
                 startDate,

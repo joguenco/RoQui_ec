@@ -2,13 +2,13 @@ package dev.joguenco.roqui.certificate.controller
 
 import dev.joguenco.roqui.certificate.dto.DayDto
 import dev.joguenco.roqui.certificate.service.CertificateService
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.exception.FileImportException
-import dev.joguenco.roqui.shared.dto.Message
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
-@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/roqui/v1")
+@PreAuthorize("hasAnyRole('ADMIN')")
 class CertificateController {
 
     private val log = LoggerFactory.getLogger(CertificateController::class.java)
@@ -32,10 +32,19 @@ class CertificateController {
             return ResponseEntity(Message("Certificate file not found"), HttpStatus.NOT_FOUND)
         }
 
-        val certificate = certificateService.getCertificateInformation()
-        return ResponseEntity.ok(certificate)
+        try {
+            val certificate = certificateService.getCertificateInformation()
+            return ResponseEntity.ok(certificate)
+        } catch (ex: FileImportException) {
+            log.error("Error retrieving certificate information: ${ex.message}")
+            return ResponseEntity(
+                Message("Failed to retrieve certificate information"),
+                HttpStatus.NOT_FOUND,
+            )
+        }
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/certificate/days-to-expiry")
     fun getDaysToExpiry(): ResponseEntity<Any> {
         if (!certificateService.checkCertificateFile()) {

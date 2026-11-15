@@ -1,1 +1,1 @@
-rootProject.name = "RoQui_ec"
+rootProject.name = "roqui"

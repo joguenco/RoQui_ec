@@ -1,9 +1,9 @@
 package dev.joguenco.roqui.parameter.controller
 
+import dev.joguenco.roqui.common.dto.Message
 import dev.joguenco.roqui.exception.FileImportException
 import dev.joguenco.roqui.parameter.dto.ParameterDto
 import dev.joguenco.roqui.parameter.service.ResourceService
-import dev.joguenco.roqui.shared.dto.Message
 import java.nio.file.Path
 import java.nio.file.Paths
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
-@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/roqui/v1")
+@PreAuthorize("hasAnyRole('ADMIN')")
 class ResourceController {
     private val log = LoggerFactory.getLogger(ResourceController::class.java)
 

@@ -1,4 +1,3 @@
-.DS_Store
 HELP.md
 .gradle
 build/
@@ -33,15 +32,10 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+/logs
 
 ### VS Code ###
 .vscode/
 
 ### Kotlin ###
 .kotlin
-local.properties
-
-### Python ###
-__pycache__/
-
-/logs/
