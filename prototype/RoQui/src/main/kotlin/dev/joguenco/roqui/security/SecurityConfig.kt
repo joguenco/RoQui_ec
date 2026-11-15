@@ -39,6 +39,13 @@ class SecurityConfig(@Value("\${app.cors.allowed-origin}") private val allowedOr
                     )
                     .permitAll()
                 auth.requestMatchers(HttpMethod.POST, "/roqui/v2/invoice/authorize").permitAll()
+                auth.requestMatchers(HttpMethod.POST, "/roqui/v2/credit/note/authorize").permitAll()
+                auth.requestMatchers(HttpMethod.POST, "/roqui/v2/debit/note/authorize").permitAll()
+                auth
+                    .requestMatchers(HttpMethod.POST, "/roqui/v2/delivery/note/authorize")
+                    .permitAll()
+                auth.requestMatchers(HttpMethod.POST, "/roqui/v2/withhold/authorize").permitAll()
+                auth.requestMatchers(HttpMethod.POST, "/roqui/v2/liquidation/authorize").permitAll()
                 auth.anyRequest().authenticated()
             }
             .oauth2ResourceServer { oauth2 ->

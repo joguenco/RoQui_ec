@@ -184,6 +184,50 @@ class EmailSmtp(
                     accessKey,
                 )
             }
+            "ND" -> {
+                val debitNote = informationService.getDebitNote(code, number)
+                val serieNumber =
+                    debitNote.establishment +
+                        "-" +
+                        debitNote.emissionPoint +
+                        "-" +
+                        debitNote.sequence
+                val accessKey = debitNote.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getDebitNote(code, number).identification!!,
+                    accessKey,
+                )
+            }
+            "LQ" -> {
+                val liquidation = informationService.getLiquidation(code, number)
+                val serieNumber =
+                    liquidation.establishment +
+                        "-" +
+                        liquidation.emissionPoint +
+                        "-" +
+                        liquidation.sequence
+                val accessKey = liquidation.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getLiquidation(code, number).identification!!,
+                    accessKey,
+                )
+            }
+            "RT" -> {
+                val withhold = informationService.getWithhold(code, number)
+                val serieNumber =
+                    withhold.establishment + "-" + withhold.emissionPoint + "-" + withhold.sequence
+                val accessKey = withhold.accessKey!!
+
+                return Triple(
+                    serieNumber,
+                    informationService.getWithhold(code, number).identification!!,
+                    accessKey,
+                )
+            }
         }
         return Triple("", "", "")
     }
@@ -195,6 +239,10 @@ class EmailSmtp(
         return when (code) {
             "FV" -> "Factura"
             "DV" -> if (type == "text") "Nota de Crédito" else "Nota de Cr&eacute;dito"
+            "ND" -> if (type == "text") "Nota de Débito" else "Nota de D&eacute;bito"
+            "LQ" -> if (type == "text") "Liquidación de Compra" else "Liquidaci&oacute;n de Compra"
+            "GUI" -> if (type == "text") "Guía de Remisión" else "Gu&iacute;a de Remisi&oacute;n"
+            "RT" -> if (type == "text") "Retención" else "Retenci&oacute;n"
             else -> ""
         }
     }

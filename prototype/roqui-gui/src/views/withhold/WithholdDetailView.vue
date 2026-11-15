@@ -9,7 +9,6 @@
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Total</th>
           <th class="titulo">Documento</th>
           <th class="titulo">Razón Social</th>
           <th class="titulo">Correo</th>
@@ -29,7 +28,6 @@
           <th class="titulo">
             <a title="Fecha de Documento ( aaaa-mm-dd )" class="button">Fecha</a>
           </th>
-          <th class="titulo">Total</th>
           <th class="titulo">Documento</th>
           <th class="titulo">Razón Social</th>
           <th class="titulo">Correo</th>
@@ -48,7 +46,6 @@
             <p>{{ d.number }}</p>
           </td>
           <td>{{ d.date }}</td>
-          <td class="numero">{{ d.total }}</td>
           <td class="numero">{{ d.identification }}</td>
           <td>{{ d.legalName }}</td>
           <td>

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -49,7 +50,8 @@ class CreditNoteController {
         return authorize(document)
     }
 
-    @PostMapping("/v2/creditnote/authorize")
+    @PostMapping("/v2/credit/note/authorize")
+    @PreAuthorize("permitAll()")
     fun postAuthorizeV2(
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @RequestBody document: DocumentDto,
