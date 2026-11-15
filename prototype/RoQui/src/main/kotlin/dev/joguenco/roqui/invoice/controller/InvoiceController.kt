@@ -52,6 +52,7 @@ class InvoiceController {
     }
 
     @PostMapping("/v2/invoice/authorize")
+    @PreAuthorize("permitAll()")
     fun postAuthorizeV2(
         @RequestHeader("X-API-KEY", required = false) requestApiKey: String?,
         @RequestBody document: DocumentDto,

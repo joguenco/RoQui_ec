@@ -7,15 +7,15 @@ deliveryNoteService.find = async (startDate, endDate, status) => {
 }
 
 deliveryNoteService.authorizeAll = async (startDate, endDate) => {
-  return await http.post(`/delivery-note/authorize/dates/${startDate}/${endDate}`, {})
+  return await http.post(`/roqui/v1/delivery-note/authorize/dates/${startDate}/${endDate}`, {})
 }
 
 deliveryNoteService.checkAll = async (startDate, endDate) => {
-  return await http.post(`/delivery-note/check/dates/${startDate}/${endDate}`, {})
+  return await http.post(`/roqui/v1/delivery-note/check/dates/${startDate}/${endDate}`, {})
 }
 
 deliveryNoteService.authorize = async (code, number) => {
-  return await http.post(`/delivery-note/authorize`, { code, number })
+  return await http.post(`/roqui/v1/delivery-note/authorize`, { code, number })
 }
 
 export default deliveryNoteService
