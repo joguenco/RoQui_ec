@@ -23,3 +23,15 @@ echo "$TOKEN"
 ```shell
 http GET http://localhost:8080/roqui/v1/taxpayer "Authorization:Bearer $TOKEN"
 ```
+Windows
+```powershell
+þ
+```
+```powershell
+$TOKEN = $response.access_token
+```
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/roqui/v1/taxpayer" `
+  -Method Get `
+  -Headers @{ Authorization = "Bearer $TOKEN" }
+```
