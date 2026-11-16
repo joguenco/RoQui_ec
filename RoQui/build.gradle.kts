@@ -17,7 +17,9 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    maven { url = uri("https://joguenco.github.io/RoQuiSigner/") }
+    maven { url = uri("https://joguenco.github.io/RoQuiPrinter/") }
+    maven { url = uri("https://joguenco.github.io/RoQuiClientSri/") }
     maven { url = uri("https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/") }
 }
 
