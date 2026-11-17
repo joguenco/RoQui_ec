@@ -25,7 +25,15 @@ http GET http://localhost:8080/roqui/v1/taxpayer "Authorization:Bearer $TOKEN"
 ```
 Windows
 ```powershell
-þ
+$response = Invoke-RestMethod -Uri "http://localhost:9090/realms/roqui-realm/protocol/openid-connect/token" `
+  -Method Post `
+  -ContentType "application/x-www-form-urlencoded" `
+  -Body @{
+      grant_type = "password"
+      client_id  = "roqui-client"
+      username   = "checker"
+      password   = "c"
+  }
 ```
 ```powershell
 $TOKEN = $response.access_token
