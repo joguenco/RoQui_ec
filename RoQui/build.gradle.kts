@@ -23,6 +23,14 @@ repositories {
     maven { url = uri("https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/") }
 }
 
+// com.sun.xml.bind:jaxb-core / jaxb-impl are legacy coordinates that ship the same
+// classes as org.glassfish.jaxb:jaxb-core / jaxb-runtime, producing duplicate
+// jaxb-core-*.jar entries in the WAR. Keep only the org.glassfish.jaxb copy.
+configurations.configureEach {
+    exclude(group = "com.sun.xml.bind", module = "jaxb-core")
+    exclude(group = "com.sun.xml.bind", module = "jaxb-impl")
+}
+
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

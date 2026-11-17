@@ -2,17 +2,17 @@
 
 ## Mariadb
 ## Create database and user
-```
+```sh
 CREATE database keycloak;
 ```
-```
+```sh
 CREATE USER 'keycloak'@'%' IDENTIFIED BY 'k';
 ```
-```
+```sh
 GRANT ALL PRIVILEGES ON keycloak.* TO 'keycloak'@'%' WITH GRANT OPTION;
 ```
 
-## keycloak.conf
+## conf/keycloak.conf
 Only http and mariadb
 ```
 http-enabled=true
@@ -23,6 +23,16 @@ db-username=keycloak
 db-password=k
 db-url=jdbc:mariadb://localhost/keycloak
 ```
+## bin/kc.bat
+Add for set JAVA_HOME
+```
+set "JAVA_HOME=C:\Java\AdoptiumJDK-25"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+
+echo JAVA_HOME is set to %JAVA_HOME%
+java -version
+```
+
 ## Windows Service
 - Download, extract and copy
 https://downloads.apache.org/commons/daemon/binaries/windows/

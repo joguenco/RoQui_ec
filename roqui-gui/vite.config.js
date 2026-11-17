@@ -6,13 +6,20 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
+  plugins: [vue(), vueDevTools()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  build: {
+    target: 'esnext',
+    cssCodeSplit: false, // bundle all CSS
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true, // prevent chunk splitting
+      },
     },
   },
 })
