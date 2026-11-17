@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "format": "httpie",
+    "version": "1.0.0",
+    "contentType": "environment",
+    "schema": "https://schema.httpie.io/1.0.0.json",
+    "docs": "https://httpie.io/r/help/export-from-httpie",
+    "source": "HTTPie Desktop 2025.2.0"
+  },
+  "entry": {
+    "name": "RoQui_ec",
+    "color": "green",
+    "isDefault": false,
+    "isLocalOnly": true,
+    "variables": [
+      {
+        "name": "base_url",
+        "value": "localhost:8080",
+        "isSecret": false
+      },
+      {
+        "name": "token",
+        "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbmlzdHJhdG9yIiwiaWF0IjoxNzYzNDkyMTM1LCJleHAiOjE3NjM0OTM5MzV9.lhi72FdP2XKAz2vtws8j-w6GU1m0LWSRdm26vg04o0CgqfCf_ZphfLhAzNxEywkM",
+        "isSecret": false
+      }
+    ]
+  }
+}
