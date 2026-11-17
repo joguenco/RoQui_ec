@@ -1,5 +1,7 @@
 <template>
-  <div class="container">
+  <!-- mismo contenedor fluido y margen lateral que el formulario y la linea
+       de resultados, para que la tabla arranque en la misma columna -->
+  <div class="container is-fluid px-3">
     <table class="table is-bordered is-striped is-hoverable">
       <thead>
         <tr>

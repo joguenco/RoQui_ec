@@ -8,55 +8,49 @@
   />
 
   <section class="section" v-show="!isLoading">
-    <div class="container">
+    <!-- contenedores fluidos: usan todo el ancho con el mismo margen lateral
+         (px-3), en vez de quedar centrados con el ancho fijo de Bulma -->
+    <div class="container is-fluid px-3">
       <h1 class="title">Notas de Débito</h1>
 
-      <div class="field is-horizontal m-2">
-        <div class="field p-3">
-          <div class="field-label"></div>
-          <div class="field-body">
-            <div class="field is-expanded">
-              <div class="field has-addons">
-                <p class="control">
-                  <a class="button is-static"> Fecha Inicial </a>
-                </p>
-                <p class="control is-expanded">
-                  <input
-                    class="input"
-                    placeholder="2025-02-31"
-                    v-model="startDate"
-                    ref="startDate"
-                    @keyup.enter="findDebitNotes"
-                  />
-                </p>
-              </div>
-            </div>
+      <!-- las dos fechas juntas en una fila; en movil se acomodan una debajo
+           de otra por el is-grouped-multiline -->
+      <div class="field is-grouped is-grouped-multiline my-3">
+        <div class="control date-field">
+          <div class="field has-addons">
+            <p class="control">
+              <a class="button is-static"> Fecha Inicial </a>
+            </p>
+            <p class="control is-expanded">
+              <input
+                class="input"
+                placeholder="2025-02-31"
+                v-model="startDate"
+                ref="startDate"
+                @keyup.enter="findDebitNotes"
+              />
+            </p>
           </div>
         </div>
 
-        <div class="field p-3">
-          <div class="field-label"></div>
-          <div class="field-body">
-            <div class="field is-expanded">
-              <div class="field has-addons">
-                <p class="control">
-                  <a class="button is-static"> Fecha Final </a>
-                </p>
-                <p class="control is-expanded">
-                  <input
-                    class="input"
-                    placeholder="2025-02-31"
-                    v-model="endDate"
-                    @keyup.enter="findDebitNotes"
-                  />
-                </p>
-              </div>
-            </div>
+        <div class="control date-field">
+          <div class="field has-addons">
+            <p class="control">
+              <a class="button is-static"> Fecha Final </a>
+            </p>
+            <p class="control is-expanded">
+              <input
+                class="input"
+                placeholder="2025-02-31"
+                v-model="endDate"
+                @keyup.enter="findDebitNotes"
+              />
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="field is-horizontal m-3">
+      <div class="field is-horizontal my-3">
         <div class="radios">
           <label class="radio">
             <input type="radio" value="All" v-model="status" @keyup.enter="findDebitNotes" />
@@ -78,7 +72,7 @@
         </div>
       </div>
 
-      <div class="field is-grouped m-3">
+      <div class="field is-grouped is-grouped-multiline my-3">
         <button class="button is-primary" @click="findDebitNotes">Buscar</button>
         <button class="button is-link" @click="authorizeAll">Autorizar</button>
         <button class="button is-success" @click="checkAll">Verificar</button>
@@ -87,7 +81,7 @@
         </button>
       </div>
     </div>
-    <div class="container p-2">Encontrados: {{ finderMessage }}</div>
+    <div class="container is-fluid px-3 py-2">Encontrados: {{ finderMessage }}</div>
     <AppDetail v-bind:details="debitNote.details" />
   </section>
 </template>
@@ -229,4 +223,11 @@ export default {
   },
 }
 </script>
-<style scoped></style>
+<style scoped>
+/* los dos campos de fecha: ancho comodo y fijo, que en pantallas chicas se
+   reduce al 100% y se apilan sin desbordar */
+.date-field {
+  width: 20rem;
+  max-width: 100%;
+}
+</style>

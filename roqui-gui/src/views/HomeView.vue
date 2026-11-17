@@ -42,7 +42,7 @@
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
       <router-link to="/debit/note" class="navbar-item" active-class="is-active">
-        <img src="@/assets/receipt-refund.svg" alt="refund" />
+        <img src="@/assets/receipt-charge.svg" alt="refund" />
         <strong class="has-text-grey-dark">Notas de Débito</strong></router-link
       >
     </a>
@@ -53,7 +53,7 @@
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
       <router-link to="/liquidation" class="navbar-item" active-class="is-active">
-        <img src="@/assets/invoice.svg" alt="liquidation" />
+        <img src="@/assets/liquidation.svg" alt="liquidation" />
         <strong class="has-text-grey-dark">Liquidaciones de Compra</strong></router-link
       >
     </a>
@@ -64,7 +64,7 @@
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
       <router-link to="/withhold" class="navbar-item" active-class="is-active">
-        <img src="@/assets/star.svg" alt="withhold" />
+        <img src="@/assets/withhold.svg" alt="withhold" />
         <strong class="has-text-grey-dark">Comprobantes de Retención</strong></router-link
       >
     </a>
@@ -74,7 +74,7 @@
         <i class="fas fa-book" aria-hidden="true"></i>
       </span>
       <router-link to="/delivery-note" class="navbar-item" active-class="is-active">
-        <img src="@/assets/star.svg" alt="delivery note" />
+        <img src="@/assets/dispatch.svg" alt="delivery note" />
         <strong class="has-text-grey-dark">Guías de Remisión</strong></router-link
       >
     </a>
