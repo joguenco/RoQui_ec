@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 
 param(
-    [string]$IpMariaDB = "192.168.56.1",
+    [string]$IpMariaDB = "localhost",
     [string]$DbUsername = "keycloak",
     [string]$DbPassword = "k",
     [string]$DominioTomcat = "tomcat.vm.oe",
