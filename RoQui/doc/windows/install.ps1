@@ -6,7 +6,11 @@ param(
     [string]$DbPassword = "k",
     [string]$DominioTomcat = "tomcat.vm.oe",
     [string]$DominioSPA = "client.vm.oe",
-    [string]$DominioKeycloak = "keycloak.vm.oe"
+    [string]$DominioKeycloak = "keycloak.vm.oe",
+    [string]$DbRoquiName = "donpos",
+    [string]$DbRoquiUsername = "donpos",
+    [string]$DbRoquiPassword = "d",
+    [string]$KeyProperty = "dieciseisnumeros"
 )
 
 # --- VERSIONES ---
@@ -130,6 +134,24 @@ if (Test-Path -Path "$RutaTomcat\bin\service.bat") {
         & "$RutaTomcat\bin\service.bat" remove Tomcat11 | Out-Null
     }
     & "$RutaTomcat\bin\service.bat" install Tomcat11 | Out-Null
+}
+
+# 7a. Variables de entorno para el WAR de RoQui.
+#     El servicio de Windows no hereda las variables definidas en la sesion interactiva,
+#     por eso se registran en la configuracion propia del servicio (tomcat11.exe //US).
+#     El issuer debe coincidir exactamente con el claim "iss" de los tokens de Keycloak.
+$EntornoTomcat = @(
+    "KEY_CORS_ALLOWED_ORIGIN=https://$DominioSPA",
+    "KEYCLOAK_ISSUER_URI=https://$DominioKeycloak/realms/roqui-realm",
+    "DB_ROQUI_NAME=$DbRoquiName",
+    "DB_ROQUI_USERNAME=$DbRoquiUsername",
+    "DB_ROQUI_PASSWORD=$DbRoquiPassword",
+    "KEY_PROPERTY=$KeyProperty"
+) -join '#'
+
+if (Test-Path -Path "$RutaTomcat\bin\tomcat11.exe") {
+    & "$RutaTomcat\bin\tomcat11.exe" //US//Tomcat11 "--Environment=$EntornoTomcat" | Out-Null
+    Write-Host "Variables de entorno del WAR configuradas en el servicio Tomcat11." -ForegroundColor Green
 }
 
 
