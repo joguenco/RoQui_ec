@@ -48,7 +48,7 @@ db-url=jdbc:mariadb://localhost/keycloak
 ```
 - Add for set JAVA_HOME: bin/kc.bat
 ```
-set "JAVA_HOME=C:\Java\AdoptiumJDK-25"
+set "JAVA_HOME=C:\app\Java\Temurin25"
 set "PATH=%JAVA_HOME%\bin;%PATH%"
 
 echo JAVA_HOME is set to %JAVA_HOME%
