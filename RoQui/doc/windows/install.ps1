@@ -508,7 +508,30 @@ db-url=jdbc:mariadb://$IpMariaDB/keycloak
 "@
 [System.IO.File]::WriteAllText($ArchivoKeycloakConf, $ContenidoKeycloakConf, (New-Object System.Text.UTF8Encoding $false))
 
-# 14b. Descargar Apache Commons Daemon (prunsrv.exe) y copiarlo a bin de Keycloak
+# 14b. Añadir JAVA_HOME y PATH al inicio de todos los archivos *.bat de C:\app\keycloak\bin
+#     (kc.bat, kcadm.bat, kcreg.bat...). Se comprueba el marcador para no duplicar
+#     las líneas cuando el script se ejecuta varias veces.
+$LineasJavaBat = @(
+    "set `"JAVA_HOME=$RutaJava`"",
+    "set `"PATH=%JAVA_HOME%\bin;%PATH%`"",
+    "",
+    "echo JAVA_HOME is set to %JAVA_HOME%",
+    "java -version"
+) -join "`r`n"
+$MarcadorJavaBat = 'set "JAVA_HOME='
+
+foreach ($ArchivoBat in (Get-ChildItem -Path "$RutaKeycloak\bin" -Filter "*.bat" -File)) {
+    $ContenidoBat = [System.IO.File]::ReadAllText($ArchivoBat.FullName)
+    if ($ContenidoBat.Contains($MarcadorJavaBat)) {
+        Write-Host "  $($ArchivoBat.Name): JAVA_HOME ya configurado. Omitiendo." -ForegroundColor DarkGreen
+        continue
+    }
+    $NuevoContenidoBat = $LineasJavaBat + "`r`n" + $ContenidoBat
+    [System.IO.File]::WriteAllText($ArchivoBat.FullName, $NuevoContenidoBat, (New-Object System.Text.UTF8Encoding $false))
+    Write-Host "  $($ArchivoBat.Name): JAVA_HOME añadido al inicio del archivo." -ForegroundColor Green
+}
+
+# 14c. Descargar Apache Commons Daemon (prunsrv.exe) y copiarlo a bin de Keycloak
 $UrlCommonsDaemon     = "https://dlcdn.apache.org/commons/daemon/binaries/windows/commons-daemon-$VersionCommonsDaemon-bin-windows.zip"
 $ZipCommonsDaemon     = "$env:TEMP\commons-daemon-$VersionCommonsDaemon-bin-windows.zip"
 $TempCommonsDaemon    = "$env:TEMP\commons-daemon-$VersionCommonsDaemon-extract"
@@ -528,13 +551,13 @@ if (!(Test-Path -Path $PrunsrvExe)) {
     Write-Host "prunsrv.exe ya está instalado en $PrunsrvExe. Omitiendo descarga." -ForegroundColor DarkGreen
 }
 
-# 14c. Construir la distribución optimizada (opcional, acelera el primer arranque)
+# 14d. Construir la distribución optimizada (opcional, acelera el primer arranque)
 Write-Host "Construyendo Keycloak (kc.bat build)..." -ForegroundColor Cyan
 Push-Location $RutaKeycloak
 & "$RutaKeycloak\bin\kc.bat" build 2>&1 | Out-Null
 Pop-Location
 
-# 14d. Instalar el servicio con prunsrv.exe según la documentación oficial de Keycloak
+# 14e. Instalar el servicio con prunsrv.exe según la documentación oficial de Keycloak
 Write-Host "Registrando el servicio $ServicioKeycloak con Apache Commons Daemon..." -ForegroundColor Cyan
 Stop-Service -Name $ServicioKeycloak -Force -ErrorAction SilentlyContinue
 if (Get-Service -Name $ServicioKeycloak -ErrorAction SilentlyContinue) {
